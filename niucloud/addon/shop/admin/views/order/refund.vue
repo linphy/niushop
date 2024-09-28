@@ -64,7 +64,12 @@
 													<img class="w-[50px] h-[50px]" v-else src="" alt="">
 												</div>
 												<div class="flex  flex-col">
-													<p class="multi-hidden">{{ row.goods_name }}</p>
+                                                    <el-tooltip class="box-item" effect="light" placement="top">
+                                                        <template #content>
+                                                            <div class="max-w-[250px]">{{row.goods_name}}</div>
+                                                        </template>
+													    <p class="multi-hidden">{{ row.goods_name }}</p>
+                                                    </el-tooltip>
 													<span class="text-[12px] text-[#999] truncate">{{ row.sku_name }}</span>
 												</div>
 											</div>

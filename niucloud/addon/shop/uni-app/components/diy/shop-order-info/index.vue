@@ -1,22 +1,21 @@
 <template>
 	<view :style="warpCss">
 		<view class="diy-text relative">
-			<view class="px-[20rpx] py-[30rpx] flex items-center justify-between">
+			<view class="px-[var(--pad-sidebar-m)] pt-[var(--pad-top-m)] pb-[40rpx] flex items-center justify-between">
 				<view @click="diyStore.toRedirect(diyComponent.link)">
-					<view class="max-w-[200rpx] truncate leading-[1]" :style="{ fontSize: diyComponent.fontSize * 2 + 'rpx', color: diyComponent.textColor, fontWeight: diyComponent.fontWeight }">
+					<view class="max-w-[200rpx] truncate leading-[1] text-[30rpx]" :style="{ fontSize: diyComponent.fontSize * 2 + 'rpx', color: diyComponent.textColor, fontWeight: (diyComponent.fontWeight == 'normal' ? 500 : diyComponent.fontWeight) }">
 						{{ diyComponent.text }}
 					</view>
 				</view>
-				{{ diyComponent.more.fontSize }}
 				<view class="flex items-center">
 					<view  @click="redirect({ url: '/addon/shop/pages/order/list'})" class="flex items-center">
 						<text class="max-w-[200rpx] truncate text-[24rpx]" :style="{ color: diyComponent.more.color }">{{ diyComponent.more.text }}</text>
-						<text class="nc-iconfont nc-icon-youV6xx text-[26rpx]" :style="{ color: diyComponent.more.color }"></text>
+						<text class="nc-iconfont nc-icon-youV6xx text-[24rpx]" :style="{ color: diyComponent.more.color }"></text>
 					</view>
 				</view>
 			</view>
 		</view>
-		<view class="pb-[30rpx] px-[20rpx] flex items-center justify-between text-center">
+		<view class="pb-[var(--pad-top-m)] px-[var(--pad-sidebar-m)] flex items-center justify-between text-center">
 			<view class="flex flex-col items-center w-[20%] flex-shrink-0" @click="toList(1)">
 				<view class="relative w-[44rpx] h-[44rpx]">
 					<image class="w-[44rpx] h-[44rpx]" :src="img('addon/shop/diy/member/order1.png')" />
@@ -25,7 +24,7 @@
 						{{ orderInfo.wait_pay > 99 ? "99+" : orderInfo.wait_pay }}
 					</view>
 				</view>
-				<view class="mt-[14rpx]" :style="{
+				<view class="mt-[20rpx] leading-[1]" :style="{
 					fontSize: diyComponent.item.fontSize * 2 + 'rpx',
 					color: diyComponent.item.color,
 					fontWeight: diyComponent.item.fontWeight
@@ -39,7 +38,7 @@
 						{{ orderInfo.wait_shipping > 99 ? "99+" : orderInfo.wait_shipping }}
 					</view>
 				</view>
-				<view class="mt-[14rpx]" :style="{
+				<view class="mt-[20rpx] leading-[1]" :style="{
 					fontSize: diyComponent.item.fontSize * 2 + 'rpx',
 					color: diyComponent.item.color,
 					fontWeight: diyComponent.item.fontWeight
@@ -53,7 +52,7 @@
 						{{ orderInfo.wait_take > 99 ? "99+" : orderInfo.wait_take }}
 					</view>
 				</view>
-				<view class="mt-[14rpx]" :style="{
+				<view class="mt-[20rpx] leading-[1]" :style="{
 					fontSize: diyComponent.item.fontSize * 2 + 'rpx',
 					color: diyComponent.item.color,
 					fontWeight: diyComponent.item.fontWeight
@@ -67,7 +66,7 @@
 						{{ orderInfo.evaluate > 99 ? "99+" : orderInfo.evaluate }}
 					</view>
 				</view>
-				<view class="mt-[14rpx]" :style="{
+				<view class="mt-[20rpx] leading-[1]" :style="{
 					fontSize: diyComponent.item.fontSize * 2 + 'rpx',
 					color: diyComponent.item.color,
 					fontWeight: diyComponent.item.fontWeight
@@ -81,7 +80,7 @@
 						{{ orderInfo.refund > 99 ? "99+" : orderInfo.refund }}
 					</view>
 				</view>
-				<view class="mt-[14rpx]" :style="{
+				<view class="mt-[20rpx] leading-[1]" :style="{
 					fontSize: diyComponent.item.fontSize * 2 + 'rpx',
 					color: diyComponent.item.color,
 					fontWeight: diyComponent.item.fontWeight
@@ -115,7 +114,7 @@
 	    () => diyComponent.value,
 		(newValue, oldValue) => {
             refresh();
-        },{deep: true})
+    },{deep: true})
 
 	const refresh = () => {
 		// 装修模式

@@ -212,7 +212,7 @@
             if (companyList.value[i].company_id == value) {
                 expTypeList.value = companyList.value[i].exp_type;
                 expTypeList.value.forEach((item: any) => {
-                    if(item.value) item.value = parseInt(item.value);
+                    if (item.value) item.value = parseInt(item.value);
                 })
                 printStyleList.value = companyList.value[i].print_style;
 

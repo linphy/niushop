@@ -8,6 +8,11 @@
 					<upload-image v-model="diyStore.editComponent.bgUrl" :limit="1"/>
 				</el-form-item>
 			</el-form>
+			<el-form label-width="80px" class="px-[10px]">
+				<el-form-item :label="t('shopMemberInfoComponentAccount')">
+					<el-switch v-model="diyStore.editComponent.isShowAccount" />
+				</el-form-item>
+			</el-form>
 		</div>
 	</div>
 
@@ -18,6 +23,12 @@
 			<el-form label-width="80px" class="px-[10px]">
 				<el-form-item :label="t('textColor')">
 					<el-color-picker v-model="diyStore.editComponent.textColor"/>
+				</el-form-item>
+			</el-form>
+			
+			<el-form label-width="80px" class="px-[10px]">
+				<el-form-item :label="t('shopMemberInfoComponentUidTextColor')">
+					<el-color-picker v-model="diyStore.editComponent.uidTextColor"/>
 				</el-form-item>
 			</el-form>
 		</div>

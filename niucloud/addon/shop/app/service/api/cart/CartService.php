@@ -42,7 +42,7 @@ class CartService extends BaseApiService
 
         if (empty($member_info)) throw new CommonException('SHOP_ORDER_BUYER_NOT_FOUND');//无效的账号
         if ($member_info[ 'status' ] == MemberDict::OFF) throw new CommonException('SHOP_ORDER_BUYER_LOCKED');//账号被锁定
-
+        
         $data[ 'member_id' ] = $this->member_id;
         $info = $this->model->where([
             [ 'member_id', '=', $data[ 'member_id' ] ],

@@ -319,6 +319,6 @@ const back = () => {
 
 <style lang="scss" scoped>
 .fixed-footer {
-    z-index: 1000 !important
+    z-index: 4 !important
 }
 </style>

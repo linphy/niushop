@@ -1,8 +1,8 @@
 <template>
 	<view :style="themeColor()">
-		<category-template-one-one class="category" v-if="config.level===1&&config.template === 'style-1'" :categoryId="categoryId" :config="config" />
-		<category-template-two-one v-if="config.level===2&&config.template === 'style-1'" :categoryId="categoryId" :config="config" />
-		<category-template-two-two class="category" v-if="config.level===2&&config.template === 'style-2'" :categoryId="categoryId" :config="config" />
+		<category-template-one-one class="category" v-if="config.level===1 && config.template === 'style-1'" :categoryId="categoryId" :config="config" />
+		<category-template-two-one v-if="config.level===2 && config.template === 'style-1'" :categoryId="categoryId" :config="config" />
+		<category-template-two-two class="category" v-if="config.level===2 && config.template === 'style-2'" :categoryId="categoryId" :config="config" />
 	</view>
 </template>
 <script setup lang="ts">
@@ -15,7 +15,7 @@ import { getGoodsCategoryConfig } from '@/addon/shop/api/goods';
 import useCartStore from '@/addon/shop/stores/cart'
 
 const cartStore = useCartStore();
-const config = ref({})
+const config: any = ref({})
 const categoryId = ref(0)
 
 const getGoodsCategoryConfigFn = () => {
@@ -52,7 +52,7 @@ onShow(() => {
 }
 /*  #endif  */
 /*  #ifndef  H5  */
-.category .detail .mescroll-body {
+ .category .detail .mescroll-body {
 	padding-bottom: calc(100rpx + constant(safe-area-inset-bottom)) !important;
 	padding-bottom: calc(100rpx + env(safe-area-inset-bottom)) !important;
 }
@@ -61,15 +61,49 @@ onShow(() => {
 	padding-bottom: calc(200rpx + constant(safe-area-inset-bottom)) !important;
 	padding-bottom: calc(200rpx + env(safe-area-inset-bottom)) !important;
 }
-/*  #endif  */
-.category .labelPopup :deep(.u-transition) {
+/*
+.category .labelPopup :deep(.u-fade-enter-active) {
 	top: 92rpx !important;
-	left: 182rpx !important;
+	left: 166rpx !important;
+	z-index: 8 !important;
+	
+	
+}
+.category .labelPopup :deep(.u-slide-down-enter-active){
+	top: 92rpx !important;
+	left: 165rpx !important;
 	z-index: 8 !important;
 }
-.category .labelPopup.active :deep(.u-transition) {
-	top: 198rpx !important;
+.category .labelPopup.active :deep(.u-fade-enter-active) {
+	top: 190rpx !important;
+	
 }
+.category .labelPopup.active :deep(.u-slide-down-enter-active){
+	top: 190rpx !important;
+}
+.category .labelPopup :deep(.u-fade-enter-to){
+	top: 92rpx !important;
+	left: 166rpx !important;
+	z-index: 8 !important;
+}
+.category .labelPopup :deep(.u-slide-down-leave-to){
+	top: 92rpx !important;
+	left: 165rpx !important;
+	z-index: 8 !important;
+} */
+.category .labelPopup :deep(.u-transition) {
+	top: 96rpx !important;
+	left: 170rpx !important;
+	z-index: 8 !important;
+	&:nth-child(2){
+		left: 168rpx !important;
+	}
+}
+.category .labelPopup.active :deep(.u-transition) {
+	top: 190rpx !important;
+}
+/*  #endif  */
+
 </style>
 <style lang="scss" scoped>
 :deep(.mescroll-upwarp) {
@@ -86,5 +120,14 @@ onShow(() => {
 }
 button::after{
 	border: 0 !important;
+}
+
+:deep(.part .mescroll-empty){
+	width: 542rpx;
+	height: 542rpx;
+	margin-top: 0;
+	margin-left: 0;
+	margin-right: 0;
+	padding-top: 50rpx;
 }
 </style>

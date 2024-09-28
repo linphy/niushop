@@ -7,13 +7,13 @@
             </div>
         </el-form-item>
         <el-form-item label="" prop="coupon_id" v-show="formData.is_use">
-            <div>
+            <div class="flex-1 max-w-[1000px]">
                 <div>
                     <coupon-select-popup v-model="formData.coupon_id" ref="selectCouponRef">
                         <el-button type="primary" link>选择优惠券</el-button>
                     </coupon-select-popup>
                 </div>
-                <div v-if="couponList.length" class="mt-[10px]">
+                <div v-if="couponList.length" class="mt-[10px] w-[100%]">
                     <el-table :data="couponList" size="default" ref="couponListTableRef" max-height="400">
                         <el-table-column prop="title" label="名称" min-width="130" />
                         <el-table-column prop="type_name" label="类型" min-width="130" />
@@ -22,23 +22,28 @@
                                 <span >¥{{row.price}}</span>
                             </template>
                         </el-table-column>
-                        <el-table-column  label="使用门槛" min-width="130" >
+                        <el-table-column label="使用门槛" min-width="130" >
                             <template #default="{ row }">
                                 <span v-if="row.min_condition_money == '0.00'">无门槛</span>
                                 <span v-else >满{{ row.min_condition_money }}元可用</span>
                             </template>
                         </el-table-column>
-                        <el-table-column  label="有效期" min-width="210">
+                        <el-table-column label="有效期" min-width="210">
                             <template #default="{ row }">
-                                <span v-if="row.valid_type == 1">  领取之日起{{ row.length || '' }} 天内有效</span>
-                                <span v-else> 使用截止时间至{{ row.valid_end_time || ''}} </span>
+                                <template v-if="row.receive_type == 1">
+                                    <span v-if="row.valid_type == 1">  领取之日起{{ row.length || '' }} 天内有效</span>
+                                    <span v-else> 使用截止时间至{{ row.valid_end_time || ''}} </span>
+                                </template>
+                                <span v-else>--</span>
                             </template>
                         </el-table-column>
-                        <el-table-column  label="赠券数" min-width="130">
+                        <el-table-column label="赠券数" min-width="130">
                             <template #default="{ row }">
                                 <el-input-number
                                     v-model="formData.coupon_list['id_' + row.id]"
                                     :min="1"
+                                    :precision="0"
+                                    :max="row.limit_count"
                                     controls-position="right"
                                     class="!w-[100px]"
                                 />

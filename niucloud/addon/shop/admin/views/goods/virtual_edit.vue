@@ -237,7 +237,7 @@
 
                                                 </li>
                                             </ul>
-                                            <span class="text-color text-[14px] add-spec-value" @click="goodsEdit.addSpecValue(index)">{{ t('addSpecValue') }}</span>
+                                            <span class="text-primary text-[14px] add-spec-value" @click="goodsEdit.addSpecValue(index)">{{ t('addSpecValue') }}</span>
                                             <div class="box"></div>
                                         </div>
 
@@ -471,7 +471,7 @@
                 <el-tab-pane :label="t('goodsDesc')" name="detail">
                     <el-form :model="goodsEdit.formData" label-width="120px" ref="detailFormRef" :rules="goodsEdit.formRules" class="page-form">
                         <el-form-item :label="t('goodsDesc')" prop="goods_desc">
-                            <editor v-model="goodsEdit.formData.goods_desc" :height="600" class="editor-width" />
+                            <editor v-model="goodsEdit.formData.goods_desc" :height="600" class="editor-width" @handleBlur="goodsEdit.handleBlur" />
                         </el-form-item>
                     </el-form>
                 </el-tab-pane>
@@ -628,4 +628,13 @@ const disabledPastDates = (date:any) => {
 
 <style lang="scss" scoped>
     @import 'public/css/goods_edit.scss';
+</style>
+<style lang="scss">
+    .edui-default .edui-editor{
+        z-index: 1 !important;
+    }
+    
+    .el-cascader__tags.is-validate{
+        right: 30px !important;
+    }
 </style>

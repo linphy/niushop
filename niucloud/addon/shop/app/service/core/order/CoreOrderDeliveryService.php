@@ -23,13 +23,13 @@ use addon\shop\app\model\shop_address\ShopAddress;
 use app\dict\pay\PayDict;
 use app\model\member\Member;
 use app\model\pay\Pay;
-use app\service\core\verify\CoreVerifyService;
 use app\service\core\weapp\CoreWeappDeliveryService;
 use core\base\BaseCoreService;
 use core\exception\CommonException;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
+use think\facade\Log;
 
 /**
  *  订单配送服务层
@@ -354,202 +354,205 @@ class CoreOrderDeliveryService extends BaseCoreService
      */
     public function orderShippingUploadShippingInfo($params)
     {
+        try {
 
-        $order_id = $params[ 'order_id' ];
+            $order_id = $params[ 'order_id' ];
 
-        //查询订单
-        $where = array(
-            [ 'order_id', '=', $order_id ],
-        );
-        $order_data = $this->model->where($where)->findOrEmpty();
+            //查询订单
+            $where = array(
+                [ 'order_id', '=', $order_id ],
+            );
+            $order_data = $this->model->where($where)->findOrEmpty();
 
-        //订单不存在
-        if ($order_data->isEmpty()) {
-            return '';
-        }
-
-        //不用的订单项针对的发货方式不同
-        $order_goods_where = [
-            [ 'order_id', '=', $order_id ],
-            [ 'status', '=', OrderGoodsDict::NORMAL ],
-            [ 'delivery_status', '=', OrderDeliveryDict::WAIT_DELIVERY ]
-        ];
-
-        $order_goods_data = ( new OrderGoods() )->where($order_goods_where)->select();
-
-        if ($order_goods_data->count() == 0) {
-            return '';
-        }
-
-        $pay_model = new Pay();
-        $where = array(
-            [ 'out_trade_no', '=', $order_data[ 'out_trade_no' ] ]
-        );
-        $pay_info = $pay_model->where($where)->field('id,type')->findOrEmpty()->toArray();
-
-        if (empty($pay_info)) {
-            return '';
-        }
-
-        // 订单未使用微信支付，无须处理
-        if ($pay_info[ 'type' ] != PayDict::WECHATPAY) {
-            return '订单未使用微信支付';
-        }
-
-        $weapp_delivery_service = new CoreWeappDeliveryService();
-
-        // 检测微信小程序是否已开通发货信息管理服务
-        $is_trade_managed = $weapp_delivery_service->isTradeManaged();
-
-        if (empty($is_trade_managed[ 'is_trade_managed' ])) {
-            return '发货信息录入接口，报错：' . $is_trade_managed[ "errmsg" ];
-        }
-
-        // 设置消息跳转路径设置接口
-        $result_jump_path = $weapp_delivery_service->setMsgJumpPath('shop_order');
-
-        if ($result_jump_path[ 'errcode' ] != 0) {
-            return '设置消息跳转路径设置接口，报错：' . $result_jump_path[ "errmsg" ];
-        }
-
-        $logistics_type = 1; // 物流模式，发货方式枚举值：1、实体物流配送采用快递公司进行实体物流配送形式 2、同城配送 3、虚拟商品，虚拟商品，例如话费充值，点卡等，无实体配送形式 4、用户自提
-
-        if ($order_data[ 'delivery_type' ] == OrderDeliveryDict::EXPRESS) {
-
-            // 1、实体物流配送采用快递公司进行实体物流配送形式
-            $logistics_type = 1;
-
-        } else if ($order_data[ 'delivery_type' ] == OrderDeliveryDict::STORE) {
-
-            // 门店自提
-            $logistics_type = 4;
-
-        } else if ($order_data[ 'delivery_type' ] == OrderDeliveryDict::LOCAL_DELIVERY) {
-
-            // 同城配送
-            $logistics_type = 2;
-
-        } else if ($order_data[ 'delivery_type' ] == OrderDeliveryDict::VIRTUAL) {
-
-            // 虚拟商品，例如话费充值，点卡等，无实体配送形式
-            $logistics_type = 3;
-
-        }
-
-        $order_goods_list = $order_goods_data;
-
-        $shipping_list = [];
-        $first_shipping_info = [];
-
-        // 获取物流公司
-        $delivery_list = [];
-
-        $delivery_mode = 1; // 发货模式，发货模式枚举值：1、UNIFIED_DELIVERY（统一发货）2、SPLIT_DELIVERY（分拆发货） 示例值: UNIFIED_DELIVERY
-        if ($logistics_type == 1) {
-            $delivery_mode = count($order_goods_list) == 1 ? 1 : 2;
-            $result_delivery_list = $weapp_delivery_service->getDeliveryList();
-            if ($result_delivery_list[ 'errcode' ] == 0 && !empty($result_delivery_list[ 'delivery_list' ])) {
-                $delivery_list = $result_delivery_list[ 'delivery_list' ];
+            //订单不存在
+            if ($order_data->isEmpty()) {
+                return '';
             }
 
-        }
-
-        // 查询商家默认发货地址
-        $shop_address_field = 'contact_name,mobile,province_id,city_id,district_id,address,full_address,lat,lng';
-        $shop_address = ( new ShopAddress() )->where([ [ 'is_default_delivery', '=', 1 ] ])->field($shop_address_field)->findOrEmpty()->toArray();
-
-        foreach ($order_goods_list as $k => $v) {
-
-            // 一笔支付单最多分拆成 10 个包裹
-            if ($k == 9) {
-                break;
-            }
-
-            $express_company = ''; // 物流公司编码，快递公司ID，参见「查询物流公司编码列表」，物流快递发货时必填， 示例值: DHL 字符字节限制: [1, 128]
-            $tracking_no = ''; // 物流单号，物流快递发货时必填，示例值: 323244567777 字符字节限制: [1, 128]
-
-            if ($logistics_type == 1) {
-
-                $field = 'id, order_id, delivery_type, sub_delivery_type, express_company_id,express_number';
-                $info = ( new OrderDelivery() )->where([ [ 'id', '=', $v[ 'delivery_id' ] ] ])->with([
-                    'company' => function($query) {
-                        $query->field('company_id, company_name, express_no');
-                    }
-                ])->field($field)->findOrEmpty()->toArray();
-                $tracking_no = $info[ 'express_number' ];
-
-                if (!empty($info) && $info[ 'express_company_id' ] && !empty($delivery_list)) {
-                    $index = array_search($info[ 'company' ][ 'company_name' ], array_column($delivery_list, 'delivery_name'));
-                    if ($index !== false && isset($delivery_list[ $index ])) {
-                        $express_company = $delivery_list[ $index ][ 'delivery_id' ];
-                    }
-                    if (empty($express_company)) {
-                        return '物流公司不支持，请更换其他物流公司';
-                    }
-                } else {
-                    $logistics_type = 2; // 无需物流的情况，无实体配送形式
-                    $delivery_mode = 1; // 统一发货
-                }
-
-            }
-
-            $item = [
-                'tracking_no' => $tracking_no, // 物流单号，物流快递发货时必填，示例值: 323244567777 字符字节限制: [1, 128]
-                'express_company' => $express_company, // 物流公司编码，快递公司ID，参见「查询物流公司编码列表」，物流快递发货时必填， 示例值: DHL 字符字节限制: [1, 128]
-                'item_desc' => str_sub($v[ 'goods_name' ] . $v[ 'sku_name' ], 90) . '*' . $v[ 'num' ], // 商品信息，例如：微信红包抱枕*1个，限120个字以内
-                'contact' => [
-                    'consignor_contact' => '',
-                    'receiver_contact' => ''
-                ]
+            //不用的订单项针对的发货方式不同
+            $order_goods_where = [
+                [ 'order_id', '=', $order_id ],
+                [ 'status', '=', OrderGoodsDict::NORMAL ],
+                [ 'delivery_status', '=', OrderDeliveryDict::WAIT_DELIVERY ]
             ];
 
-            // 寄件人联系方式，寄件人联系方式，采用掩码传输，最后4位数字不能打掩码 示例值: `189****1234, 021-****1234, ****1234, 0**2-***1234, 0**2-******23-10, ****123-8008` 值限制: 0 ≤ value ≤ 1024
-            if (!empty($shop_address[ 'mobile' ])) {
-                $item[ 'contact' ][ 'consignor_contact' ] = substr($shop_address[ 'mobile' ], 0, 3) . '****' . substr($shop_address[ 'mobile' ], 7);
+            $order_goods_data = ( new OrderGoods() )->where($order_goods_where)->select();
+
+            if ($order_goods_data->count() == 0) {
+                return '';
             }
 
-            // 收件人联系方式，收件人联系方式为，采用掩码传输，最后4位数字不能打掩码 示例值: `189****1234, 021-****1234, ****1234, 0**2-***1234, 0**2-******23-10, ****123-8008` 值限制: 0 ≤ value ≤ 1024
-            if (!empty($order_data[ 'taker_mobile' ])) {
-                $item[ 'contact' ][ 'receiver_contact' ] = substr($order_data[ 'taker_mobile' ], 0, 3) . '****' . substr($order_data[ 'taker_mobile' ], 7);
+            $pay_model = new Pay();
+            $where = array(
+                [ 'out_trade_no', '=', $order_data[ 'out_trade_no' ] ]
+            );
+            $pay_info = $pay_model->where($where)->field('id,type')->findOrEmpty()->toArray();
+
+            if (empty($pay_info)) {
+                return '';
             }
 
-            $shipping_list[] = $item;
-            if ($k == 0) {
-                $first_shipping_info = $item;
+            // 订单未使用微信支付，无须处理
+            if ($pay_info[ 'type' ] != PayDict::WECHATPAY) {
+                return '订单未使用微信支付';
             }
-        }
 
-        // 统一发货，只能有一个物流信息，拼装商品信息
-        if ($delivery_mode == 1) {
-            if (count($shipping_list) > 1) {
-                foreach ($shipping_list as $k => $v) {
-                    if ($k > 0) {
-                        $first_shipping_info[ 'item_desc' ] .= ',' . $v[ 'item_desc' ];
+            $weapp_delivery_service = new CoreWeappDeliveryService();
+
+            // 检测微信小程序是否已开通发货信息管理服务
+            $is_trade_managed = $weapp_delivery_service->isTradeManaged();
+
+            if (empty($is_trade_managed[ 'is_trade_managed' ])) {
+                return '发货信息录入接口，报错：' . $is_trade_managed[ "errmsg" ];
+            }
+
+            // 设置消息跳转路径设置接口
+            $result_jump_path = $weapp_delivery_service->setMsgJumpPath('shop_order');
+            if ($result_jump_path[ 'errcode' ] != 0) {
+                return '设置消息跳转路径设置接口，报错：' . $result_jump_path[ "errmsg" ];
+            }
+
+            $logistics_type = 1; // 物流模式，发货方式枚举值：1、实体物流配送采用快递公司进行实体物流配送形式 2、同城配送 3、虚拟商品，虚拟商品，例如话费充值，点卡等，无实体配送形式 4、用户自提
+
+            if ($order_data[ 'delivery_type' ] == OrderDeliveryDict::EXPRESS) {
+
+                // 1、实体物流配送采用快递公司进行实体物流配送形式
+                $logistics_type = 1;
+
+            } else if ($order_data[ 'delivery_type' ] == OrderDeliveryDict::STORE) {
+
+                // 门店自提
+                $logistics_type = 4;
+
+            } else if ($order_data[ 'delivery_type' ] == OrderDeliveryDict::LOCAL_DELIVERY) {
+
+                // 同城配送
+                $logistics_type = 2;
+
+            } else if ($order_data[ 'delivery_type' ] == OrderDeliveryDict::VIRTUAL) {
+
+                // 虚拟商品，例如话费充值，点卡等，无实体配送形式
+                $logistics_type = 3;
+
+            }
+
+            $order_goods_list = $order_goods_data;
+
+            $shipping_list = [];
+            $first_shipping_info = [];
+
+            // 获取物流公司
+            $delivery_list = [];
+
+            $delivery_mode = 1; // 发货模式，发货模式枚举值：1、UNIFIED_DELIVERY（统一发货）2、SPLIT_DELIVERY（分拆发货） 示例值: UNIFIED_DELIVERY
+            if ($logistics_type == 1) {
+                $delivery_mode = count($order_goods_list) == 1 ? 1 : 2;
+                $result_delivery_list = $weapp_delivery_service->getDeliveryList();
+                if ($result_delivery_list[ 'errcode' ] == 0 && !empty($result_delivery_list[ 'delivery_list' ])) {
+                    $delivery_list = $result_delivery_list[ 'delivery_list' ];
+                }
+
+            }
+
+            // 查询商家默认发货地址
+            $shop_address_field = 'contact_name,mobile,province_id,city_id,district_id,address,full_address,lat,lng';
+            $shop_address = ( new ShopAddress() )->where([ [ 'is_default_delivery', '=', 1 ] ])->field($shop_address_field)->findOrEmpty()->toArray();
+
+            foreach ($order_goods_list as $k => $v) {
+
+                // 一笔支付单最多分拆成 10 个包裹
+                if ($k == 9) {
+                    break;
+                }
+
+                $express_company = ''; // 物流公司编码，快递公司ID，参见「查询物流公司编码列表」，物流快递发货时必填， 示例值: DHL 字符字节限制: [1, 128]
+                $tracking_no = ''; // 物流单号，物流快递发货时必填，示例值: 323244567777 字符字节限制: [1, 128]
+
+                if ($logistics_type == 1) {
+
+                    $field = 'id, order_id, delivery_type, sub_delivery_type, express_company_id,express_number';
+                    $info = ( new OrderDelivery() )->where([ [ 'id', '=', $v[ 'delivery_id' ] ] ])->with([
+                        'company' => function($query) {
+                            $query->field('company_id, company_name, express_no');
+                        }
+                    ])->field($field)->findOrEmpty()->toArray();
+                    $tracking_no = $info[ 'express_number' ];
+
+                    if (!empty($info) && $info[ 'express_company_id' ] && !empty($delivery_list)) {
+                        $index = array_search($info[ 'company' ][ 'company_name' ], array_column($delivery_list, 'delivery_name'));
+                        if ($index !== false && isset($delivery_list[ $index ])) {
+                            $express_company = $delivery_list[ $index ][ 'delivery_id' ];
+                        }
+                        if (empty($express_company)) {
+                            return '物流公司不支持，请更换其他物流公司';
+                        }
+                    } else {
+                        $logistics_type = 2; // 无需物流的情况，无实体配送形式
+                        $delivery_mode = 1; // 统一发货
                     }
+
+                }
+
+                $item = [
+                    'tracking_no' => $tracking_no, // 物流单号，物流快递发货时必填，示例值: 323244567777 字符字节限制: [1, 128]
+                    'express_company' => $express_company, // 物流公司编码，快递公司ID，参见「查询物流公司编码列表」，物流快递发货时必填， 示例值: DHL 字符字节限制: [1, 128]
+                    'item_desc' => str_sub($v[ 'goods_name' ] . $v[ 'sku_name' ], 90) . '*' . $v[ 'num' ], // 商品信息，例如：微信红包抱枕*1个，限120个字以内
+                    'contact' => [
+                        'consignor_contact' => '',
+                        'receiver_contact' => ''
+                    ]
+                ];
+
+                // 寄件人联系方式，寄件人联系方式，采用掩码传输，最后4位数字不能打掩码 示例值: `189****1234, 021-****1234, ****1234, 0**2-***1234, 0**2-******23-10, ****123-8008` 值限制: 0 ≤ value ≤ 1024
+                if (!empty($shop_address[ 'mobile' ])) {
+                    $item[ 'contact' ][ 'consignor_contact' ] = substr($shop_address[ 'mobile' ], 0, 3) . '****' . substr($shop_address[ 'mobile' ], 7);
+                }
+
+                // 收件人联系方式，收件人联系方式为，采用掩码传输，最后4位数字不能打掩码 示例值: `189****1234, 021-****1234, ****1234, 0**2-***1234, 0**2-******23-10, ****123-8008` 值限制: 0 ≤ value ≤ 1024
+                if (!empty($order_data[ 'taker_mobile' ])) {
+                    $item[ 'contact' ][ 'receiver_contact' ] = substr($order_data[ 'taker_mobile' ], 0, 3) . '****' . substr($order_data[ 'taker_mobile' ], 7);
+                }
+
+                $shipping_list[] = $item;
+                if ($k == 0) {
+                    $first_shipping_info = $item;
                 }
             }
-            $first_shipping_info[ 'item_desc' ] = str_sub($first_shipping_info[ 'item_desc' ], 90);
+
+            // 统一发货，只能有一个物流信息，拼装商品信息
+            if ($delivery_mode == 1) {
+                if (count($shipping_list) > 1) {
+                    foreach ($shipping_list as $k => $v) {
+                        if ($k > 0) {
+                            $first_shipping_info[ 'item_desc' ] .= ',' . $v[ 'item_desc' ];
+                        }
+                    }
+                }
+                $first_shipping_info[ 'item_desc' ] = str_sub($first_shipping_info[ 'item_desc' ], 90);
+            }
+
+            // 分拆发货模式时必填，用于标识分拆发货模式下是否已全部发货完成，只有全部发货完成的情况下才会向用户推送发货完成通知。示例值: true/false
+            $is_all_delivered = false;
+            if ($delivery_mode == 2) {
+                $is_all_delivered = true;
+            }
+
+            $member_info = ( new Member() )->where([ [ 'member_id', '=', $order_data[ 'member_id' ] ] ])->field('weapp_openid')->findOrEmpty()->toArray();
+
+            $data = [
+                'out_trade_no' => $order_data[ 'out_trade_no' ],
+                'logistics_type' => $logistics_type, // 物流模式，发货方式枚举值：1、实体物流配送采用快递公司进行实体物流配送形式 2、同城配送 3、虚拟商品，虚拟商品，例如话费充值，点卡等，无实体配送形式 4、用户自提
+                'delivery_mode' => $delivery_mode, // 发货模式，发货模式枚举值：1、UNIFIED_DELIVERY（统一发货）2、SPLIT_DELIVERY（分拆发货） 示例值: UNIFIED_DELIVERY
+                // 同城配送没有物流信息，只能传一个订单
+                'shipping_list' => $delivery_mode == 1 ? [ $first_shipping_info ] : $shipping_list, // 物流信息列表，发货物流单列表，支持统一发货（单个物流单）和分拆发货（多个物流单）两种模式，多重性: [1, 10]
+                'weapp_openid' => $member_info[ 'weapp_openid' ], // 用户标识，用户在小程序appid下的唯一标识。 下单前需获取到用户的Openid 示例值: oUpF8uMuAJO_M2pxb1Q9zNjWeS6o 字符字节限制: [1, 128]
+                'is_all_delivered' => $is_all_delivered
+            ];
+
+            $weapp_delivery_service->uploadShippingInfo($data);
+        } catch (\Exception $e) {
+            Log::write('商城订单发货失败' . $e->getMessage() . $e->getFile() . $e->getLine());
         }
-
-        // 分拆发货模式时必填，用于标识分拆发货模式下是否已全部发货完成，只有全部发货完成的情况下才会向用户推送发货完成通知。示例值: true/false
-        $is_all_delivered = false;
-        if ($delivery_mode == 2) {
-            $is_all_delivered = true;
-        }
-
-        $member_info = ( new Member() )->where([ [ 'member_id', '=', $order_data[ 'member_id' ] ] ])->field('weapp_openid')->findOrEmpty()->toArray();
-
-        $data = [
-            'out_trade_no' => $order_data[ 'out_trade_no' ],
-            'logistics_type' => $logistics_type, // 物流模式，发货方式枚举值：1、实体物流配送采用快递公司进行实体物流配送形式 2、同城配送 3、虚拟商品，虚拟商品，例如话费充值，点卡等，无实体配送形式 4、用户自提
-            'delivery_mode' => $delivery_mode, // 发货模式，发货模式枚举值：1、UNIFIED_DELIVERY（统一发货）2、SPLIT_DELIVERY（分拆发货） 示例值: UNIFIED_DELIVERY
-            // 同城配送没有物流信息，只能传一个订单
-            'shipping_list' => $delivery_mode == 1 ? [ $first_shipping_info ] : $shipping_list, // 物流信息列表，发货物流单列表，支持统一发货（单个物流单）和分拆发货（多个物流单）两种模式，多重性: [1, 10]
-            'weapp_openid' => $member_info[ 'weapp_openid' ], // 用户标识，用户在小程序appid下的唯一标识。 下单前需获取到用户的Openid 示例值: oUpF8uMuAJO_M2pxb1Q9zNjWeS6o 字符字节限制: [1, 128]
-            'is_all_delivered' => $is_all_delivered
-        ];
-
-        $weapp_delivery_service->uploadShippingInfo($data);
     }
 
 }

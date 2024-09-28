@@ -277,7 +277,7 @@ const goodsParams = reactive({
         active_id: route.query.id
     }
 })
-const getActiveDiscountGoodsPageListFn= (page: number = 1)=>{
+const getActiveDiscountGoodsPageListFn = (page: number = 1)=>{
     goodsParams.loading = true
     goodsParams.page = page
     getActiveDiscountGoodsPageList({

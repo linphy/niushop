@@ -90,5 +90,16 @@
   "printResultCode": "状态码",
   "printRemark": "备注",
   "electronicSheetPrintOperation": "打印面单",
-  "printTicket": "打印小票"
+  "printTicket": "打印小票",
+  "contacts": "联系人",
+  "contactsPlaceholder": "请输入联系人",
+  "ContactInformation": "联系方式",
+  "ContactInformationPlaceholder": "请输入联系方式",
+  "selfPickupStores": "自提门店",
+  "address": "地址",
+  "province": "请选择省",
+  "city": "请选择市",
+  "area": "请选择区/县",
+  "detailedAddress": "请输入详细地址"
+
 }

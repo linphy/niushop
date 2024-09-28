@@ -187,7 +187,7 @@
 		<el-dialog v-model="refuseShowDialog" :title="t('orderRefundRefuse')" width="460px" class="diy-dialog-wrap" :destroy-on-close="true">
 			<el-form :model="refuseFormData" label-width="90px" ref="refuseFormRef" :rules="refundFormRules" class="page-form">
 				<el-form-item :label="t('refuseReason')" prop="shop_reason">
-					<el-input v-model="refuseFormData.shop_reason" type="textarea" rows="4" clearable class="input-width" maxlength="200" show-word-limit />
+					<el-input v-model.trim="refuseFormData.shop_reason" type="textarea" rows="4" clearable class="input-width" maxlength="200" show-word-limit />
 				</el-form-item>
 			</el-form>
 			<template #footer>
@@ -204,7 +204,7 @@
 					<span>￥{{ refuseFormData.apply_money }}</span>
 				</el-form-item>
 				<el-form-item :label="t('agreeMoney')" prop="money">
-					<el-input v-model="refuseFormData.money" clearable class="input-width" />
+					<el-input v-model.trim="refuseFormData.money" clearable class="input-width" />
 				</el-form-item>
 				<el-form-item :label="t('refundDeliveryAddress')" prop="refund_address_id" v-if="refuseFormData.refund_type == 2" >
 					<el-select v-model="refuseFormData.refund_address_id" clearable class="input-item">
@@ -223,7 +223,7 @@
 		<el-dialog v-model="deliveryRefuseDialog" :title="t('orderRefundRefuse')" width="460px" class="diy-dialog-wrap" :destroy-on-close="true">
 			<el-form :model="deliveryRefuseFormData" label-width="90px" ref="deliveryRefuseFormRef" :rules="deliveryRefundFormRules" class="page-form">
 				<el-form-item :label="t('refuseReason')" prop="shop_reason">
-					<el-input v-model="deliveryRefuseFormData.shop_reason" type="textarea" rows="4" clearable class="input-width" maxlength="200" show-word-limit />
+					<el-input v-model.trim="deliveryRefuseFormData.shop_reason" type="textarea" rows="4" clearable class="input-width" maxlength="200" show-word-limit />
 				</el-form-item>
 			</el-form>
 			<template #footer>
@@ -458,5 +458,5 @@ const toOrderDetail = (id:number) => {
 <style lang="scss" scoped>
 .line-feed{
         word-wrap:break-word;
-    }
+}
 </style>

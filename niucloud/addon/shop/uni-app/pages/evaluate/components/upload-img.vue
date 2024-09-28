@@ -1,28 +1,26 @@
 <template>
     <view class="flex flex-wrap">
-        <view v-for="(item, index) in value" :class="['mb-[18rpx] relative', (index + 1) % 3 === 0 ? '' : 'mr-[18rpx]']">
-            <u--image class="rounded-[10rpx] overflow-hidden" width="204rpx" height="204rpx" :src="img(item || '')" model="aspectFill">
+        <view v-for="(item, index) in value" class="mb-[18rpx] relative" :class="{'mr-[18rpx]': (index + 1) % 4 != 0 }">
+            <u--image class="rounded-[10rpx] overflow-hidden" width="140rpx" height="140rpx" :src="img(item || '')" model="aspectFill">
                 <template #error>
                     <u-icon name="photo" color="#999" size="50"></u-icon>
                 </template>
             </u--image>
-            <text class="nc-iconfont nc-icon-guanbiV6xx absolute top-0 right-[5rpx] text-[#fff] bg-[#888] rounded-bl-[16rpx]" @click.stop="deleteImg(index)"></text>
+            <view class="absolute top-0 right-[0] bg-[#373737] flex justify-end h-[28rpx] w-[28rpx] rounded-bl-[40rpx]" @click.stop="deleteImg(index)">
+                <text class="nc-iconfont nc-icon-guanbiV6xx !text-[20rpx] mt-[2rpx] mr-[2rpx] text-[#fff]"></text>
+            </view>
         </view>
-        <view class="w-[204rpx] h-[204rpx]" v-show="value.length < maxCount">
+        <view class="w-[140rpx] h-[140rpx]" v-show="value.length < maxCount">
             <u-upload @afterRead="afterRead" :maxCount="maxCount" :multiple="prop.multiple">
-                <view class="flex items-center justify-center w-[204rpx] h-[204rpx] border-[2rpx] border-dashed border-[#ebebec] text-center text-[#888]">
+                <view class="flex items-center justify-center w-[140rpx] h-[140rpx] border-[2rpx] border-dashed border-[#ddd] text-center text-[var(--text-color-light9)] rounded-[var(--goods-rounded-big)]">
                     <view>
                         <view class="nc-iconfont nc-icon-xiangjiV6xx text-[50rpx]"></view>
-                        <view class=" text-[24rpx] mt-[10rpx]">{{ value.length }}/{{ maxCount }}</view>
+                        <view class="text-[24rpx] mt-[12rpx]">{{ value.length }}/{{ maxCount }}</view>
                     </view>
                 </view>
             </u-upload>
         </view>
 
-        <!-- #ifdef MP-WEIXIN -->
-        <!-- 小程序隐私协议 -->
-        <wx-privacy-popup ref="wxPrivacyPopupRef"></wx-privacy-popup>
-        <!-- #endif -->
     </view>
 </template>
 <script lang="ts" setup>
@@ -44,7 +42,7 @@ const prop = defineProps({
     }
 })
 const emit = defineEmits(['update:modelValue'])
-const value = computed({
+const value: any = computed({
     get() {
         return prop.modelValue
     },
@@ -57,7 +55,7 @@ const maxCount = computed(() => {
 })
 const afterRead = (event:any) => {
     if (prop.multiple) {
-        event.file.forEach(file => {
+        event.file.forEach((file: any) => {
             upload({ file })
         })
     } else {

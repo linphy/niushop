@@ -11,14 +11,14 @@
                 <!-- 活动名称 -->
                 <el-form-item :label="t('name')" prop="active_name">
                     <div>
-                        <el-input v-model="formData.active_name" clearable :placeholder="t('namePlaceholder')" class="input-width" :maxlength="20" />
+                        <el-input v-model.trim="formData.active_name" clearable :placeholder="t('namePlaceholder')" class="input-width" :maxlength="20" />
                         <p class=" text-[14px] text-[#999]">{{ t('nameTip') }}</p>
                     </div>
                 </el-form-item>
                 <!-- 活动标题 -->
                 <el-form-item :label="t('title')" prop="active_desc">
                     <div>
-                        <el-input v-model="formData.active_desc" clearable :placeholder="t('titlePlaceholder')" class="input-width" :maxlength="20" />
+                        <el-input v-model.trim="formData.active_desc" clearable :placeholder="t('titlePlaceholder')" class="input-width" :maxlength="20" />
                         <p class=" text-[14px] text-[#999]">{{ t('titleTip') }}</p>
                     </div>
                 </el-form-item>

@@ -4,6 +4,7 @@
   "--primary-color-dark": "#F26F3E",
   "--primary-color-disabled": "#FFB397",
   "--primary-color-light": "#FFF4F4",
-  "--page-bg-color": "#f7f7f7",
+  "--primary-color-light2": "rgba(255,65,66,.04)",
+  "--page-bg-color": "#f6f6f6",
   "--price-text-color": "#FF4142"
 }

@@ -14,7 +14,7 @@
 
             <el-form :inline="true" :model="couponTable.searchParam" ref="searchFormRef">
                 <el-form-item :label="t('优惠券名称')" prop="keyword" class="form-item-wrap">
-                    <el-input v-model="couponTable.searchParam.title" :placeholder="t('请输入优惠券名称')" maxlength="60" />
+                    <el-input v-model.trim="couponTable.searchParam.title" :placeholder="t('请输入优惠券名称')" maxlength="60" />
                 </el-form-item>
                 <el-form-item class="form-item-wrap">
                     <el-button type="primary" @click="loadCouponList()">{{ t('search') }}</el-button>
@@ -43,11 +43,8 @@
                 </el-table-column>
                 <el-table-column  :label="t('有效期')" min-width="210">
                     <template #default="{ row }">
-                        <template v-if="row.receive_type == 1">
-                            <span v-if="row.valid_type == 1">  领取之日起{{ row.length || '' }} 天内有效</span>
-                            <span v-else> 使用截止时间至{{ row.valid_end_time || ''}} </span>
-                        </template>
-                        <span v-else>--</span>
+                        <span v-if="row.valid_type == 1">  领取之日起{{ row.length || '' }} 天内有效</span>
+                        <span v-else> 使用截止时间至{{ row.valid_end_time || ''}} </span>
                     </template>
                 </el-table-column>
 
@@ -183,7 +180,7 @@ const loadCouponList = (page: number = 1, callback: any = null) => {
     couponTable.loading = true
     couponTable.page = page
 
-    const searchData = cloneDeep(couponTable.searchParam);
+    const searchData: any = cloneDeep(couponTable.searchParam);
 
     if (searchData.select_type == 'selected') {
         const ids = <any>[]

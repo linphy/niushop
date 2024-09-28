@@ -1,18 +1,18 @@
 <template>
-	<view class="min-h-screen">
-		<view class="mescroll-box bg-[#F4F6F8]" :class="{ 'cart': config.cart.control && config.cart.event === 'cart', 'detail': !(config.cart.control && config.cart.event === 'cart') }" v-if="tabsData.length">
+	<view class="min-h-screen bg-[var(--page-bg-color)] overflow-hidden">
+		<view class="mescroll-box bg-[var(--page-bg-color)]" :class="{ 'cart': config.cart.control && config.cart.event === 'cart', 'detail': !(config.cart.control && config.cart.event === 'cart') }" v-if="tabsData.length">
 			<mescroll-body ref="mescrollRef" :down="{ use: false }" @init="mescrollInit" @up="getListFn">
-				<view v-if="config.search.control" class="search-box z-10 bg-[#fff] fixed top-0 left-0 right-0 h-[106rpx] box-border">
-					<input class="search-ipt pl-[32rpx] text-[24rpx]" :class="{'pr-[106rpx]':searchName,'pr-[32rpx]':!searchName}" type="text" v-model="searchName" :placeholder="config.search.title"  @confirm="searchNameFn">
-					<view class="flex items-center h-[70rpx] absolute right-[56rpx] top-[18rpx]  z-2">
-						<u-icon v-if="searchName" name="close-circle-fill" color="#A5A6A6" size="28rpx" @click="searchName=''"></u-icon>
-						<view class="h-[70rpx] w-[40rpx] text-center leading-[70rpx]" @click.stop="searchNameFn"><text class="nc-iconfont nc-icon-sousuo-duanV6xx1 text-[32rpx]"></text></view>	
+				<view v-if="config.search.control" class="search-box z-10 bg-[#fff] fixed top-0 left-0 right-0 h-[100rpx] box-border">
+					<view class="flex-1 search-input">
+						<text @click.stop="searchNameFn" class="nc-iconfont nc-icon-sousuo-duanV6xx1 btn"></text>
+						<input class="input" type="text" v-model="searchName" :placeholder="config.search.title" @confirm="searchNameFn" placeholderClass="text-[var(--text-color-light9)]">
+						<text v-if="searchName" class="nc-iconfont nc-icon-cuohaoV6xx1 clear" @click="searchName=''"></text>
 					</view>
 				</view>
 				<!--  #ifdef  H5 -->
-				<view class="tabs-box z-2 fixed left-0 bg-[#fff] bottom-[50px] top-0" :class="{ '!top-[106rpx]': config.search.control, 'pb-[98rpx]': config.cart.control && config.cart.event === 'cart' }">
+				<view class="tabs-box z-2 fixed left-0 bg-[#fff] bottom-[50px] top-0" :class="{ '!top-[100rpx]': config.search.control, 'pb-[98rpx]': config.cart.control && config.cart.event === 'cart' }">
 					<scroll-view :scroll-y="true" class="scroll-height">
-						<view class="bg-[#F4F6F8]">
+						<view class="bg-[var(--temp-bg)]">
 							<view class="tab-item truncate" :class="{ 'tab-item-active': index == tabActive,'rounded-br-[12rpx]':tabActive-1===index,'rounded-tr-[12rpx]':tabActive+1===index}" v-for="(item, index) in tabsData" :key="index" @click="firstLevelClick(index, item)">
 								<view class="text-box px-[16rpx] truncate">
 									{{ item.category_name }}
@@ -23,9 +23,9 @@
 				</view>
 				<!--  #endif -->
 				<!--  #ifndef  H5 -->
-				<view class="tabs-box z-2 fixed left-0 bg-[#fff] pb-ios bottom-[100rpx] top-0" :class="{ 'top-[106rpx]': config.search.control, '!bottom-[198rpx]': config.cart.control && config.cart.event === 'cart' }">
+				<view class="tabs-box z-2 fixed left-0 bg-[#fff] pb-ios bottom-[100rpx] top-0" :class="{ 'top-[126rpx]': config.search.control, '!bottom-[198rpx]': config.cart.control && config.cart.event === 'cart' }">
 					<scroll-view :scroll-y="true" class="scroll-height">
-						<view class="bg-[#F4F6F8]">
+						<view class="bg-[var(--temp-bg)]">
 							<view class="tab-item truncate" :class="{ 'tab-item-active': index == tabActive,'rounded-br-[12rpx]':tabActive-1===index,'rounded-tr-[12rpx]':tabActive+1===index}" v-for="(item, index) in tabsData" :key="index" @click="firstLevelClick(index, item)">
 								<view class="text-box px-[16rpx] truncate">
 									{{ item.category_name }}
@@ -35,46 +35,49 @@
 					</scroll-view>
 				</view>
 				<!--  #endif -->
-				<view class="flex justify-center flex-wrap pl-[182rpx] pb-[20rpx]" :class="{ ' pt-[126rpx]': config.search.control, ' pt-[20rpx]': !(config.search.control) }">
+				<view class="flex justify-center flex-wrap pl-[188rpx] pb-[20rpx]" :class="{ ' pt-[120rpx]': config.search.control, ' pt-[20rpx]': !(config.search.control) }">
 					<template v-for="(item, index) in list" :key="item.goods_id">
 						<view
-							class="w-[536rpx] box-border bg-white w-full flex mx-[16rpx] px-[24rpx] py-[20rpx] rounded-[12rpx]"
+							class="box-border bg-white w-full flex mr-[20rpx] py-[24rpx] px-[20rpx] rounded-[var(--rounded-small)]"
 							:class="{ 'mt-[16rpx]': index }" @click.stop="toLink(item.goods_id)">
-							<view class="mr-[8rpx]">
-								<u--image width="168rpx" height="168rpx" radius="12rpx" :src="img(item.goods_cover_thumb_mid ? item.goods_cover_thumb_mid : '')" model="aspectFill">
+							<view class="w-[168rpx] h-[168rpx] flex items-center justify-center rounded-[var(--goods-rounded-small)] overflow-hidden">
+								<u--image width="168rpx" height="168rpx" radius="var(--goods-rounded-small)" :src="img( item.goods_cover_thumb_mid || '')" model="aspectFill">
 									<template #error>
-										<image class="rounded-[12rpx] overflow-hidden w-[168rpx] h-[168rpx]" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
+										<image class="w-[168rpx] h-[168rpx]" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
 									</template>
 								</u--image>
 							</view>
-							<view class="flex flex-1 ml-[8rpx] flex-wrap">
-								<view class="w-[316rpx] max-h-[80rpx] text-[28rpx] leading-[40rpx] multi-hidden">
+							<view class="flex flex-1 ml-[20rpx] flex-wrap flex-col">
+								<view class="max-h-[80rpx] text-[26rpx] leading-[40rpx] multi-hidden">
 									{{ item.goods_name }}
 								</view>
-								<view class="w-[316rpx] flex self-end items-end justify-between">
-									<view class="text-[var(--price-text-color)] price-font">
-										<text class="text-[26rpx] font-500">￥</text>
-										<text class="text-[36rpx] font-500">{{ parseFloat(goodsPrice(item)).toFixed(2).split('.')[0] }}</text>
+								<view class="flex-1 flex items-end justify-between">
+									<view class="text-[var(--price-text-color)] price-font -mb-[8rpx]">
+										<text class="text-[24rpx] font-500">￥</text>
+										<text class="text-[40rpx] font-500">{{ parseFloat(goodsPrice(item)).toFixed(2).split('.')[0] }}</text>
 										<text class="text-[24rpx] font-500">.{{ parseFloat(goodsPrice(item)).toFixed(2).split('.')[1] }}</text>
-										<image class="h-[24rpx] ml-[6rpx]" v-if="priceType(item) == 'member_price'" :src="img('addon/shop/VIP.png')" mode="heightFix" />
-										<image class="h-[24rpx] ml-[6rpx]" v-if="priceType(item) == 'discount_price'" :src="img('addon/shop/discount.png')" mode="heightFix" />
+										<image class="h-[24rpx] w-[72rpx] ml-[6rpx]" v-if="priceType(item) == 'member_price'" :src="img('addon/shop/VIP.png')" mode="aspectFit" />
+										<image class="h-[24rpx] w-[72rpx] ml-[6rpx]" v-if="priceType(item) == 'discount_price'" :src="img('addon/shop/discount.png')" mode="aspectFit" />
 									</view>
 									<view
 										v-if="
 										(item.goods_type == 'real' || (item.goods_type == 'virtual' && item.virtual_receive_type != 'verify')) &&
 										item.goodsSku.sku_spec_format === '' && cartList['goods_' + item.goods_id] && cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id] && config.cart.control && config.cart.event === 'cart'"
 										class="flex items-center">
-										<text class="text-[44rpx] text-color nc-iconfont nc-icon-jianshaoV6xx"
-											@click.stop="reduceCart(cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id])"></text>
-										<text class="text-[#333] text-[24rpx] mx-[16rpx]">
-											{{ cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id].num }}</text>
-										<text class="text-[44rpx] text-color iconfont iconjiahao2fill"
-											:id="'itemCart' + index"
-											@click.stop="addCartBtn(item,cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id],'itemCart' + index)"></text>
+										<view class="relative w-[32rpx] h-[32rpx]">
+											<text class="text-[32rpx] text-color nc-iconfont nc-icon-jianshaoV6xx absolute flex items-center justify-center -left-[8rpx] -bottom-[8rpx] -right-[8rpx] -top-[8rpx]"
+												@click.stop="reduceCart(cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id])"></text>
+										</view>
+										<text class="text-[#333] text-[24rpx] mx-[16rpx]">{{ cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id].num }}</text>
+										<view class="relative w-[32rpx] h-[32rpx]">
+											<text class="text-[32rpx] text-color iconfont iconjiahao2fill absolute flex items-center justify-center -left-[8rpx] -bottom-[8rpx] -right-[8rpx] -top-[8rpx]"
+												:id="'itemCart' + index"
+												@click.stop="addCartBtn(item,cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id],'itemCart' + index)"></text>
+										</view>
 									</view>
 									<template v-else-if="(item.goods_type == 'virtual' && config.cart.event !== 'cart') || item.goods_type == 'real'">
 										<view v-if="config.cart.control && config.cart.style === 'style-1'" class="h-[44rpx] relative">
-											<view :id="'itemCart' + index" class="text-[#fff] bg-color h-[44rpx] text-[24rpx] px-[10px] leading-[44rpx] rounded-[22rpx]" @click.stop="itemCart(item, 'itemCart' + index)">
+											<view :id="'itemCart' + index" class="w-[102rpx] box-border text-center text-[#fff] primary-btn-bg h-[46rpx] text-[22rpx] leading-[46rpx] rounded-[100rpx]" @click.stop="itemCart(item, 'itemCart' + index)">
 												{{ config.cart.text }}
 											</view>
 											<view
@@ -84,9 +87,7 @@
 											</view>
 										</view>
 										<view v-if="config.cart.control && config.cart.style === 'style-2'" class="w-[44rpx] h-[44rpx] relative">
-											<text :id="'itemCart' + index"
-												class="text-color nc-iconfont nc-icon-tianjiaV6xx text-[44rpx]"
-												@click.stop="itemCart(item, 'itemCart' + index)"></text>
+											<text :id="'itemCart' + index" class="text-color nc-iconfont nc-icon-tianjiaV6xx text-[44rpx]" @click.stop="itemCart(item, 'itemCart' + index)"></text>
 											<view
 												v-if="cartList['goods_' + item.goods_id] && cartList['goods_' + item.goods_id].totalNum"
 												:class="['absolute right-[-16rpx] top-[-16rpx] rounded-[30rpx] h-[30rpx] min-w-[30rpx] text-center leading-[30rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border box-border border-[2rpx] border-solid border-[#fff]', cartList['goods_' + item.goods_id].totalNum > 9 ? 'px-[10rpx]' : '']">
@@ -121,40 +122,37 @@
 						</view>
 
 					</template>
-					<view class="mx-[24rpx]  w-[536rpx] rounded-[12rpx] flex items-center justify-center" :class="{'noData1':config.search.control,'noData2':!(config.search.control)}" v-if="!list.length && !loading && listLoading">
-						<mescroll-empty :option="{tip : '暂无商品'}"></mescroll-empty>
-					</view>
+					<mescroll-empty class="part" v-if="!list.length && !loading && listLoading" :option="{tip : '暂无商品'}"></mescroll-empty>
 				</view>
 				<add-cart-popup ref="cartRef" />
 			</mescroll-body>
 			<!--  #ifdef  H5 -->
 			<view v-if="config.cart.control && config.cart.event === 'cart'"
-				class="bg-[#fff] z-10 flex justify-between items-center fixed left-0 right-0 bottom-[50px] box-solid px-[24rpx] py-[17rpx] mb-ios">
+				class="bg-[#fff] z-10 flex justify-between items-center fixed left-0 right-0 bottom-[50px] box-solid px-[24rpx] py-[17rpx] mb-ios border-[0] border-t-[2rpx] border-solid border-[#f6f6f6]">
 				<view class="flex items-center">
 					<view class="w-[66rpx] h-[66rpx] mr-[27rpx] relative">
 						<view id="animation-end" class="w-[66rpx] h-[66rpx] rounded-[35rpx] bg-[var(--primary-color)] text-center leading-[70rpx]" @click.stop="toCart">
 							<text class="nc-iconfont nc-icon-gouwucheV6mm1 text-[#fff] text-[32rpx]"></text>
 						</view>
 						<view v-if="totalNum"
-							:class="['absolute left-[50rpx] top-[-10rpx] rounded-[28rpx] h-[28rpx] min-w-[28rpx] text-center leading-[30rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border', totalNum > 9 ? 'px-[10rpx]' : '']">
+							class="border-[1rpx] border-solid border-[#fff]"
+							:class="['absolute left-[40rpx] top-[-10rpx] rounded-[28rpx] h-[28rpx] min-w-[28rpx] text-center leading-[26rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border', totalNum > 9 ? 'px-[10rpx]' : '']">
 							{{ totalNum > 99 ? "99+" : totalNum }}
 						</view>
 					</view>
-					<text class="text-[32rpx] font-500 text-[#333]">总计：</text>
-					<text class="text-[var(--price-text-color)] price-font">
-						<text class="text-[26rpx] font-500">￥</text>
-						<text class="text-[36rpx] font-500">{{ parseFloat(totalMoney).toFixed(2).split('.')[0] }}</text>
-						<text class="text-[24rpx] font-500">.{{ parseFloat(totalMoney).toFixed(2).split('.')[1] }}</text>
-					</text>
+					<text class="text-[26rpx] font-500 text-[#333]">总计：</text>
+					<view class="text-[var(--price-text-color)] price-font font-bold flex items-baseline">
+						<text class="text-[26rpx] mr-[6rpx]">￥</text>
+						<text class="text-[44rpx]">{{ parseFloat(totalMoney) }}</text>
+					</view>
 				</view>
-				<button
-					class="w-[180rpx] h-[66rpx] text-[28rpx] leading-[66rpx] !text-[#fff] m-0 rounded-full primary-btn-bg remove-border"
-					shape="circle" @click="settlement">去结算</button>
+				<button class="w-[180rpx] h-[70rpx] text-[26rpx] leading-[70rpx] font-500 m-0 rounded-full remove-border" :class="{'primary-btn-bg !text-[#fff]': parseFloat(totalMoney) > 0, 'bg-[#F7F7F7] !text-[var(--text-color-light9)]': parseFloat(totalMoney) <= 0}" @click="settlement">去结算</button>
 			</view>
 			<!--  #endif -->
-			<!--  #ifndef  H5 -->
+
+			<!-- #ifdef MP-WEIXIN -->
 			<view v-if="config.cart.control && config.cart.event === 'cart'"
-				class="bg-[#fff] z-10 flex justify-between items-center fixed left-0 right-0 bottom-[100rpx] box-solid px-[24rpx] py-[17rpx] mb-ios">
+				class="bg-[#fff] z-10 flex justify-between items-center fixed left-0 right-0 bottom-[100rpx] box-solid px-[24rpx] py-[17rpx] mb-ios border-[0] border-t-[2rpx] border-solid border-[#f6f6f6]">
 				<view class="flex items-center">
 					<view class="w-[66rpx] h-[66rpx] mr-[27rpx] relative">
 						<view id="animation-end"
@@ -163,20 +161,19 @@
 							<text class="nc-iconfont nc-icon-gouwucheV6mm1 text-[#fff] text-[32rpx]"></text>
 						</view>
 						<view v-if="totalNum"
-							:class="['absolute left-[50rpx] top-[-10rpx] rounded-[28rpx] h-[28rpx] min-w-[28rpx] text-center leading-[30rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border', totalNum > 9 ? 'px-[10rpx]' : '']">
+							class="border-[1rpx] border-solid border-[#fff]"
+							:class="['absolute left-[40rpx] top-[-10rpx] rounded-[28rpx] h-[28rpx] min-w-[28rpx] text-center leading-[26rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border', totalNum > 9 ? 'px-[10rpx]' : '']">
 							{{ totalNum > 99 ? "99+" : totalNum }}
 						</view>
 					</view>
-					<text class="text-[32rpx] font-500 text-[#333]">总计：</text>
-					<text class="text-[var(--price-text-color)] price-font">
-						<text class="text-[26rpx] font-500">￥</text>
-						<text class="text-[36rpx] font-500">{{ parseFloat(totalMoney).toFixed(2).split('.')[0] }}</text>
-						<text class="text-[24rpx] font-500">.{{ parseFloat(totalMoney).toFixed(2).split('.')[1] }}</text>
-					</text>
+					<text class="text-[26rpx] font-500 text-[#333]">总计：</text>
+					<view class="text-[var(--price-text-color)] price-font font-bold inline-block">
+						<text class="text-[26rpx] mr-[6rpx]">￥</text>
+						<text class="text-[44rpx]">{{ parseFloat(totalMoney) }}</text>
+					</view>
 				</view>
-				<button
-					class="w-[180rpx] h-[66rpx] text-[28rpx] leading-[66rpx] !text-[#fff] m-0 rounded-full primary-btn-bg remove-border"
-					shape="circle" @click="settlement">去结算</button>
+				<button v-if="isBindMobile && userInfo && !userInfo.mobile" class="w-[180rpx] h-[70rpx] text-[26rpx] leading-[70rpx] font-500 m-0 rounded-full remove-border" :class="{'primary-btn-bg !text-[#fff]': parseFloat(totalMoney) > 0, 'bg-[#F7F7F7] !text-[var(--text-color-light9)]': parseFloat(totalMoney) <= 0}" open-type="getPhoneNumber" @getphonenumber="memberStore.bindMobile">去结算</button>
+				<button v-else class="w-[180rpx] h-[70rpx] text-[26rpx] leading-[70rpx] font-500 m-0 rounded-full remove-border" :class="{'primary-btn-bg !text-[#fff]': parseFloat(totalMoney) > 0, 'bg-[#F7F7F7] !text-[var(--text-color-light9)]': parseFloat(totalMoney) <= 0}" @click="settlement">去结算</button>
 			</view>
 			<!--  #endif -->
 		</view>
@@ -185,10 +182,8 @@
 			class="fixed z-999 flex items-center justify-center text-[#fff] bg-color h-[44rpx] w-[44rpx] rounded-[22rpx] text-center">
 			<text class=" nc-iconfont nc-icon-gouwucheV6xx-2 !text-[30rpx]"></text>
 		</view>
-		<view class="flex justify-center items-center w-[100%] h-[100vh]" v-if="!tabsData.length && !loading">
-			<mescroll-empty :option="{tip : '暂无商品分类'}"></mescroll-empty>
-		</view>
-		<u-loading-page bg-color="rgb(248,248,248)" :loading="loading" loadingText="" fontSize="16" color="#303133"></u-loading-page>
+		<mescroll-empty v-if="!tabsData.length && !loading" :option="{tip : '暂无商品分类'}"></mescroll-empty>
+		<loading-page :loading="loading"></loading-page>
 		
 		<tabbar />
 		<!-- 强制绑定手机号 -->
@@ -262,14 +257,7 @@ const getListFn = (mescroll: mescrollStructure) => {
 	getGoodsPages({
 		page: mescroll.num,
 		limit: mescroll.size,
-		keyword: '', // 搜索关键词
 		goods_category: categoryId, // 商品分类id
-		brand_id: '', // 品牌id
-		label_ids: '', // 标签id
-		start_price: '', // 价格开始区间
-		end_price: '', // 价格结束区间
-		order: 'price', // 排序方式（综合：空，销量：sale_num，价格：price）
-		sort: 'desc' // 升序：asc，降序：desc
 	}).then((res: any) => {
 		let newArr = res.data.data
 		//设置列表数据
@@ -407,11 +395,8 @@ const firstLevelClick = (index: number, data: any) => {
 // 搜索名字
 const searchNameFn = () => {
 	// getMescroll().resetUpScroll();
-	if(searchName.value) redirect({ url: '/addon/shop/pages/goods/list', param: { goods_name: searchName.value } })
+	if(searchName.value) redirect({ url: '/addon/shop/pages/goods/list', param: { goods_name: encodeURIComponent(searchName.value) } })
 }
-
-//强制绑定手机号
-const bindMobileRef = ref(null)
 
 //点击商品购物车按钮
 const cartRef = ref()
@@ -429,11 +414,7 @@ const itemCart = (row: any, id: any) => {
 		useLogin().setLoginBack({ url: '/addon/shop/pages/goods/category' })
 		return false
 	}
-	// 绑定手机号
-	if(uni.getStorageSync('isbindmobile')){
-        bindMobileRef.value.open()
-        return false
-    }
+
 	if (row.goodsSku.sku_spec_format) {
 		cartRef.value.open(row.goodsSku.sku_id)
 	} else {
@@ -480,31 +461,40 @@ const toCart = () => {
 	redirect({ url: '/addon/shop/pages/goods/cart' })
 }
 
+//强制绑定手机号
+const bindMobileRef: any = ref(null)
+const isBindMobile = ref(uni.getStorageSync('isbindmobile'))
+
 /**
  * 结算
  */
 const settlement = () => {
+
+	// #ifdef H5
 	// 绑定手机号
 	if(uni.getStorageSync('isbindmobile')){
-        bindMobileRef.value.open()
-        return false
-    }
+		bindMobileRef.value.open()
+		return false
+	}
+	// #endif
+
 	if (!totalNum.value) {
 		uni.showToast({ title: '还没有选择商品', icon: 'none' })
 		return
 	}
-	const ids:any = []
+	const cart_ids:any = []
 	Object.values(cartList.value).forEach(item => {
 		Object.keys(item).forEach(v => {
-			if (v != 'totalNum' && v != 'totalMoney') ids.push(item[v].id)
+			if (v != 'totalNum' && v != 'totalMoney') cart_ids.push(item[v].id)
 		})
 
 	})
+	if(cart_ids.length == 0){
+		return;
+	}
 	uni.setStorage({
 		key: 'orderCreateData',
-		data: {
-			cart_ids: ids
-		},
+		data: { cart_ids },
 		success() {
 			redirect({ url: '/addon/shop/pages/order/payment' })
 		}
@@ -539,11 +529,11 @@ const goodsPrice = (data:any) =>{
 </script>
 
 <style lang="scss" scoped>
-	.remove-border {
-		&::after {
-			border: none;
-		}
+.remove-border {
+	&::after {
+		border: none;
 	}
+}
 .border-color {
 	border-color: var(--primary-color) !important;
 }
@@ -602,14 +592,14 @@ const goodsPrice = (data:any) =>{
 
 // search input
 .search-box {
-	// position: relative;
-	padding: 20rpx 24rpx;
+	display: flex;
+	align-items: center;
+	padding: 0 30rpx;
 }
 
 .search-box .search-ipt {
-	height: 64rpx;
+	height: 58rpx;
 	background-color: #F6F8F8;
-	padding-left: 20rpx;
 	border-radius: 33rpx;
 }
 
@@ -618,21 +608,21 @@ const goodsPrice = (data:any) =>{
 }
 
 .tabs-box {
-	width: 182rpx;
+	width: 168rpx;
 	font-size: 28rpx;
 }
 
 .tabs-box .tab-item {
-	height: 92rpx;
+	height: 96rpx;
 	text-align: center;
-	line-height: 92rpx;
+	line-height: 96rpx;
 	background-color:#fff;
 }
 
 .tabs-box .tab-item-active {
 	position: relative;
 	color: var(--primary-color);
-	background-color:#F4F6F8;
+	background-color:var(--temp-bg);
 	&::before {
 		display: inline-block;
 		position: absolute;
@@ -705,4 +695,18 @@ const goodsPrice = (data:any) =>{
 	}
 }
 /*  #endif  */
+
+// 空页面
+.mescroll-empty.empty-page.part{
+	width: 542rpx;
+	height: 542rpx;
+	margin-top: 0;
+	margin-left: 0;
+	padding-top: 50rpx;
+	.img{
+		width: 160rpx !important;
+		height: 120rpx !important;
+	}
+}
 </style>
+

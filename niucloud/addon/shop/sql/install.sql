@@ -611,7 +611,7 @@ CREATE TABLE `{{prefix}}shop_order_refund` (
   `source` varchar(255) NOT NULL DEFAULT '' COMMENT '来源 system 系统 member 会员',
   `timeout` int(11) NOT NULL DEFAULT '0' COMMENT '操作超时时间',
   `refund_no` varchar(255) NOT NULL DEFAULT '' COMMENT '退款交易号',
-  `delivery` varchar(500) NOT NULL DEFAULT '' COMMENT '退货配送信息',
+  `delivery` varchar(3000) NOT NULL DEFAULT '' COMMENT '退货配送信息',
   `shop_reason` varchar(255) NOT NULL DEFAULT '' COMMENT '上架拒绝原因',
   `refund_address` varchar(1000) NOT NULL DEFAULT '' COMMENT '商家退货地址',
   `is_refund_delivery` INT(11) NOT NULL DEFAULT 0 COMMENT '是否退运费',
@@ -655,7 +655,7 @@ CREATE TABLE `{{prefix}}shop_point_exchange` (
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
   `stock` int(11) NOT NULL DEFAULT '0' COMMENT '库存',
   `total_exchange_num` int(11) NOT NULL DEFAULT '0' COMMENT '兑换数量',
-  PRIMARY KEY (`id`,`total_price_num`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci COMMENT='积分兑换表';
 
 

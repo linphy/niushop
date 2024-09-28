@@ -379,9 +379,7 @@ class CouponService extends BaseAdminService
                 throw new AdminException('该优惠券已被用户领取无法删除');
             }
         }
-        $res = $this->model->where([ [ 'id', '=', $id ] ])->delete();
-        if ($res) $coupon_member_model->where([ [ 'coupon_id', '=', $id ], [ 'status', '=', CouponMemberDict::WAIT_USE ] ])->update([ 'status' => CouponMemberDict::INVALID ]);
-        return $res;
+        return $this->model->where([ [ 'id', '=', $id ] ])->delete();
     }
 
     /**
@@ -429,7 +427,9 @@ class CouponService extends BaseAdminService
         $data = array(
             'status' => CouponDict::INVALID
         );
-        $this->model->where([ [ 'id', '=', $id ] ])->update($data);
+        $res = $this->model->where([ [ 'id', '=', $id ] ])->update($data);
+        $coupon_member_model = new CouponMember();
+        if ($res) $coupon_member_model->where([ [ 'coupon_id', '=', $id ], [ 'status', '=', CouponMemberDict::WAIT_USE ] ])->update([ 'status' => CouponMemberDict::INVALID ]);
         return true;
     }
 

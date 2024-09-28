@@ -6,18 +6,18 @@
 					<view v-for="(item,index) in diyComponent.list" :key="index" :class="['flex-col inline-flex items-center justify-center', { 'pr-[40rpx]': (index != diyComponent.list.length-1) }]" @click="changeCateIndex(item,index)">
 						<image :style="{ borderRadius : (diyComponent.aroundRadius * 2) + 'rpx' }" :class="['w-[90rpx] h-[90rpx] overflow-hidden border-[2rpx] border-solid border-transparent', {'border-[var(--primary-color)]': index == cateIndex }]" v-if="item.imageUrl" :src="img(item.imageUrl)" mode="aspectFit"/>
 						<image :style="{ borderRadius : (diyComponent.aroundRadius * 2) + 'rpx' }" :class="['w-[90rpx] h-[90rpx] overflow-hidden border-[2rpx] border-solid border-transparent', {'border-[var(--primary-color)]': index == cateIndex }]" v-else :src="img('static/resource/images/diy/figure.png')" mode="scaleToFill" />
-						<text :class="['text-[24rpx] mt-[14rpx]', {'text-[var(--primary-color)]' : index == cateIndex  }]">{{ item.title }}</text>
+						<text :class="['text-[28rpx] mt-[16rpx]', {'font-500 text-[var(--primary-color)]' : index == cateIndex  }]">{{ item.title }}</text>
 					</view>
 				</template>
 				<template v-else-if="diyComponent.source == 'goods_category'">
 					<view class="pr-[40rpx] inline-flex flex-col items-center justify-center" @click="changeGoodsCategory({ category_id : 0 })">
 						<image :style="{ borderRadius : (diyComponent.aroundRadius * 2) + 'rpx' }" :class="['w-[90rpx] h-[90rpx] overflow-hidden border-[2rpx] border-solid border-transparent', {'border-[var(--primary-color)]': currentCategoryId == 0}]" :src="img('static/resource/images/diy/figure.png')" mode="scaleToFill" />
-						<text :class="['text-[24rpx] mt-[14rpx]', {'text-[var(--primary-color)]': currentCategoryId == 0}]">全部</text>
+						<text :class="['text-[28rpx] mt-[16rpx]', {'font-500 text-[var(--primary-color)]': currentCategoryId == 0}]">全部</text>
 					</view>
 					<view v-for="(item,index) in goodsCategoryListData" :key="index" :class="['flex-col inline-flex items-center justify-center', { 'pr-[40rpx]': (index != goodsCategoryListData.length-1) }]" @click="changeGoodsCategory(item)">
 						<image :style="{ borderRadius : (diyComponent.aroundRadius * 2) + 'rpx' }" :class="['w-[90rpx] h-[90rpx] overflow-hidden border-[2rpx] border-solid border-transparent', {'border-[var(--primary-color)]': currentCategoryId == item.category_id}]" v-if="item.image" :src="img(item.image)" mode="aspectFit"/>
 						<image :style="{ borderRadius : (diyComponent.aroundRadius * 2) + 'rpx' }" :class="['w-[90rpx] h-[90rpx] overflow-hidden border-[2rpx] border-solid border-transparent', {'border-[var(--primary-color)]': currentCategoryId == item.category_id}]" v-else :src="img('static/resource/images/diy/figure.png')" mode="scaleToFill" />
-						<text :class="['text-[24rpx] mt-[14rpx]', {'text-[var(--primary-color)]' : currentCategoryId == item.category_id}]">{{ item.category_name }}</text>
+						<text :class="['text-[28rpx] mt-[16rpx]', {'font-500 text-[var(--primary-color)]' : currentCategoryId == item.category_id}]">{{ item.category_name }}</text>
 					</view>
 				</template>
 			</template>
@@ -43,7 +43,7 @@
 <script setup lang="ts">
 	// 多商品组 组件
 	import { ref, computed, watch, onMounted } from 'vue';
-	import { redirect, img } from '@/utils/common';
+	import { img } from '@/utils/common';
 	import useDiyStore from '@/app/stores/diy';
     import diyGoodsList from '@/addon/shop/components/diy/goods-list/index.vue';
     import { getGoodsCategoryList } from '@/addon/shop/api/goods';
@@ -191,17 +191,16 @@
 		position: relative;
 
 		&.style-1{
-
+			padding: 26rpx 0 14rpx;
 		}
 
 		&.style-2{
-			height:100rpx;
-			line-height: 100rpx;
-			padding:0;
+			height: 100rpx;
+			padding: 20rpx 0 16rpx;
 		}
 
 		&.style-3{
-			padding: 24rpx;
+			padding: 26rpx 20rpx;
 			background-color: #fff;
 			margin-bottom: 20rpx;
 			width: 100%;
@@ -224,6 +223,7 @@
 				&.active {
 					.name{
 						color: var(--primary-color);
+						font-weight: 500;
 					}
 					.desc {
 						color: #ffffff;
@@ -233,9 +233,8 @@
 				}
 				
 				.name {
-					font-weight: bold;
-					font-size: 32rpx;
-					color: #303133;
+					font-size: 30rpx;
+					color: #333;
 					line-height: 1;
 				}
 				
@@ -244,12 +243,15 @@
 				}
 				
 				.desc {
-					font-size: 24rpx;
-					color: #909399;
-					height: 36rpx;
-					line-height: 40rpx;
+					font-size: 22rpx;
+					color: #999;
+					height: 38rpx;
+					line-height: 38rpx;
+					display: flex;
+					align-items: center;
+					justify-content: center;
 					margin-top: 10rpx;
-					min-width: 120rpx;
+					min-width: 110rpx;
 					max-width: 220rpx;
 					overflow: hidden;
 					text-overflow: ellipsis;
@@ -265,14 +267,14 @@
 					position: relative;
 				}
 				.name{
-					font-size: 30rpx;
-					color: #888;
+					font-size: 28rpx;
+					color: #333;
 					line-height: 32rpx;
 				}
 				&.active {
 					.name{
 						color:var(--primary-color);
-						font-weight: bold;
+						font-weight: 500;
 					}
 					.nc-iconfont{
 						position: absolute;

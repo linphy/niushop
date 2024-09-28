@@ -204,7 +204,7 @@
                                                     </el-icon>
                                                 </li>
                                             </ul>
-                                            <span class="text-color text-[14px] add-spec-value" @click="goodsEdit.addSpecValue(index)">{{ t('addSpecValue') }}</span>
+                                            <span class="text-primary text-[14px] add-spec-value" @click="goodsEdit.addSpecValue(index)">{{ t('addSpecValue') }}</span>
                                             <div class="box"></div>
                                         </div>
 
@@ -410,7 +410,7 @@
                             </el-radio-group>
                         </el-form-item>
                         <el-form-item :label="t('deliveryMoney')" prop="delivery_money" v-show="goodsEdit.formData.delivery_type.indexOf('express') != -1 && goodsEdit.formData.is_free_shipping == 0 && goodsEdit.formData.fee_type == 'fixed'">
-                            <el-input v-model="goodsEdit.formData.delivery_money" clearable placeholder="0.00" class="input-width" maxlength="8">
+                            <el-input v-model.trim="goodsEdit.formData.delivery_money" clearable placeholder="0.00" class="input-width" maxlength="8">
                                 <template #append>{{ t('yuan') }}</template>
                             </el-input>
                         </el-form-item>
@@ -499,7 +499,7 @@
                 <el-tab-pane :label="t('goodsDesc')" name="detail">
                     <el-form :model="goodsEdit.formData" label-width="120px" ref="detailFormRef" :rules="goodsEdit.formRules" class="page-form">
                         <el-form-item :label="t('goodsDesc')" prop="goods_desc">
-                            <editor v-model="goodsEdit.formData.goods_desc" :height="600" @handleBlur="goodsEdit.handleBlur" class="editor-width" />
+                            <editor v-model="goodsEdit.formData.goods_desc" :height="600" class="editor-width" @handleBlur="goodsEdit.handleBlur" />
                         </el-form-item>
                     </el-form>
                 </el-tab-pane>
@@ -603,10 +603,8 @@ const goodsEdit = useGoodsEdit({
                 {
                     trigger: 'blur',
                     validator: (rule: any, value: any, callback: any) => {
-                        if (formData.spec_type == 'single') {
-                            if (value == undefined || value == '') {
-                                callback(new Error(t('weightPlaceholder')))
-                            } else if (isNaN(value) || !regExp.special.test(value)) {
+                        if (formData.spec_type == 'single' && value) {
+                            if (isNaN(value) || !regExp.special.test(value)) {
                                 callback(new Error(t('weightTips')))
                             } else if (value < 0) {
                                 callback(new Error(t('weightNotZeroTips')))
@@ -623,10 +621,8 @@ const goodsEdit = useGoodsEdit({
                 {
                     trigger: 'blur',
                     validator: (rule: any, value: any, callback: any) => {
-                        if (formData.spec_type == 'single') {
-                            if (value == undefined || value == '') {
-                                callback(new Error(t('volumePlaceholder')))
-                            } else if (isNaN(value) || !regExp.special.test(value)) {
+                        if (formData.spec_type == 'single' && value) {
+                            if (isNaN(value) || !regExp.special.test(value)) {
                                 callback(new Error(t('volumeTips')))
                             } else if (value < 0) {
                                 callback(new Error(t('volumeNotZeroTips')))
@@ -796,4 +792,12 @@ const save = () => {
 
 <style lang="scss" scoped>
 	@import 'public/css/goods_edit.scss';
+</style>
+<style lang="scss">
+    .edui-default .edui-editor{
+        z-index: 1 !important;
+    }
+    .el-cascader__tags.is-validate{
+        right: 30px !important;
+    }
 </style>

@@ -10,7 +10,7 @@
 				</el-select>
 			</el-form-item>
 			<el-form-item>
-				<el-button type="primary" @click="loadExchangeDoodsList()">{{ t('search') }}</el-button>
+				<el-button type="primary" @click="loadExchangeGoodsList()">{{ t('search') }}</el-button>
 				<el-button @click="resetForm(searchFormRef)">{{ t('reset') }}</el-button>
 			</el-form-item>
 		</el-form>
@@ -55,7 +55,7 @@
 			<div class="mt-[16px] flex justify-end">
 				<el-pagination v-model:current-page="tableData.page" v-model:page-size="tableData.limit"
 				               layout="total, sizes, prev, pager, next, jumper" :total="tableData.total"
-				               @size-change="loadExchangeDoodsList()" @current-change="loadExchangeDoodsList" />
+				               @size-change="loadExchangeGoodsList()" @current-change="loadExchangeGoodsList" />
 			</div>
 		</div>
 		<template #footer>
@@ -100,7 +100,7 @@
         }
     });
     const searchFormRef = ref<FormInstance>()
-    const loadExchangeDoodsList = (page: number = 1) => {
+    const loadExchangeGoodsList = (page: number = 1) => {
         tableData.loading = true
         tableData.page = page
 
@@ -140,7 +140,7 @@
     const show = (data: any) => {
         ids.value = data
         showDialog.value = true;
-        loadExchangeDoodsList()
+        loadExchangeGoodsList()
     };
     // 选中数据
     const multipleSelection: any = ref([]);

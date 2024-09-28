@@ -2,7 +2,7 @@
 	<view @touchmove.prevent.stop>
 		<u-popup :show="showpop" mode="bottom" :round="10" @close="close" :closeable="true" :safeAreaInsetBottom="true" @touchmove.prevent.stop>
 			<view class="h-[70vh] px-[24rpx] bg-page pb-[20rpx]" @touchmove.prevent.stop v-if="Object.keys(showList).length">
-				<view class="text-center text-[32rpx] py-[30rpx]">{{t('detailedInformation')}}</view>
+				<view class="font-500 text-center text-[32rpx] leading-[104rpx] box-border h-[104rpx]">{{t('detailedInformation')}}</view>
 				<scroll-view :scroll-x="true" scroll-with-animation :scroll-into-view="'id' + (subActive>3 ? subActive - 2 : 0)" >
 					<view class="flex py-[22rpx] whitespace-nowrap" v-if="packageList.length > 1">
 						<view :id="'id' + index" class="text-[26rpx] leading-[36rpx] mr-[30rpx] text-[#626779]" :class="{'!text-primary class-select': item.id ==  current}" v-for="(item,index) in packageList" :key="index" @click="handleClick(item,index)">{{ item.name }}</view>
@@ -43,10 +43,6 @@
 				</view>
 			</view>
 		</u-popup>
-		<!-- #ifdef MP-WEIXIN -->
-		<!-- 小程序隐私协议 -->
-		<wx-privacy-popup ref="wxPrivacyPopupRef"></wx-privacy-popup>
-		<!-- #endif -->
 	</view>
 </template>
 
@@ -63,7 +59,7 @@
 		if(showList.value?.traces?.list.length){
 			showList.value.traces.list = []
 		}
-        let data = await getMaterialflowList(params)
+        let data: any = await getMaterialflowList(params)
         showList.value = data.data
     }
 	const current = ref(0)

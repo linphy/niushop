@@ -36,7 +36,7 @@ return [
                 'name' => 'SHOP_GOODS_CART',
                 'title' => get_lang('dict_diy.shop_link_goods_cart'),
                 'url' => '/addon/shop/pages/goods/cart',
-                'is_share' => 1,
+                'is_share' => 0,
                 'action' => ''
             ],
             [
@@ -57,21 +57,21 @@ return [
                 'name' => 'SHOP_MY_COUPON',
                 'title' => get_lang('dict_diy.shop_link_my_coupon'),
                 'url' => '/addon/shop/pages/member/my_coupon',
-                'is_share' => 1,
+                'is_share' => 0,
                 'action' => ''
             ],
             [
                 'name' => 'SHOP_ORDER_LIST',
                 'title' => get_lang('dict_diy.shop_link_order_list'),
                 'url' => '/addon/shop/pages/order/list',
-                'is_share' => 1,
+                'is_share' => 0,
                 'action' => ''
             ],
             [
                 'name' => 'SHOP_REFUND_LIST',
                 'title' => get_lang('dict_diy.shop_link_order_refund_list'),
                 'url' => '/addon/shop/pages/refund/list',
-                'is_share' => 1,
+                'is_share' => 0,
                 'action' => ''
             ],
             [
@@ -92,7 +92,7 @@ return [
                 'name' => 'SHOP_POINT_ORDER_LIST',
                 'title' => get_lang('dict_diy.shop_link_point_order_list'),
                 'url' => '/addon/shop/pages/point/order_list',
-                'is_share' => 1,
+                'is_share' => 0,
                 'action' => ''
             ],
             [

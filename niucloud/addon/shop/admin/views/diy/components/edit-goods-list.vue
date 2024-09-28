@@ -44,19 +44,16 @@
 					</div>
 				</el-form-item>
 				<el-form-item :label="t('goodsNum')" v-if="diyStore.editComponent.source == 'all' || diyStore.editComponent.source == 'category'">
-					<div class="flex items-center w-full ml-[5px]">
-						<el-slider class="flex-1" v-model="diyStore.editComponent.num" max="20" size="small" />
-						<span class="ml-[15px]">{{ diyStore.editComponent.num }}</span>
-					</div>
+					<el-slider class="goods-list-slider" show-input v-model="diyStore.editComponent.num" :min="1" max="20" size="small" />
 				</el-form-item>
 				<el-form-item :label="t('customGoods')" v-if="diyStore.editComponent.source == 'custom'">
 					<goods-select-popup ref="goodsSelectPopupRef" v-model="diyStore.editComponent.goods_ids" :min="1" :max="99" />
 				</el-form-item>
 			</el-form>
 
-			<el-dialog v-model="categoryShowDialog" :title="t('goodsCategoryTitle')" width="1000px" :close-on-press-escape="false" :destroy-on-close="true" :close-on-click-modal="false">
+			<el-dialog v-model="categoryShowDialog" :title="t('goodsCategoryTitle')" width="750px" :close-on-press-escape="false" :destroy-on-close="true" :close-on-click-modal="false">
 				<el-table :data="categoryTable.data" ref="categoryTableRef" size="large" v-loading="categoryTable.loading"
-					height="490px" @selection-change="handleSelectionChange" row-key="category_id"
+					height="450px" @selection-change="handleSelectionChange" row-key="category_id"
 					:expand-row-keys="expand_category_ids"
 					:tree-props="{ hasChildren: 'hasChildren', children: 'child_list' }">
 					<template #empty>
@@ -229,3 +226,10 @@ defineExpose({})
 </script>
 
 <style lang="scss" scoped></style>
+<style lang="scss">
+	.goods-list-slider {
+		.el-slider__input {
+			width: 100px;
+		}
+	}
+</style>

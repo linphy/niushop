@@ -31,11 +31,11 @@
                 </el-form-item>
                 <!-- 商品名称 -->
                 <el-form-item :label="t('goodsName')" prop="names">
-                    <el-input v-model="formData.names" type="textarea" clearable :placeholder="t('goodsNamePlaceholder')" class="!w-[512px]" show-word-limit :maxlength="60" />
+                    <el-input v-model.trim="formData.names" type="textarea" clearable :placeholder="t('goodsNamePlaceholder')" class="!w-[512px]" show-word-limit :maxlength="60" />
                 </el-form-item>
                 <!-- 商品标题 -->
                 <el-form-item :label="t('goodsTitle')">
-                    <el-input v-model="formData.title" type="textarea" clearable :placeholder="t('goodsTitlePlaceholder')" class="!w-[512px]" show-word-limit :maxlength="60" />
+                    <el-input v-model.trim="formData.title" type="textarea" clearable :placeholder="t('goodsTitlePlaceholder')" class="!w-[512px]" show-word-limit :maxlength="60" />
                 </el-form-item>
                 <!-- 商品图片 -->
                 <el-form-item :label="t('image')" prop="image">
@@ -151,7 +151,7 @@
                                                         } else{
                                                             callback();
                                                         }
-                                            }
+                                                    }
                                             }]" class="sku-form-item-wrap">
                                             <!-- @blur="inputBlur(row,'reduce',$index)" -->
                                             <el-input v-model.trim="row.point" class="!w-[200px]"  clearable placeholder="0" maxlength="8" >
@@ -219,7 +219,7 @@
                         }
                     }
                 }]">
-                    <el-input v-model="formData.stock" clearable :placeholder="t('stockPlaceholder')" class="input-width" />
+                    <el-input v-model.trim="formData.stock" clearable :placeholder="t('stockPlaceholder')" class="input-width" />
                 </el-form-item>
                 <!-- 兑换限制 -->
                 <el-form-item :label="t('limit')" prop="limit_num"  :rules="[{
@@ -238,7 +238,7 @@
                         }
                     }
                 }]">
-                    <el-input v-model="formData.limit_num" clearable :placeholder="t('limitPlaceholder')" class="input-width" />
+                    <el-input v-model.trim="formData.limit_num" clearable :placeholder="t('limitPlaceholder')" class="input-width" />
                 </el-form-item>
                 <!-- 兑换价 -->
 	            <el-form-item :label="t('money')" required>
@@ -315,7 +315,7 @@
                         }
                     }
                 }]">
-                    <el-input v-model="formData.balance" clearable :placeholder="t('balancePlaceholder')" class="input-width" />
+                    <el-input v-model.trim="formData.balance" clearable :placeholder="t('balancePlaceholder')" class="input-width" />
                 </el-form-item>
                 <!-- 余额类型 -->
                 <el-form-item :label="t('balance')">
@@ -340,7 +340,7 @@
                         }
                     }
                 }]">
-                    <el-input v-model="formData.stock" clearable :placeholder="t('stockPlaceholder')" class="input-width" />
+                    <el-input v-model.trim="formData.stock" clearable :placeholder="t('stockPlaceholder')" class="input-width" />
                 </el-form-item>
                 <!-- 兑换限制 -->
                 <el-form-item :label="t('limit')" prop="limit_num"  :rules="[{
@@ -359,7 +359,7 @@
                         }
                     }
                 }]">
-                    <el-input v-model="formData.limit_num" clearable :placeholder="t('limitPlaceholder')" class="input-width" />
+                    <el-input v-model.trim="formData.limit_num" clearable :placeholder="t('limitPlaceholder')" class="input-width" />
                 </el-form-item>
                 <!-- 兑换价 -->
                 <el-form-item :label="t('money')" required>

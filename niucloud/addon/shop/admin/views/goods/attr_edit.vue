@@ -75,7 +75,7 @@
         </el-card>
 
         <!-- 编辑商品参数信息 -->
-        <el-dialog v-model="showDialogByAttr" :title="t('updateShopGoodsAttr')" width="500px" :destroy-on-close="true">
+        <el-dialog v-model="showDialogByAttr" :title="t('updateAttr')" width="500px" :destroy-on-close="true">
             <el-form :model="formData" label-width="120px" ref="formRef" :rules="formRulesByAttr" class="page-form" v-loading="loadingByAttr">
                 <el-form-item :label="t('attrName')" prop="attr_name">
                     <el-input v-model.trim="formData.attr_name" clearable :placeholder="t('attrNamePlaceholder')" class="input-width"  maxlength="20" />

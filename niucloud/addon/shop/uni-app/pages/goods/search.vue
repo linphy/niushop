@@ -1,11 +1,12 @@
 <template>
 	<view :style="themeColor()">
-		<view class="cate-search">
-			<view class="search-box">
-				<input class="uni-input text-[24rpx]" maxlength="50" v-model="inputValue" confirm-type="search" focus @confirm="search()" placeholder="搜索商品" />
-				<u-icon v-if="inputValue" name="close-circle-fill" color="#A5A6A6" size="28rpx" @click="inputValue=''"></u-icon>
-				<text class="nc-iconfont nc-icon-sousuo-duanV6xx1 !text-[32rpx]" @click="search()"></text>
+		<view class="flex items-center px-[20rpx] h-[120rpx]">
+			<view class="h-[68rpx] bg-[var(--temp-bg)] px-[30rpx] flex items-center rounded-[100rpx] flex-1">	
+				<text class="nc-iconfont nc-icon-sousuo-duanV6xx1 text-[var(--text-color-light9)] text-[26rpx] mr-[18rpx]"></text>
+				<input class="text-[28rpx] flex-1" maxlength="50" type="text" v-model="inputValue"  placeholder="请搜索您想要的商品" confirm-type="search" placeholderClass="text-[var(--text-color-light9)] text-[28rpx]" @confirm="search">
+				<text v-if="inputValue" class="nc-iconfont nc-icon-cuohaoV6xx1 text-[24rpx] text-[var(--text-color-light9)]" @click="inputValue=''"></text>
 			</view>
+			<text @click.stop="search()" class="text-[28rpx] ml-[32rpx] -mb-[2rpx]">搜索</text>
 		</view>
 
 		<view class="search-content">
@@ -13,8 +14,8 @@
 			<view class="history" v-if="historyList.length">
 				<view class="history-box">
 					<view class="history-top">
-						<view class="title">历史搜索</view>
-						<view class="icon nc-iconfont nc-icon-shanchu-yuangaizhiV6xx text-[28rpx] text-[#999]" @click="deleteHistoryList"></view>
+						<view class="title font-500">历史搜索</view>
+						<view class="icon nc-iconfont nc-icon-shanchu-yuangaizhiV6xx !text-[24rpx] text-[var(--text-color-light6)]" @click="deleteHistoryList"></view>
 					</view>
 					<view class="history-bottom " id="history-list" :style="{ maxHeight: !isAllHistory ? '100%' : '168rpx' }">
 						<view class="history-li" v-for="(item, index) in historyList" :key="index" @click="otherSearch(item)">
@@ -90,7 +91,7 @@ const search = ()=> {
         }
         uni.setStorageSync('goodsSearchHistory', array);
 
-        redirect({ url: '/addon/shop/pages/goods/list', param: { goods_name: inputValue.value.trim() }, mode: 'navigateTo' })
+        redirect({ url: '/addon/shop/pages/goods/list', param: { goods_name: encodeURIComponent(inputValue.value) }, mode: 'navigateTo' })
     }
 }
 
@@ -103,7 +104,7 @@ const otherSearch = (e:any)=> {
 // 获取元素高度
 const getHistoryHeight =()=> {
     const query = uni.createSelectorQuery().in(this);
-    query.select('#history-list').boundingClientRect(data => {
+    query.select('#history-list').boundingClientRect((data: any) => {
         if (data && data.height > uni.upx2px(70) * 2 + uni.upx2px(35) * 2) {
             isAllHistory.value = true;
         }
@@ -128,44 +129,6 @@ const getHistoryHeight =()=> {
 		background: #ffffff;
 	}
 
-	.cate-search {
-		width: 100%;
-		background: #ffffff;
-		padding: 10rpx 30rpx;
-		box-sizing: border-box;
-		/* #ifdef H5 */
-		padding-top: 30rpx;
-		/* #endif */
-
-		input {
-			font-size: 24rpx;
-			height: 100%;
-			padding: 0 25rpx 0 32rpx;
-			width: calc(100% - 120rpx);
-			
-		}
-		.input-placeholder {
-			font-size: 24rpx;
-		}
-		text {
-			font-size: 32rpx;
-			color: #909399;
-			padding-right: 32rpx;
-			padding-left: 10rpx;
-			text-align: center;
-		}
-
-		.search-box {
-			width: 100%;
-			height: 64rpx;
-			background: #f8f8f8;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			border-radius: 40rpx;
-		}
-	}
-
 	.search-content {
 		box-sizing: border-box;
 		background: #ffffff;
@@ -179,14 +142,13 @@ const getHistoryHeight =()=> {
 			width: 100%;
 			height: 100%;
 			background: #ffffff;
-			padding: 30rpx 30rpx 0rpx 30rpx;
+			padding: 16rpx 20rpx 0rpx 20rpx;
 
 			box-sizing: border-box;
 			overflow: hidden;
 
 			.history-top {
 				width: 100%;
-				height: 60rpx;
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
@@ -196,7 +158,7 @@ const getHistoryHeight =()=> {
 				}
 
 				.iconfont {
-					color: #909399;
+					color: var(--text-color-light9);
 					font-size: 28rpx;
 				}
 			}
@@ -213,16 +175,16 @@ const getHistoryHeight =()=> {
 					max-width: 100%;
 
 					view {
-						line-height: 66rpx;
-						background: #f8f8f8 !important;
-						height: 66rpx;
-						color: #303133 !important;
+						line-height: 56rpx;
+						background: var(--temp-bg) !important;
+						height: 56rpx;
+						color: #333 !important;
 						margin: 0 0rpx 4rpx 0 !important;
-						padding: 0 20rpx;
+						padding: 0 24rpx;
 						overflow: hidden;
 						white-space: nowrap;
 						text-overflow: ellipsis;
-						border-radius: 20rpx;
+						border-radius: 100rpx;
 						font-size: 24rpx;
 					}
 

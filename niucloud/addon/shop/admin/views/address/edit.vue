@@ -51,7 +51,7 @@
 			</el-form>
 		</el-card>
 		<div class="fixed-footer-wrap">
-			<div class="fixed-footer !z-[1000]">
+			<div class="fixed-footer !z-[9999]">
 				<el-button type="primary" @click="onSave(formRef)">{{ t('save') }}</el-button>
 				<el-button @click="back()">{{ t('cancel') }}</el-button>
 			</div>

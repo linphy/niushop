@@ -1,97 +1,95 @@
 <template>
-	<view class="bg-[#F6F6F6] min-h-screen overflow-hidden order-list" :style="themeColor()">
+	<view class="bg-[var(--page-bg-color)] min-h-screen overflow-hidden order-list" :style="themeColor()">
 		<view class="fixed left-0 top-0 right-0 z-10" v-if="statusLoading">
-			<scroll-view :scroll-x="true" class="box-border px-[30rpx] bg-white">
-				<view class="flex whitespace-nowrap justify-between py-[24rpx]">
-					<view :class="['text-[28rpx] leading-[40rpx]', { 'class-select': orderState === item.status.toString() }]" @click="orderStateFn(item.status)" v-for="(item, index) in orderStateList">{{ item.name }}</view>
+			<scroll-view :scroll-x="true" class="tab-style-2">
+				<view class="tab-content">
+					<view class="tab-items" :class="{ 'class-select': orderState === item.status.toString() }" @click="orderStateFn(item.status)" v-for="(item, index) in orderStateList">{{ item.name }}</view>
 				</view>
 			</scroll-view>
 		</view>
 
 		<mescroll-body ref="mescrollRef" top="88rpx" @init="mescrollInit" :down="{ use: false }" @up="getShopOrderFn">
-			<view class="sidebar-marign mt-[20rpx]" v-if="list.length">
+			<view class="sidebar-margin pt-[var(--top-m)]" v-if="list.length">
 				<template v-for="(item, index) in list" :key="index">
-					<view class="mb-[20rpx] card-template">
+					<view class="mb-[var(--top-m)] card-template">
 						<view @click.stop="toLink(item)">
 							<view class="flex justify-between items-center">
-								<view class="text-[#626779] text-[24rpx] font-400 leading-[34rpx]">
-									<text>{{ t('orderNo') }}：{{ item.order_no }}</text>
-									<text class="text-[#626779] text-[24rpx] font-400 nc-iconfont nc-icon-fuzhiV6xx1 ml-[11rpx]" @click.stop="copy(item.order_no)"></text>
+								<view class="text-[#303133] text-[26rpx] font-400 leading-[36rpx]">
+									<text>{{ t('orderNo') }}:</text>
+									<text class="ml-[10rpx]">{{ item.order_no }}</text>
+									<text class="text-[#303133] text-[26rpx] font-400 nc-iconfont nc-icon-fuzhiV6xx1 ml-[11rpx]" @click.stop="copy(item.order_no)"></text>
 								</view>
-								<view class="text-[#333] text-[24rpx] leading-[34rpx]" :class="{'text-primary': item.status  == 1,'text-[#626779]' :item.status  == 5 || item.status  == -1}">{{ item.status_name.name }}</view>
+								<view class="text-[#303133] text-[26rpx] leading-[34rpx]" :class="{'text-primary': item.status  == 1,'!text-[var(--text-color-light9)]' :item.status  == 5 || item.status  == -1}">{{ item.status_name.name }}</view>
 							</view>
 							<view class="flex box-border mt-[20rpx]" v-for="(subitem, index) in item.order_goods" :key="index">
-								<view class="w-[150rpx] h-[150rpx]">
-									<u--image class="rounded-[10rpx] overflow-hidden" radius="10rpx" width="150rpx" height="150rpx" :src="img(subitem.goods_image_thumb_small ? subitem.goods_image_thumb_small : '')" mode="aspectFill">
-										<template #error>
-											<image class="w-[150rpx] h-[150rpx] rounded-[10rpx] overflow-hidden" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
-										</template>
-									</u--image>
-								</view>
+								<u--image width="150rpx" height="150rpx" :radius="'var(--goods-rounded-big)'" :src="img(subitem.goods_image_thumb_small ? subitem.goods_image_thumb_small : '')" mode="aspectFill">
+									<template #error>
+										<image class="w-[150rpx] h-[150rpx] rounded-[var(--goods-rounded-big)] overflow-hidden" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
+									</template>
+								</u--image>
 								<view class="ml-[20rpx] flex flex-1 flex-col box-border">
 									<view class="flex justify-between items-baseline">
-										<view class="max-w-[322rpx] text-[28rpx] leading-[40rpx] font-500 truncate text-[#333]">{{ subitem.goods_name }}</view>
+										<view class="max-w-[322rpx] text-[28rpx] leading-[40rpx] font-400 truncate text-[#303133]">{{ subitem.goods_name }}</view>
 										<block v-if="item.activity_type == 'exchange'">
-											<view class="text-right  ml-[10rpx] leading-[42rpx]" v-if="parseFloat(subitem.price)">
-												<text class="text-[20rpx] price-font">￥</text>
-												<text class="text-[32rpx] font-500 price-font">{{parseFloat(subitem.price).toFixed(2).split('.')[0] }}</text>
+											<view class="text-right ml-[10rpx] leading-[42rpx]" v-if="parseFloat(subitem.price)">
+												<text class="text-[22rpx] font-400 price-font">￥</text>
+												<text class="text-[36rpx] font-500 price-font">{{parseFloat(subitem.price).toFixed(2).split('.')[0] }}</text>
 												<text class="text-[22rpx] font-500 price-font">.{{parseFloat(subitem.price).toFixed(2).split('.')[1] }}</text>
 											</view>
 										</block>
 										<block v-else>
 											<view class="text-right leading-[42rpx] ml-[10rpx]">
-												<text class="text-[20rpx] price-font">￥</text>
-												<text class="text-[32rpx] font-500 price-font">{{parseFloat(subitem.price).toFixed(2).split('.')[0] }}</text>
+												<text class="text-[22rpx] price-font">￥</text>
+												<text class="text-[36rpx] font-500 price-font">{{parseFloat(subitem.price).toFixed(2).split('.')[0] }}</text>
 												<text class="text-[22rpx] font-500 price-font">.{{parseFloat(subitem.price).toFixed(2).split('.')[1] }}</text>
 											</view>
 										</block>
 									</view>
-									<view class="flex justify-between items-center text-[#333] mt-[20rpx]">
-										<view class="text-[26rpx] text-[#333] font-400 truncate leading-[36rpx] max-w-[369rpx]">{{ subitem.sku_name }}</view>
+									<view class="flex justify-between items-baseline text-[#303133] mt-[14rpx]">
+										<view>
+											<view class="text-[24rpx] text-[var(--text-color-light6)] font-400 truncate leading-[34rpx] max-w-[369rpx] mb-[10rpx]" v-if="subitem.sku_name">{{ subitem.sku_name }}</view>
+											<view class="text-[24rpx] font-400 leading-[34rpx] text-[var(--text-color-light6)]" v-if="item.delivery_type != 'virtual'">
+												{{t('deliveryType') }} ： {{item.delivery_type_name}}
+											</view>
+											<view class="text-[24rpx] font-400 leading-[34rpx] text-[var(--text-color-light6)]" v-else>{{t('createTime') }} ：{{item.create_time}}</view>
+										</view>
 										<text class="text-right text-[26rpx] font-400 w-[90rpx] leading-[36rpx]">x{{ subitem.num }}</text>
 									</view>
-									<view class="text-[26rpx] font-400 leading-[36rpx] text-[#333] mt-[10rpx]" v-if="item.delivery_type != 'virtual'">
-										{{t('deliveryType') }} ： {{item.delivery_type_name}}
-									</view>
-									<view class="text-[26rpx] font-400 leading-[36rpx] text-[#333] mt-[10rpx]" v-else>{{t('createTime') }} ：{{item.create_time}}</view>
 								</view>
 							</view>
 						</view>
-						<view class="flex justify-end items-center mt-[30rpx]">
+						<view class="flex justify-end items-center mt-[20rpx]">
 							<view class="flex items-baseline">
-								<view class="text-[22rpx] font-400 text-[#8288A2] leading-[30rpx] mr-[6rpx]" v-if="parseFloat(item.delivery_money)">{{ t('service') }}</view>
-								<view class="text-[22rpx] font-400 leading-[30rpx] ">{{ t('actualPayment') }}：</view>
-								<view class="leading-[1]">
+								<view class="text-[22rpx] text-[var(--text-color-light9)] leading-[30rpx] mr-[6rpx]" v-if="parseFloat(item.delivery_money)">{{ t('service') }}</view>
+								<view class="text-[22rpx] font-400 leading-[30rpx] text-[#303133]">{{ t('actualPayment') }}：</view>
+								<view class="leading-[1] text-[var(--price-text-color)]">
 									<block v-if="item.activity_type == 'exchange'">
-										<text class="text-[32rpx] mr-[2rpx] leading-[40rpx] price-font">{{ item.point }}</text>
-										<text  class="text-[20rpx] leading-[28rpx]">{{ t('point') }}</text>
+										<text class="text-[36rpx] mr-[2rpx] leading-[40rpx] price-font font-500">{{ item.point }}</text>
+										<text  class="text-[20rpx] leading-[28rpx] font-500">{{ t('point') }}</text>
 										<block v-if="parseFloat(item.order_money)">
-											<text class="text-[20rpx] mx-[4rpx] leading-[28rpx]">+</text>
-											<text class="text-[32rpx] font-500 leading-[40rpx] price-font">{{ parseFloat(item.order_money).toFixed(2).split('.')[0]  }}</text>
-											<text class="text-[22rpx] font-500 leading-[28rpx] price-font">.{{ parseFloat(item.order_money).toFixed(2).split('.')[1]  }}</text>
+											<text class="text-[20rpx] mx-[4rpx] font-500 leading-[28rpx]">+</text>
+											<text class="text-[36rpx] font-500 leading-[40rpx] price-font">{{ parseFloat(item.order_money).toFixed(2) }}</text>
 											<text class="text-[20rpx] font-500 leading-[28rpx] ml-[2rpx]">{{ t('money') }}</text>
 										</block>
 									</block>
 									<block v-else>
-										<text class="text-[20rpx] leading-[26rpx] price-font">￥</text>
-										<text class="text-[32rpx] font-500 leading-[40rpx] price-font">{{ parseFloat(item.order_money).toFixed(2).split('.')[0]  }}</text>
+										<text class="text-[22rpx] leading-[26rpx] price-font">￥</text>
+										<text class="text-[36rpx] font-500 leading-[40rpx] price-font">{{ parseFloat(item.order_money).toFixed(2).split('.')[0]  }}</text>
 										<text class="text-[22rpx] font-500 leading-[28rpx] price-font">.{{ parseFloat(item.order_money).toFixed(2).split('.')[1]  }}</text>
 									</block>
 								</view>
 							</view>
 						</view>
 						<view class="flex justify-end text-[28rpx] mt-[20rpx] items-center" v-if="(item.status == 1) || (item.status == 3) || (item.status == 5 && evaluateConfig.is_evaluate == 1)">
-							<view class="text-[26rpx] font-400 leading-[56rpx] h-[56rpx] min-w-[150rpx] text-center border-[2rpx] border-solid border-[#8288A2] rounded-full text-[#626779] box-border" v-if="item.status == 1" @click.stop="orderBtnFn(item, 'close')">{{ t('orderClose') }}</view>
-							<view class="text-[26rpx] font-400 leading-[56rpx] h-[56rpx] min-w-[150rpx] text-center border-[2rpx] border-solid text-[#fff] border-primary bg-primary rounded-full ml-[20rpx] box-border" @click.stop="orderBtnFn(item, 'pay')" v-if="item.status == 1">{{ t('topay') }}</view>
-							<view class="text-[26rpx] font-400 leading-[56rpx] h-[56rpx] min-w-[150rpx] text-center border-[2rpx] border-solid text-[#fff] border-primary bg-primary rounded-full ml-[20rpx] box-border" @click.stop="orderBtnFn(item, 'finish')" v-if="item.status == 3">{{ t('orderFinish') }}</view>
-							<view class="text-[26rpx] font-400 leading-[56rpx] h-[56rpx] min-w-[150rpx] text-center border-[2rpx] border-solid border-[#8288A2] rounded-full ml-[20rpx]  text-[#626779] box-border" v-if="item.status == 5 && evaluateConfig.is_evaluate == 1" @click.stop="orderBtnFn(item, 'evaluate')">{{ item.is_evaluate == 1 ? t('selectedEvaluate') : t('evaluate') }}</view>
+							<view class="text-[24rpx] font-500 leading-[52rpx] h-[56rpx] min-w-[150rpx] text-center border-[2rpx] border-solid border-[var(--text-color-light9)] rounded-full text-[var(--text-color-light6)] box-border" v-if="item.status == 1" @click.stop="orderBtnFn(item, 'close')">{{ t('orderClose') }}</view>
+							<view class="text-[24rpx] font-500 flex-center h-[56rpx] min-w-[150rpx] text-center border-[0] text-[#fff] primary-btn-bg rounded-full ml-[20rpx] box-border" v-if="item.status == 1" @click.stop="orderBtnFn(item, 'pay')">{{ t('topay') }}</view>
+							<view class="text-[24rpx] font-500 flex-center h-[56rpx] min-w-[150rpx] text-center border-[0] text-[#fff] primary-btn-bg rounded-full ml-[20rpx] box-border" v-if="item.status == 3" @click.stop="orderBtnFn(item, 'finish')">{{ t('orderFinish') }}</view>
+							<view class="text-[24rpx] font-500 leading-[52rpx] h-[56rpx] min-w-[150rpx] text-center border-[2rpx] border-solid border-[var(--text-color-light9)] rounded-full ml-[20rpx]  text-[var(--text-color-light6)] box-border" v-if="item.status == 5 && evaluateConfig.is_evaluate == 1" @click.stop="orderBtnFn(item, 'evaluate')">{{ item.is_evaluate == 1 ? t('selectedEvaluate') : t('evaluate') }}</view>
 						</view>
 					</view>
 				</template>
 			</view>
-			<view class="mx-[30rpx] mt-[20rpx] rounded-[16rpx] flex items-center justify-center noData" v-if="!list.length && loading">
-				<mescroll-empty :option="{tip : '暂无订单'}"></mescroll-empty>
-			</view>
+			<mescroll-empty v-if="!list.length && loading" :option="{tip : '暂无订单'}"></mescroll-empty>
 		</mescroll-body>
 		<pay ref="payRef" @close="payClose"></pay>
 		<!-- #ifdef MP-WEIXIN -->
@@ -102,7 +100,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref,nextTick } from 'vue';
 import { t } from '@/locale'
 import { img, redirect,copy } from '@/utils/common'
 import { getShopOrderStatus, getShopOrder, orderClose, orderFinish } from '@/addon/shop/api/order';
@@ -112,32 +110,38 @@ import MescrollEmpty from '@/components/mescroll/mescroll-empty/mescroll-empty.v
 import useMescroll from '@/components/mescroll/hooks/useMescroll.js';
 import { onLoad, onPageScroll, onReachBottom } from '@dcloudio/uni-app';
 import useConfigStore from "@/stores/config";
-import { hideMenuItems } from 'weixin-js-sdk';
 
 const { mescrollInit, downCallback, getMescroll } = useMescroll(onPageScroll, onReachBottom);
 const list = ref<Array<Object>>([]);
 const loading = ref<boolean>(false);
 const statusLoading = ref<boolean>(false);
 const orderState = ref('')
-const orderStateList = ref([]);
+const orderStateList: any = ref([]);
 const evaluateConfig = ref("")
 
 const mch_id = ref('')
 const isTradeManaged = ref(false)
 
-onLoad((option) => {
+const wxPrivacyPopupRef:any = ref(null)
+
+onLoad((option: any) => {
 	orderState.value = option.status || "";
 	evaluateEvent()
 	getShopOrderStatusFn();
+	// #ifdef MP
+	nextTick(()=>{
+		if(wxPrivacyPopupRef.value) wxPrivacyPopupRef.value.proactive();
+	})
+	// #endif
 });
 
 const evaluateEvent = () => {
-	getEvaluateConfig().then((data) => {
+	getEvaluateConfig().then((data: any) => {
 		evaluateConfig.value = data.data
 	})
 }
 
-const getShopOrderFn = (mescroll) => {
+const getShopOrderFn = (mescroll: any) => {
 	loading.value = false;
 	let data: object = {
 		page: mescroll.num,
@@ -145,7 +149,7 @@ const getShopOrderFn = (mescroll) => {
 		status: orderState.value
 	};
 
-	getShopOrder(data).then((res) => {
+	getShopOrder(data).then((res: any) => {
 		let newArr = (res.data.data as Array<Object>);
 		//设置列表数据
 		if (mescroll.num == 1) {
@@ -169,7 +173,7 @@ const getShopOrderStatusFn = () => {
 	let obj = { name: '全部', status: '' };
 	orderStateList.value.push(obj);
 
-	getShopOrderStatus().then((res) => {
+	getShopOrderStatus().then((res: any) => {
 		Object.values(res.data).forEach((item, index) => {
 			orderStateList.value.push(item);
 		});
@@ -179,7 +183,7 @@ const getShopOrderStatusFn = () => {
 	})
 }
 
-const orderStateFn = (status) => {
+const orderStateFn = (status: any) => {
 	orderState.value = status.toString();
 	list.value = [];
 	getMescroll().resetUpScroll();
@@ -191,7 +195,7 @@ const toLink = (data: any) => {
 
 // 支付
 const payRef = ref(null)
-const orderBtnFn = (data, type = '') => {
+const orderBtnFn = (data: any, type = '') => {
 	if (type == 'pay')
 		payRef.value?.open(data.order_type, data.order_id, `/addon/shop/pages/order/detail?order_id=${data.order_id}`);
 	else if (type == 'close') {
@@ -294,25 +298,4 @@ const finish = (item: any) => {
 .bg-color {
 	background-color: var(--primary-color);
 }
-
-.class-select {
-	position: relative;
-	font-weight: 500;
-	color: var(--primary-color);
-	&::before {
-		content: "";
-		position: absolute;
-		bottom: -14rpx;
-		height: 6rpx;
-		border-radius: 4rpx;
-		background-color: var(--primary-color);
-		width: 40rpx;
-		left: 50%;
-		transform: translateX(-50%);
-	}
-}
-.noData{
-	height: calc(100vh - 130rpx - constant(safe-area-inset-bottom));
-	height: calc(100vh - 130rpx - env(safe-area-inset-bottom));
- }
 </style>

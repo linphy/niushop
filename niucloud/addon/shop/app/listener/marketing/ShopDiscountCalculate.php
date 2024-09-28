@@ -25,14 +25,14 @@ class ShopDiscountCalculate
     public function handle(array $params)
     {
         $sku_info = $params[ 'sku_info' ] ?? [];
-        if ($sku_info && $sku_info[ 'goods' ][ 'is_discount' ]) {
+        $order_obj = $params[ 'order_obj' ];
+        if (empty($order_obj->extend_data) && $sku_info && $sku_info[ 'goods' ][ 'is_discount' ]) {
 
             $discount_goods_info = ( new ActiveGoods() )->where([ [ 'active_goods.goods_id', '=', $sku_info[ 'goods_id' ] ] ])->withJoin([ 'active' => function($query) {
                 $query->where('active_status', '=', ActiveDict::ACTIVE);
             } ])->findOrEmpty()->toArray();
 
             if ($discount_goods_info && $discount_goods_info[ 'active' ][ 'active_status' ] == ActiveDict::ACTIVE) {
-                $order_obj = $params[ 'order_obj' ];
                 $order_obj->discount[ 'discount' ] = $order_obj->discountFormat(
                     [ $sku_info[ 'sku_id' ] ],
                     OrderDiscountDict::DISCOUNT,
@@ -43,9 +43,13 @@ class ShopDiscountCalculate
                     '限时折扣',
                     $discount_goods_info[ 'active' ][ 'active_desc' ] ?? ''
                 );
-                $sku_info[ 'price' ] = $sku_info[ 'sale_price' ];
+                if ($sku_info[ 'sale_price' ] != $sku_info[ 'original_price' ]) {//不等于原价才使用活动价
+                    $sku_info[ 'price' ] = $sku_info[ 'sale_price' ];
+                }
                 $sku_info[ 'goods_money' ] = $sku_info[ 'price' ] * $sku_info[ 'num' ];//小计
-                return $sku_info;
+                return [
+                    'sku_info' => $sku_info
+                ];
             }
 
         }

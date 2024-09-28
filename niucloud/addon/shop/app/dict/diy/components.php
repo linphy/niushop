@@ -120,13 +120,15 @@ return [
                 'title' => '会员信息',
                 'icon' => 'iconfont iconhuiyuanqiandaopc',
                 'path' => 'edit-shop-member-info',
-                'support_page' => [ 'DIY_SHOP_MEMBER_INDEX' ],
+                'support_page' => [ 'DIY_SHOP_MEMBER_INDEX', 'DIY_SHOP_GIFTCARD_MEMBER_INDEX' ],
                 'uses' => 1,
                 'sort' => 10015,
                 'value' => [
                     "style" => "style-1",
                     "styleName" => "风格1",
-                    'bgUrl' => ''
+                    'bgUrl' => '',
+                    'isShowAccount' => true,
+                    'uidTextColor' => '#666666'
                 ],
             ],
             'ShopOrderInfo' => [

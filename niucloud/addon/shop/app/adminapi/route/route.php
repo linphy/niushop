@@ -83,7 +83,6 @@ Route::group('shop', function() {
     //物流配置
     Route::get('delivery/deliveryList', 'addon\shop\app\adminapi\controller\delivery\Delivery@getDeliveryList');
     Route::put('delivery/setConfig', 'addon\shop\app\adminapi\controller\delivery\Delivery@setDeliveryConfig');
-    Route::put('delivery/deliverySort', 'addon\shop\app\adminapi\controller\delivery\Delivery@setDeliverySort');
 
     //配送员列表
     Route::get('delivery/staff', 'addon\shop\app\adminapi\controller\delivery\Delivery@lists');
@@ -166,7 +165,7 @@ Route::group('shop', function() {
     Route::get('goods/virtual/init', 'addon\shop\app\adminapi\controller\goods\VirtualGoods@init');
 
     //删除商品
-    Route::delete('goods/delete', 'addon\shop\app\adminapi\controller\goods\Goods@del');
+    Route::put('goods/delete', 'addon\shop\app\adminapi\controller\goods\Goods@del');
 
     // 回收站商品分页列表
     Route::get('goods/recycle', 'addon\shop\app\adminapi\controller\goods\Goods@recyclePages');
@@ -187,7 +186,7 @@ Route::group('shop', function() {
     Route::get('goods/select', 'addon\shop\app\adminapi\controller\goods\Goods@select');
 
     // 获取商品选择分页列表带sku
-    Route::get('goods/selectgoodssku', 'addon\shop\app\adminapi\controller\goods\Goods@selectgoodssku');
+    Route::get('goods/selectgoodssku', 'addon\shop\app\adminapi\controller\goods\Goods@selectGoodsSku');
 
     // 获取商品SKU规格列表
     Route::get('goods/sku', 'addon\shop\app\adminapi\controller\goods\Goods@sku');

@@ -4,29 +4,28 @@
 			<view :style="maskLayer"></view>
 			<div class="diy-shop-goods-list relative flex flex-wrap justify-between">
 				<block v-if="diyComponent.style == 'style-1'">
-					<view class="bg-white w-full flex p-[20rpx] mx-[20rpx] rounded-[8rpx] overflow-hidden" :class="{ 'mt-[20rpx]': index > -10,'mb-[20rpx]': (index+1) == goodsList.length }" :style="itemCss" v-for="(item,index) in goodsList" :key="item.goods_id" @click="toLink(item)">
-						<u--image radius="10rpx" width="190rpx" height="190rpx" :src="img(item.goods_cover_thumb_mid || '')" model="aspectFill">
+					<view class="bg-white w-full flex p-[20rpx] mx-[20rpx] overflow-hidden" :class="{ 'mt-[20rpx]': index > -10,'mb-[20rpx]': (index+1) == goodsList.length }" :style="itemCss" v-for="(item,index) in goodsList" :key="item.goods_id" @click="toLink(item)">
+						<u--image radius="var(--goods-rounded-big)" width="200rpx" height="200rpx" :src="img(item.goods_cover_thumb_mid || '')" model="aspectFill">
 							<template #error>
-								<image class="w-[190rpx] h-[190rpx] rounded-[10rpx] overflow-hidden" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
+								<image class="w-[200rpx] h-[200rpx] rounded-[var(--goods-rounded-big)] overflow-hidden" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
 							</template>
 						</u--image>
 						<view class="flex-1 flex flex-col ml-[20rpx] py-[6rpx]">
 							<view class="text-[28rpx] leading-[40rpx] text-[#303133] multi-hidden mb-[10rpx]" :style="{ color : diyComponent.goodsNameStyle.color, fontWeight : diyComponent.goodsNameStyle.fontWeight }">{{item.goods_name}}</view>
 							<view class="mt-auto flex justify-between items-center items-baseline">
 								<view class="font-bold text-[var(--price-text-color)] price-font flex items-baseline" :style="{ color : diyComponent.priceStyle.mainColor }">
-									<text class="text-[26rpx] font-500">￥</text>
-									<text class="text-[36rpx] font-500">{{ parseFloat(goodsPrice(item)).toFixed(2).split('.')[0] }}</text>
-									<text class="text-[24rpx] font-500">.{{ parseFloat(goodsPrice(item)).toFixed(2).split('.')[1] }}</text>
-									<image class="h-[24rpx] ml-[6rpx]" v-if="priceType(item) == 'member_price'" :src="img('addon/shop/VIP.png')" mode="heightFix" />
-									<image class="h-[24rpx] ml-[6rpx]" v-if="priceType(item) == 'discount_price'" :src="img('addon/shop/discount.png')" mode="heightFix" />
+									<text class="text-[24rpx] font-500 mr-[4rpx]">￥</text>
+									<text class="text-[40rpx] font-500">{{ parseFloat(goodsPrice(item)).toFixed(2)}}</text>
+									<image class="h-[26rpx] ml-[6rpx]" v-if="priceType(item) == 'member_price'" :src="img('addon/shop/VIP.png')" mode="heightFix" />
+									<image class="h-[26rpx] ml-[6rpx]" v-if="priceType(item) == 'discount_price'" :src="img('addon/shop/discount.png')" mode="heightFix" />
 								</view>
-								<text class="text-[22rpx] text-[#999]" :style="{ color : diyComponent.saleStyle.color }">已售{{item.sale_num}}{{item.unit || '件'}}</text>
+								<text class="text-[22rpx] text-[var(--text-color-light9)]" :style="{ color : diyComponent.saleStyle.color }">已售{{item.sale_num}}{{item.unit || '件'}}</text>
 							</view>
 						</view>
 					</view>
 				</block>
 				<block v-if="diyComponent.style == 'style-2'">
-					<view class="flex flex-col bg-[#fff] box-border rounded-[12rpx] overflow-hidden" :class="{'mt-[24rpx]': index > 1}" :style="itemCss" v-for="(item,index) in goodsList" :key="item.goods_id" @click="toLink(item)">
+					<view class="flex flex-col bg-[#fff] box-border rounded-[var(--rounded-mid)] overflow-hidden" :class="{'mt-[24rpx]': index > 1}" :style="itemCss" v-for="(item,index) in goodsList" :key="item.goods_id" @click="toLink(item)">
 						<u--image :width="style2Width" :height="style2Width" :src="img(item.goods_cover_thumb_mid || '')" model="aspectFill">
 							<template #error>
 								<image :style="{'width': style2Width,'height': style2Width}" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
@@ -34,23 +33,23 @@
 						</u--image>
 						<view class="px-[16rpx] flex-1 pt-[16rpx] pb-[20rpx] flex flex-col justify-between">
 							<view class="text-[#303133] leading-[40rpx] text-[28rpx] multi-hidden" :style="{ color : diyComponent.goodsNameStyle.color, fontWeight : diyComponent.goodsNameStyle.fontWeight }">{{item.goods_name}}</view>
-							<view class="flex justify-between flex-wrap items-baseline mt-[16rpx]" >
+							<view class="flex justify-between flex-wrap items-baseline mt-[28rpx]" >
 								<view class="text-[var(--price-text-color)] price-font flex items-baseline" :style="{ color : diyComponent.priceStyle.mainColor }">
-									<text class="text-[26rpx] font-500">￥</text>
-									<text class="text-[36rpx] font-500">{{ parseFloat(goodsPrice(item)).toFixed(2).split('.')[0] }}</text>
+									<text class="text-[24rpx] font-400">￥</text>
+									<text class="text-[40rpx] font-500">{{ parseFloat(goodsPrice(item)).toFixed(2).split('.')[0] }}</text>
 									<text class="text-[24rpx] font-500">.{{ parseFloat(goodsPrice(item)).toFixed(2).split('.')[1] }}</text>
 									<image class="h-[24rpx] ml-[6rpx]" v-if="priceType(item) == 'member_price'" :src="img('addon/shop/VIP.png')" mode="heightFix" />
 									<image class="h-[24rpx] ml-[6rpx]" v-if="priceType(item) == 'discount_price'" :src="img('addon/shop/discount.png')" mode="heightFix" />
 								</view>
-								<text class="text-[22rpx] text-[#999]" :style="{ color : diyComponent.saleStyle.color }">已售{{item.sale_num}}{{item.unit || '件'}}</text>
+								<text class="text-[22rpx] text-[var(--text-color-light9)]" :style="{ color : diyComponent.saleStyle.color }">已售{{item.sale_num}}{{item.unit || '件'}}</text>
 							</view>
 						</view>
 					</view>
 				</block>
 				<block v-if="diyComponent.style == 'style-3'">
-					<view :style="style3Css">
-						<scroll-view :id="'warpStyle3-'+diyComponent.id" class="whitespace-nowrap h-[284rpx]" :scroll-x="true">
-							<view :id="'item'+index+diyComponent.id" class="w-[214rpx] rounded-[10rpx] inline-block bg-[#fff] box-border overflow-hidden" :class="{'!mr-[0rpx]' : index == (goodsList.length-1)}" :style="itemCss+itemStyle3" v-for="(item,index) in goodsList" :key="item.goods_id" @click="toLink(item)">
+					<view :style="style3Css" v-if="goodsList.length">
+						<scroll-view :id="'warpStyle3-'+diyComponent.id" class="whitespace-nowrap min-h-[290rpx]" :scroll-x="true">
+							<view :id="'item'+index+diyComponent.id" class="w-[214rpx] mb-[6rpx] rounded-[var(--rounded-mid)] inline-block bg-[#fff] box-border overflow-hidden" :class="{'!mr-[0rpx]' : index == (goodsList.length-1)}" :style="itemCss+itemStyle3" v-for="(item,index) in goodsList" :key="item.goods_id" @click="toLink(item)">
 								<u--image width="214rpx" height="160rpx" :src="img(item.goods_cover_thumb_mid || '')" model="aspectFill">
 									<template #error>
 										<image class="w-[214rpx] h-[160rpx]" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
@@ -58,11 +57,10 @@
 								</u--image>
 								<view class="px-[10rpx] pt-[16rpx] pb-[10rpx]">
 									<view class="text-[26rpx] text-[#303133] truncate" :style="{ color : diyComponent.goodsNameStyle.color, fontWeight : diyComponent.goodsNameStyle.fontWeight }">{{item.goods_name}}</view>
-									<view class="text-[var(--price-text-color)] py-[10rpx] flex-wrap font-bold price-font flex items-baseline leading-[1]" :style="{ color : diyComponent.priceStyle.mainColor }">
-										<view class="truncate">
-											<text class="text-[26rpx] font-500">￥</text>
-											<text class="text-[36rpx] font-500">{{ parseFloat(goodsPrice(item)).toFixed(2).split('.')[0] }}</text>
-											<text class="text-[24rpx] font-500">.{{ parseFloat(goodsPrice(item)).toFixed(2).split('.')[1] }}</text>
+									<view class="text-[var(--price-text-color)] pt-[16rpx] pb-[6rpx] font-bold price-font flex items-baseline leading-[1] overflow-hidden" :style="{ color : diyComponent.priceStyle.mainColor }">
+										<view>
+											<text class="text-[20rpx] font-400 mr-[2rpx]">￥</text>
+											<text class="text-[36rpx] font-500">{{ parseFloat(goodsPrice(item)).toFixed(2)}}</text>
 										</view>
 										<image class="h-[24rpx] ml-[6rpx]" v-if="priceType(item) == 'member_price'" :src="img('addon/shop/VIP.png')" mode="heightFix" />
 										<image class="h-[24rpx] ml-[6rpx]" v-if="priceType(item) == 'discount_price'" :src="img('addon/shop/discount.png')" mode="heightFix" />
@@ -87,6 +85,7 @@
 
 	const props = defineProps(['component', 'index', 'pullDownRefreshCount','value']);
 	const diyStore = useDiyStore();
+	const emits = defineEmits(['loadingFn']); //商品数据加载完成之后触发
 
     const skeleton = reactive({
         type: '',
@@ -151,8 +150,8 @@
         if (diyComponent.value.bottomElementRounded) style += 'border-bottom-left-radius:' + diyComponent.value.bottomElementRounded * 2 + 'rpx;';
         if (diyComponent.value.bottomElementRounded) style += 'border-bottom-right-radius:' + diyComponent.value.bottomElementRounded * 2 + 'rpx;';
 		if(diyComponent.value.style == 'style-2'){
-			if(diyComponent.value.margin && diyComponent.value.margin.both) style += 'width: calc((100vw - ' + (diyComponent.value.margin.both*4) + 'rpx - 20rpx) / 2)'
-			else style += 'width: calc((100vw - 20rpx) / 2 )'
+			if(diyComponent.value.margin && diyComponent.value.margin.both) style += 'width: calc((100vw - ' + (diyComponent.value.margin.both*4) + 'rpx - 20rpx) / 2);'
+			else style += 'width: calc((100vw - 20rpx) / 2 );'
 		}
         return style;
     })
@@ -204,6 +203,7 @@
         getGoodsComponents(data).then((res) => {
             goodsList.value = res.data;
             skeleton.loading = false;
+			emits('loadingFn', res.data)
             if(diyComponent.value.componentBgUrl) {
                 setTimeout(() => {
                     const query = uni.createSelectorQuery().in(instance);
@@ -269,6 +269,7 @@
                             query.select('.diy-shop-goods-list').boundingClientRect((data: any) => {
                                 height.value = data.height;
                             }).exec();
+							if(diyComponent.value.style == 'style-3') setItemStyle3()
                         })
                     }
                 }

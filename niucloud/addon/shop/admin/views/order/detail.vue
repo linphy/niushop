@@ -75,6 +75,7 @@
 						<span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#5c96fc] bg-[#ebf3ff] cursor-pointer" @click="finish" v-if="formData.status == 3">{{ t('finish') }}</span>
 						<span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#5c96fc] bg-[#ebf3ff] cursor-pointer" @click="openElectronicSheetPrintDialog" v-if="formData.delivery_type == 'express' && formData.status == 3">{{ t('electronicSheetPrintTitle') }}</span>
 						<span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#5c96fc] bg-[#ebf3ff] cursor-pointer" @click="printTicketEvent" v-if="formData.delivery_type == 'virtual' && (formData.status == 2 || formData.status == 3 || formData.status == 5)">{{ t('printTicket') }}</span>
+                        <span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#5c96fc] bg-[#ebf3ff] cursor-pointer" @click="orderEditAddressFn" v-if="formData.status == 1 && formData.delivery_type != 'virtual' && formData.activity_type != 'giftcard'">{{ t('editAddress') }}</span>
 						<div class="flex" v-if="formData.order_delivery">
 							<template v-for="(item, index) in formData.order_delivery" :key="index">
 								<span v-if="item.delivery_type == 'express' && item.sub_delivery_type == 'express'"
@@ -191,6 +192,7 @@
 		<order-notes ref="orderNotesDialog" @complete="setFormData(orderId)" />
 		<delivery-package ref="packageDialog" />
 		<electronic-sheet-print ref="electronicSheetPrintDialog" @complete="loadOrderList" />
+        <order-edit-address ref="orderEditAddressDialog" @complete="loadOrderList"/>
 	</div>
 </template>
 
@@ -201,6 +203,7 @@ import { getOrderDetail, orderClose, orderFinish } from '@/addon/shop/api/order'
 import { printTicket } from '@/app/api/printer'
 import DeliveryAction from '@/addon/shop/views/order/components/delivery-action.vue'
 import OrderNotes from '@/addon/shop/views/order/components/order-notes.vue'
+import orderEditAddress from '@/addon/shop/views/order/components/order-edit-address.vue'
 import deliveryPackage from '@/addon/shop/views/order/components/delivery-package.vue'
 import AdjustMoney from '@/addon/shop/views/order/components/adjust-money.vue'
 import electronicSheetPrint from '@/addon/shop/views/order/components/electronic-sheet-print.vue'
@@ -304,6 +307,17 @@ const openElectronicSheetPrintDialog = () => {
 }
 
 const repeat = ref(false)
+
+/**
+ * 修改地址
+ */
+const orderEditAddressDialog :Record<string, any> | null = ref(null)
+const orderEditAddressFn = async () =>{
+    let data = cloneDeep(formData.value);
+    orderEditAddressDialog.value.showDialog = true
+    orderEditAddressDialog.value.setFormData(data)
+}
+
 
 /**
  * 打印小票

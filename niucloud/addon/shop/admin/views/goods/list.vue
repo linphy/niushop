@@ -125,7 +125,7 @@
                     </el-table-column>
                     <el-table-column prop="sort" :label="t('sort')" min-width="120" sortable="custom">
                         <template #default="{ row }">
-                            <el-input v-model="row.sort" class="w-[70px]" maxlength="8" @blur="sortInputListener(row.sort, row)" />
+                            <el-input v-model.trim="row.sort" class="w-[70px]" maxlength="8" @blur="sortInputListener(row.sort, row)" />
                         </template>
                     </el-table-column>
 
@@ -247,9 +247,19 @@ const initData = () => {
         const data = res.data
         if (data) {
             const goodsCategoryTree: any = []
+            // 增加全部筛选选择
+            goodsCategoryTree.push({
+                value: '',
+                label: '全部',
+                children: []
+            })
             data.forEach((item: any) => {
                 const children: any = []
                 if (item.child_list) {
+                    children.push({
+                        value: item.category_id,
+                        label: '全部'
+                    })
                     item.child_list.forEach((childItem: any) => {
                         children.push({
                             value: childItem.category_id,
@@ -525,6 +535,8 @@ const loadGoodsList = (page: number = 1) => {
         goodsTable.loading = false
         goodsTable.data = res.data.data
         goodsTable.total = res.data.total
+        multipleSelection.value = [];
+        toggleCheckbox.value = false;
     }).catch(() => {
         goodsTable.loading = false
     })

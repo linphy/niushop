@@ -18,9 +18,7 @@
                 </el-form-item>
                 <el-form-item :label="t('categoryTemplate')">
                     <template v-for="(item,index) in config['level_'+formData.level]" :key="index">
-                        <div
-                            :class="['w-[150px] border-[1px] border-[#ededed] border-solid overflow-hidden text-[#ededed] rounded-[4px] mr-[20px] relative', formData.template ===item.template ? 'border-color text-color' : '']"
-                            @click="levelChange(item.template)">
+                        <div :class="['w-[150px] border-[1px] border-[#ededed] border-solid overflow-hidden text-[#ededed] rounded-[4px] mr-[20px] relative', formData.template ===item.template ? 'border-color text-color' : '']" @click="levelChange(item.template)">
                             <img class="w-[100%]" :src="img(item.preview)" fit-object="contain" />
                             <span class="iconfont iconicon-selected absolute right-0 bottom-[-8px]"></span>
                         </div>
@@ -77,11 +75,11 @@
                                     </el-icon>
                                 </div> -->
                                 <div :class="['flex items-center justify-center w-[65px] h-[65px] border-0 border-color rounded-[4px] border-solid box-border cursor-pointer mr-[15px]', formData.cart.style === 'style-3' ? '!border-[1px]' : '']" @click="carStyleClick(3)">
-                                    <span class="text-color iconfont icongouwuche !text-[30px]"></span>
+                                    <span class="text-color nc-iconfont nc-icon-gouwucheV6xx-2 !text-[24px]"></span>
                                 </div>
                                 <div :class="['flex items-center justify-center w-[65px] h-[65px] border-0 border-color rounded-[4px] border-solid box-border cursor-pointer mr-[15px]', formData.cart.style === 'style-4' ? '!border-[1px]' : '']" @click="carStyleClick(4)">
                                     <div class="text-[#fff] bg-color h-[30px] w-[30px] leading-[30px] rounded-[30px] text-center">
-                                        <span class=" iconfont icongouwuche !text-[20px]"></span>
+                                        <span class="nc-iconfont nc-icon-gouwucheV6xx-2 !text-[20px]"></span>
                                     </div>
                                 </div>
                             </div>
@@ -141,11 +139,9 @@ const rules = computed(() => {
         ],
         'search.title': [
             { required: true, message: t('searchTitlePlaceholder'), trigger: 'blur' }
-
         ],
         sort: [
             { required: true, message: t('sortPlaceholder'), trigger: 'change' }
-
         ],
         'cart.text': [
             { required: true, message: t('cartTextPlaceholder'), trigger: 'blur' }

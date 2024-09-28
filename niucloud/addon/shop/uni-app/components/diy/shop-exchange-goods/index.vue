@@ -3,27 +3,27 @@
 		<view class="overflow-hidden" :style="warpCss">
 			<view :style="maskLayer"></view>
 			<view class="diy-shop-exchange-goods-list relative flex flex-wrap justify-between">
-				<view class="overflow-hidden bg-[#fff] flex flex-col box-border w-[calc(50%-10rpx)]" :class="{'mt-[20rpx]': index > 1}" :style="itemCss" v-for="(item,index) in goodsList" :key="item.goods_id" @click="toLink(item)">
-					<u--image :width="style2Width" :height="style2Width" :src="img(item.goods_cover_thumb_mid || '')" model="aspectFill">
+				<view class="overflow-hidden bg-[#fff] flex flex-col box-border w-[calc(50%-10rpx)] rounded-[var(--rounded-mid)]" :class="{'mt-[20rpx]': index > 1}" :style="itemCss" v-for="(item,index) in goodsList" :key="item.goods_id" @click="toLink(item)">
+					<u--image :width="style2Width" :height="style2Width" radius="var(--rounded-mid)" :src="img(item.goods_cover_thumb_mid || '')" model="aspectFill">
 						<template #error>
-							<image :style="{'width': style2Width,'height': style2Width}" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
+							<image class="rounded-[var(--rounded-mid)] overflow-hidden" :style="{'width': style2Width,'height': style2Width}" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
 						</template>
 					</u--image>
 					<view class="flex-1 pt-[10rpx] pb-[20rpx] px-[16rpx] flex flex-col justify-between">
 						<view class="text-[#333] leading-[40rpx] text-[28rpx] multi-hidden" :style="{ color : diyComponent.goodsNameStyle.color, fontWeight : diyComponent.goodsNameStyle.fontWeight }">{{item.names}}</view>
-						<view class="text-[24rpx] font-400 leading-[34rpx] mt-[10rpx] text-[#999]" :style="{ color : diyComponent.saleStyle.color }">已兑{{item.total_exchange_num}}人</view>
+						<view class="text-[22rpx] leading-[28rpx] mt-[10rpx] text-[var(--text-color-light9)]" :style="{ color : diyComponent.saleStyle.color }">已兑{{item.total_exchange_num}}人</view>
 						<view class="flex justify-between flex-wrap items-center mt-[16rpx]" >
 							<view class="flex flex-col">
-								<view :style="{ color : diyComponent.priceStyle.mainColor }" class="text-[var(--price-text-color)] price-font ml-[2rpx] flex items-center">
+								<view :style="{ color : diyComponent.priceStyle.mainColor }" class="text-[var(--price-text-color)] price-font ml-[2rpx] flex items-baseline">
 									<text class="text-[32rpx]">{{ item.point  }}</text>
-									<text class="text-[26rpx] ml-[4rpx]">积分</text>
+									<text class="text-[24rpx] ml-[4rpx]">积分</text>
 								</view>
-								<view v-if="item.price&&item.price>0" class="flex items-center mt-[6rpx]">
-									<text :style="{ color : diyComponent.priceStyle.mainColor }" class="text-[#333] font-400 text-[24rpx]">+{{ parseFloat(item.price).toFixed(2)  }}</text>
-									<text :style="{ color : diyComponent.priceStyle.mainColor }" class="text-[var(--price-text-color)] font-400 ml-[4rpx] text-[20rpx]">元</text>
+								<view v-if="item.price&&item.price>0" class="flex items-center mt-[6rpx] price-font">
+									<text :style="{ color : diyComponent.priceStyle.mainColor }" class="text-[#333] font-400 text-[32rpx]">+{{ parseFloat(item.price).toFixed(2)  }}</text>
+									<text :style="{ color : diyComponent.priceStyle.mainColor }" class="text-[var(--price-text-color)] font-400 ml-[4rpx] text-[24rpx]">元</text>
 								</view>
 							</view>
-							<view class="w-[80rpx] h-[46rpx] font-400 text-[28rpx] leading-[46rpx] !text-[#fff] m-0 rounded-full !bg-[var(--primary-color)] remove-border text-center" shape="circle">兑换</view>
+							<view class="w-[120rpx] h-[54rpx] text-[22rpx] flex-center !text-[#fff] m-0 rounded-full primary-btn-bg remove-border text-center" shape="circle">去兑换</view>
 						</view>
 					</view>
 				</view>

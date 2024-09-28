@@ -47,6 +47,7 @@ trait CoreOrderCreateTrait
         'order_money' => 0
     ];//基本数据处理(整体的数据)
     public $goods_data = [];//商品数据处理
+    public $extend_data = [];//活动数据
     public $config = [];//配置集合
     public $discount = [];//优惠整合
 
@@ -431,7 +432,11 @@ trait CoreOrderCreateTrait
                         if ($k == ( $match_count + 1 )) {
                             $item_coupon_money = $surplus_money;
                         } else {
-                            $item_coupon_money = $this->moneyFormat($item_order_goods_money / $match_order_goods_money * $coupon_money);
+                            if ($match_order_goods_money == 0 || $coupon_money == 0) {
+                                $item_coupon_money = 0;
+                            } else {
+                                $item_coupon_money = $this->moneyFormat($item_order_goods_money / $match_order_goods_money * $coupon_money);
+                            }
                         }
                         $this->goods_data[ $item_sku_id ][ 'discount_money' ] += $item_coupon_money;
 //                        $this->goods_data[$item_sku_id]['order_goods_money'] = $this->calculateOrderGoodsMoney($this->goods_data[$item_sku_id]);
@@ -591,19 +596,27 @@ trait CoreOrderCreateTrait
 
             //选中收货地址
             $this->selectTakeAddress();
-            switch ($delivery_type) {
-                case OrderDeliveryDict::EXPRESS://快递
-                    CoreExpressService::calculate($this);
-                    break;
-                case OrderDeliveryDict::LOCAL_DELIVERY://配送
-                    CoreLocalDeliveryService::calculate($this);
-                    break;
-                case OrderDeliveryDict::STORE://自提
-                    CoreStoreService::calculate($this);
-                    break;
+
+                switch ($delivery_type) {
+                    case OrderDeliveryDict::EXPRESS://快递
+                        CoreExpressService::calculate($this);
+                        break;
+                    case OrderDeliveryDict::LOCAL_DELIVERY://配送
+                        CoreLocalDeliveryService::calculate($this);
+                        break;
+                    case OrderDeliveryDict::STORE://自提
+                        CoreStoreService::calculate($this);
+                        break;
+                }
+
+
+            if (!empty($this->extend_data) && isset($this->extend_data[ 'delivery_money' ])) {
+                $this->basic[ 'delivery_money' ] = $this->extend_data[ 'delivery_money' ];
+            } else {
+                $this->basic[ 'delivery_money' ] = round($this->basic[ 'delivery_money' ] ?? 0);
             }
 
-            $this->basic[ 'delivery_money' ] = round($this->basic[ 'delivery_money' ] ?? 0);
+
         }
 
         return true;

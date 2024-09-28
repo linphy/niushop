@@ -16,7 +16,7 @@
 			<div class="text-[16px] my-[10px]" v-show="data.order_info.order_item.value.indexOf('pay_type') != -1">支付方式：微信支付</div>
 			<div class="text-[16px] my-[10px]" v-show="data.order_info.order_item.value.indexOf('delivery_type') != -1">配送方式：同城配送</div>
 			<div class="text-[16px] my-[10px]" v-show="data.order_info.order_item.value.indexOf('create_time') != -1">下单时间：2023-12-12 14:20:20</div>
-			<div class="text-[16px] my-[10px]" v-show="data.order_info.order_item.value.indexOf('pay_time') != -1">付款时间：2023-12-12 14:20:20</div>
+			<div class="text-[16px] my-[10px]" v-show="data.order_info.order_item.value.indexOf('pay_time') != -1">付款时间：2023-12-12 14:20:30</div>
 			<div class="text-[16px] my-[10px]" v-show="data.order_info.order_item.value.indexOf('goods_money') != -1">商品总额：￥10.00</div>
 			<div class="text-[16px] my-[10px]" v-show="data.order_info.order_item.value.indexOf('delivery_money') != -1">配送金额：￥1.00</div>
 			<div class="text-[16px] my-[10px]" v-show="data.order_info.order_item.value.indexOf('discount_money') != -1">优惠金额：￥2.00</div>
@@ -44,13 +44,13 @@
 		<div class="bottom-border"></div>
 
 		<!-- 买家/收货信息 -->
-		<div class="my-[10px]" v-show="data.buyer_info.member_basic_info.value.indexOf('nickname') != -1"><div>会员昵称：牛云</div></div>
+		<div class="my-[10px]" v-show="data.buyer_info.member_basic_info.value.indexOf('nickname') != -1"><div>会员昵称：张三</div></div>
 		<div class="my-[10px]" v-show="data.buyer_info.member_basic_info.value.indexOf('account_balance') != -1">账户余额：￥2000.00</div>
 		<div class="my-[10px]" v-show="data.buyer_info.member_basic_info.value.indexOf('account_point') != -1">账户积分：300</div>
 		<div class="my-[10px]" v-show="data.buyer_info.buyer_mobile.status" :class="[data.buyer_info.buyer_mobile.fontSize + '-size',data.buyer_info.buyer_mobile.fontWeight + '-weight']">会员手机号：{{ data.buyer_info.buyer_mobile.value == 'yes' ? '152****5131' : '15266665131' }}</div>
 		<div class="bottom-border" v-show="data.buyer_info.member_basic_info.value || data.buyer_info.buyer_mobile.status"></div>
 
-		<div class="my-[10px]" v-show="data.buyer_info.taker_name.status" :class="[data.buyer_info.taker_name.fontSize + '-size',data.buyer_info.taker_name.fontWeight + '-weight']">收货人：小明</div>
+		<div class="my-[10px]" v-show="data.buyer_info.taker_name.status" :class="[data.buyer_info.taker_name.fontSize + '-size',data.buyer_info.taker_name.fontWeight + '-weight']">收货人：小张</div>
 		<div class="my-[10px]" v-show="data.buyer_info.taker_mobile.status" :class="[data.buyer_info.taker_mobile.fontSize + '-size',data.buyer_info.taker_mobile.fontWeight + '-weight']">联系方式：{{ data.buyer_info.taker_mobile.value == 'yes' ? '152****5131' : '15266665131' }}</div>
 		<div class="my-[10px]" v-show="data.buyer_info.taker_full_address.status" :class="[data.buyer_info.taker_full_address.fontSize + '-size',data.buyer_info.taker_full_address.fontWeight + '-weight']">收货地址：山西省太原市小店区创业街27号时代广场大厦</div>
 		<div class="my-[10px]" v-show="data.buyer_info.member_remark.status" :class="[data.buyer_info.member_remark.fontSize + '-size',data.buyer_info.member_remark.fontWeight + '-weight']">买家备注：微辣，多放孜然，谢谢！</div>

@@ -138,7 +138,7 @@ class CoreElectronicSheetService extends BaseCoreService
         $shop_address_model = new ShopAddress();
         $default_shop_address = $shop_address_model->where([
             [ 'is_delivery_address', '=', 1 ],
-            [ 'is_default_delivery', '=', 1 ],
+            [ 'is_default_delivery', '=', 1 ]
         ])->field('contact_name,mobile,province_id,city_id,district_id,address')->findOrEmpty()->toArray();
 
         if (empty($default_shop_address)) {

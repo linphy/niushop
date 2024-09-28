@@ -122,7 +122,7 @@ export function getActiveDiscountStatusList() {
 
 /**
  * 获取限时折扣详情
- * @param active_id active_id
+ * @param active_id
  * @returns
  */
 export function getActiveDiscountInfo(active_id: number) {

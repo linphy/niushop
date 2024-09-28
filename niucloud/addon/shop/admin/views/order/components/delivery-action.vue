@@ -23,7 +23,7 @@
                     <el-input v-model.trim="formData.express_number" clearable :placeholder="t('expressNumberPlaceholder')" class="input-width" maxlength="30" />
                 </el-form-item>
             </el-form>
-            <el-table :data="goodsDataArr" size="large" @selection-change="handleSelectionChange">
+            <el-table :data="goodsDataArr" size="large" @selection-change="handleSelectionChange" max-height="400px">
                 <el-table-column type="selection" width="55" :selectable="selectable" />
                 <el-table-column prop="goods_name" :label="t('goodsName')" min-width="200" >
                     <template #default="{ row }">
@@ -130,7 +130,7 @@ const expressNumberPass = (rule: any, value: any, callback: any) => {
 }
 
 const selectable = (row:any, index:number) => {
-    if (row.status == 2 || row.delivery_status == 'delivery_finish') {
+    if (row.status == 2 || row.delivery_status == 'delivery_finish' || row.status == 3) {
         return false
     }
     return true
@@ -223,7 +223,7 @@ const setFormData = async (row: any = null) => {
                 break
             }
         }
-        if (isHasVirtual.value == true) {
+        if (isHasVirtual.value) {
             Object.assign(deliveryType.value, { virtual: t('virtualDelivery') })
         }
     }

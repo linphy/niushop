@@ -210,7 +210,7 @@ class Goods extends BaseAdminController
             [ 'goods_ids', '' ],
         ]);
         ( new GoodsService() )->recycle($data[ 'goods_ids' ]);
-        return success('DELETE_SUCCESS');
+        return success('SUCCESS');
     }
 
     /**
@@ -278,7 +278,7 @@ class Goods extends BaseAdminController
     }
 
     /**
-     * 商品选择分页列表
+     * 商品选择分页列表（按照单商品）
      * @return \think\Response
      */
     public function select()
@@ -287,25 +287,29 @@ class Goods extends BaseAdminController
             [ 'keyword', '' ], // 搜索关键词
             [ "goods_category", "" ], // 商品分类
             [ "goods_type", "" ], // 商品分类
-            [ 'goods_ids', '' ], // 已选商品id集合
-            [ 'verify_goods_ids', '' ] // 检测商品id集合是否存在，移除不存在的商品id，纠正数据准确性
+            [ "select_type", "all" ], // 商品分类
+            [ 'goods_ids', [] ], // 已选商品id集合
+            [ 'sku_ids', [] ], // 已选商品规格id集合
+            [ 'verify_goods_ids', [] ], // 检测商品id集合是否存在，移除不存在的商品id，纠正数据准确性
+            [ 'verify_sku_ids', [] ] // 检测商品规格id集合是否存在，移除不存在的商品规格id，纠正数据准确性
         ]);
 
         return success(( new GoodsService() )->getSelectPage($data));
     }
 
     /**
-     * 商品选择分页列表(带sku)
+     * 商品选择分页列表(带sku) todo 没用到
      * @return \think\Response
      */
-    public function selectgoodssku()
+    public function selectGoodsSku()
     {
         $data = $this->request->params([
             [ 'keyword', '' ], // 搜索关键词
             [ "goods_category", "" ], // 商品分类
             [ "goods_type", "" ], // 商品分类
             [ 'goods_ids', '' ], // 已选商品id集合
-            [ 'verify_goods_ids', '' ] // 检测商品id集合是否存在，移除不存在的商品id，纠正数据准确性
+            [ 'verify_goods_ids', '' ], // 检测商品id集合是否存在，移除不存在的商品id，纠正数据准确性
+            [ 'verify_sku_ids', [] ] // 检测商品规格id集合是否存在，移除不存在的商品规格id，纠正数据准确性
         ]);
 
         return success(( new GoodsService() )->getSelectSku($data));

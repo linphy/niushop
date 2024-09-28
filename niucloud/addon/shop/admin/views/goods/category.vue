@@ -40,7 +40,7 @@
                             <el-tag class="cursor-pointer" :type="row.is_show != 2 ? 'success' : 'danger'" @click="showClick(row)">{{ row.is_show != 2 ? '是' : '否' }}</el-tag>
                         </template>
                     </el-table-column>
-                    <!-- <el-table-column prop="sort" :label="t('sort')" width="120" /> -->
+                     <el-table-column prop="sort" :label="t('sort')" width="120" />
                     <el-table-column :label="t('operation')" fixed="right" align="right" width="200">
                         <template #default="{ row }">
                             <el-button type="primary" link @click="spreadEvent(row)">{{ t('spreadGoodsCategory') }}</el-button>
@@ -176,7 +176,9 @@ const loadCategoryList = () => {
     })
 }
 const updateCategoryFn = (params: any) => {
-    updateCategory(params).then(res => {})
+    updateCategory(params).then(res => {
+        loadCategoryList()
+    })
 }
 
 const showClick = (row: any) => {

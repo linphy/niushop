@@ -27,10 +27,7 @@
 					</el-radio-group>
 				</el-form-item>
 				<el-form-item :label="t('goodsNum')">
-					<div class="flex items-center w-full ml-[5px]">
-						<el-slider class="flex-1" v-model="diyStore.editComponent.num" max="20" size="small" />
-						<span class="ml-[15px]">{{ diyStore.editComponent.num }}</span>
-					</div>
+					<el-slider show-input class="graphic-nav-slider" v-model="diyStore.editComponent.num" :min="1" max="20" size="small" />
 				</el-form-item>
 			</el-form>
 		</div>
@@ -44,7 +41,7 @@
 					</el-radio-group>
 				</el-form-item>
 				<el-form-item :label="t('goodsCategoryTitle')" v-show="diyStore.editComponent.source == 'goods_category'">
-					<el-input v-model="diyStore.editComponent.goods_category_name" :placeholder="t('selectCategory')" readonly class="select-diy-page-input" @click="firstCategoryShowDialogOpen()">
+					<el-input v-model.trim="diyStore.editComponent.goods_category_name" :placeholder="t('selectCategory')" readonly class="select-diy-page-input" @click="firstCategoryShowDialogOpen()">
 						<template #suffix>
 							<div @click.stop="clearCategory">
 								<el-icon v-if="diyStore.editComponent.goods_category_name">
@@ -66,10 +63,10 @@
 						<div v-for="(item,index) in diyStore.editComponent.list" :key="item.id" class="item-wrap p-[10px] pb-0 relative border border-dashed border-gray-300 mb-[16px]">
 
 							<el-form-item :label="t('manyGoodsListCategoryName')">
-								<el-input v-model="item.title" clearable maxlength="4" show-word-limit/>
+								<el-input v-model.trim="item.title" clearable maxlength="4" show-word-limit/>
 							</el-form-item>
 							<el-form-item :label="t('manyGoodsListSubTitle')" v-show="diyStore.editComponent.headStyle == 'style-1'">
-								<el-input v-model="item.desc" clearable maxlength="5" show-word-limit/>
+								<el-input v-model.trim="item.desc" clearable maxlength="5" show-word-limit/>
 							</el-form-item>
 							<el-form-item :label="t('goodsSelectPopupSelectGoodsButton')">
 								<el-radio-group v-model="item.source">
@@ -106,8 +103,8 @@
 			</el-form>
 
 			<!-- 选择一级商品分类弹出框 -->
-			<el-dialog v-model="firstCategoryShowDialog" :title="t('goodsCategoryTitle')" width="1000px" :close-on-press-escape="false" :destroy-on-close="true" :close-on-click-modal="false">
-				<el-table :data="firstCategoryTable.data" ref="firstCategoryTableRef" size="large" v-loading="firstCategoryTable.loading" height="490px" @current-change="handleCurrentCategoryChange" row-key="category_id" highlight-current-row>
+			<el-dialog v-model="firstCategoryShowDialog" :title="t('goodsCategoryTitle')" width="750px" :close-on-press-escape="false" :destroy-on-close="true" :close-on-click-modal="false">
+				<el-table :data="firstCategoryTable.data" ref="firstCategoryTableRef" size="large" v-loading="firstCategoryTable.loading" height="450px" @current-change="handleCurrentCategoryChange" row-key="category_id" highlight-current-row>
 					<template #empty>
 						<span>{{ !firstCategoryTable.loading ? t('emptyData') : '' }}</span>
 					</template>

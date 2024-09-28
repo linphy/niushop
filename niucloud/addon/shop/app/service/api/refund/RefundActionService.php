@@ -155,7 +155,8 @@ class RefundActionService extends BaseApiService
             'status' => OrderRefundDict::BUYER_APPLY_WAIT_STORE,
             'remark' => $data['remark'],
             'voucher' => $data['voucher'],
-            'source' => OrderRefundDict::APPLY
+            'source' => OrderRefundDict::APPLY,
+            'shop_reason'=>'' // 再次申请退款，清空拒绝理由
         ];
         $order_refund_info->save($update_data);
         //订单申请退款后事件

@@ -1,9 +1,6 @@
 <template>
 	<view :style="themeColor()">
-		<view
-				v-if="Object.keys(detail).length&&!loading"
-				class="overflow-hidden min-h-screen bg-style relative"
-				:style="{ 'background': 'url(' + img('addon/shop/coupon/coupon_bg.png') + ') no-repeat' }">
+		<view v-if="Object.keys(detail).length&&!loading" class="overflow-hidden min-h-screen bg-style relative" :style="{ 'background': 'url(' + img('addon/shop/coupon/coupon_bg.png') + ') no-repeat' }">
 			<!-- #ifdef MP -->
 			<top-tabbar :data="topTabbarData" :scrollBool="topTabarObj.getScrollBool()" />
 			<!-- #endif -->
@@ -34,7 +31,7 @@
 				</view>
 				<view class="flex justify-center items-center mt-[20rpx]">
 					<text v-if="detail.btnType === 'collected'"
-					      class="!leading-[100rpx] text-center text-[#fff] text-[46rpx] min-w-[240rpx] h-[106rpx]"
+					      class="!leading-[100rpx] text-center text-[rgba(255,255,255,1)] text-[46rpx] min-w-[240rpx] h-[106rpx]"
 					      :style="{ 'background': 'url(' + img('addon/shop/coupon/coupon_btn_02.png') + ')  center / contain no-repeat' }"
 					>已领完
 					</text>
@@ -49,32 +46,29 @@
 					      @click="toLink(detail.id)">去使用
 					</text>
 				</view>
-				<view class="w-[230rpx] h-[230rpx] box-border p-[14rpx] bg-[#fff] mx-[auto] mt-[50rpx]">
+				<view class="w-[230rpx] h-[230rpx] box-border p-[15rpx] bg-[#fff] mx-[auto] mt-[50rpx]">
 					<image class="w-[200rpx] h-[200rpx]" :src="codeUrl" mode="aspectFill" />
 				</view>
 				<view class="text-[24rpx] text-[rgba(255,255,255,0.7)] mt-[30rpx] text-center">注:扫描二维码或点击右上角进行分享</view>
 			</view>
 
 		</view>
-		<u-loading-page bg-color="rgb(248,248,248)" :loading="loading" loadingText="" fontSize="16" color="#303133"></u-loading-page>
-        <!-- 强制绑定手机号 -->
-		<bind-mobile ref="bindMobileRef" /> 
+		<loading-page :loading="loading"></loading-page>
 	</view>
 </template>
 <script lang="ts" setup>
     import { ref, computed } from 'vue'
     import { onLoad } from '@dcloudio/uni-app'
-    import { img, redirect, handleOnloadParams } from '@/utils/common'
+    import { img, redirect, handleOnloadParams, goback } from '@/utils/common'
     import QRCode from "qrcode";
     import { topTabar } from '@/utils/topTabbar'
     import { getShopCouponInfo, getCoupon, getShopCouponQrocde } from '@/addon/shop/api/coupon'
-    import bindMobile from '@/components/bind-mobile/bind-mobile.vue';
     import useMemberStore from '@/stores/member'
     import { useLogin } from '@/hooks/useLogin'
 
     const loading = ref(false)
     const codeUrl = ref('')
-    const detail = ref({})
+    const detail: any = ref({})
     const memberStore = useMemberStore()
     const userInfo = computed(() => memberStore.info)
 
@@ -83,7 +77,7 @@
     let topTabbarData = topTabarObj.setTopTabbarParam({title:'优惠券详情'})
     /********* 自定义头部 - end ***********/
 
-    onLoad((option) => {
+    onLoad((option: any) => {
 
         // #ifdef MP-WEIXIN
         // 处理小程序场景值参数
@@ -91,16 +85,15 @@
         // #endif
 
         if (!option.coupon_id) {
-            uni.showToast({ title: '优惠券不存在', icon: 'none' })
-            setTimeout(() => {
-                redirect({ url: '/addon/shop/pages/index', mode: 'reLaunch' })
-            }, 600)
-            return false
+            let parameter = {
+				url:'/addon/shop/pages/coupon/list',
+				title: '优惠券不存在'
+			};
+			goback(parameter)
         } else {
             getShopCouponInfoFn(option.coupon_id)
             getShopCouponQrocdeFn(option.coupon_id)
         }
-
     })
 
     const getShopCouponInfoFn = (id: number) => {
@@ -109,8 +102,7 @@
             detail.value = res.data
             if (detail.value.sum_count != -1 && detail.value.receive_count === detail.value.sum_count) {
                 detail.value.btnType = 'collected'//已领完
-            }
-            if (!userInfo.value) {
+            }else if (!userInfo.value) {
                 detail.value.btnType = 'collecting'//领用
             } else {
                 if (detail.value.is_receive && detail.value.limit_count === detail.value.member_receive_count) {
@@ -130,7 +122,7 @@
         })
     }
 
-    const getShopCouponQrocdeFn = (id) => {
+    const getShopCouponQrocdeFn = (id: any) => {
         // #ifdef H5
         QRCode.toDataURL(window.location.href, { errorCorrectionLevel: 'L', margin: 0, width: 100 }).then(url => {
             codeUrl.value = url
@@ -146,15 +138,9 @@
         // #endif
     }
 
-    //强制绑定手机号
-    const bindMobileRef = ref(null)
     const collecting = (coupon_id: any) => {
         if (!userInfo.value) {
             useLogin().setLoginBack({ url: '/addon/shop/pages/coupon/list' })
-            return false
-        }
-        if(uni.getStorageSync('isbindmobile')){
-            bindMobileRef.value.open()
             return false
         }
         getCoupon({ coupon_id, number: 1 }).then(res => {

@@ -38,14 +38,6 @@ class CoreExpressService extends BaseCoreService
             return;
         }
 
-        // 判断会员等级是否有包邮的权益
-        if (isset($order->buyer['member_level']['level_benefits']) && isset($order->buyer['member_level']['level_benefits']['shop_free_shipping'])) {
-            if ($order->buyer['member_level']['level_benefits']['shop_free_shipping']['is_use']) {
-                $order->basic['delivery_money'] = 0;
-                return;
-            }
-        }
-
         foreach ($order->goods_data as $k => &$v) {
             $goods_type = $v['goods']['goods_type'];
             if ($goods_type == GoodsDict::REAL) {
@@ -64,6 +56,15 @@ class CoreExpressService extends BaseCoreService
                 }
             }
         }
+
+        // 判断会员等级是否有包邮的权益
+        if (isset($order->buyer['member_level']['level_benefits']) && isset($order->buyer['member_level']['level_benefits']['shop_free_shipping'])) {
+            if ($order->buyer['member_level']['level_benefits']['shop_free_shipping']['is_use']) {
+                $order->basic['delivery_money'] = 0;
+                return;
+            }
+        }
+
         $order->basic['delivery_money'] = $delivery_money;
     }
 

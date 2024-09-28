@@ -5,8 +5,8 @@
 			<view :style="navbarInnerStyle"></view>
 			<!-- #endif -->
 			<template v-if="token">
-				<view class="text-[34rpx] font-500 leading-[48rpx]">我的积分</view>
-				<view class="text-[80rpx] font-bold leading-[112rpx]">{{memberPoint.point||0}}</view>
+				<view class="text-[34rpx] leading-[48rpx]">我的积分</view>
+				<view class="text-[80rpx] font-500 price-font leading-[112rpx]">{{memberPoint.point||0}}</view>
 				<view class="text-[24rpx] font-400 leading-[34rpx]">今日获得：{{memberPoint.today_point||0}}</view>
 			</template>
 			<template v-else>
@@ -45,6 +45,7 @@
 		if (diyComponent.value.bgUrl) {
 			style += 'background-image:url(' + img(diyComponent.value.bgUrl) + ');';
 			style += 'background-size: 100%;';
+			style += 'backgroundPosition: bottom;';
 			style += 'background-repeat: no-repeat;';
 		}
 		if (diyComponent.value.topRounded) style += 'border-top-left-radius:' + diyComponent.value.topRounded * 2 + 'rpx;';
@@ -70,7 +71,7 @@
 	    () => diyComponent.value,
 		(newValue, oldValue) => {
             refresh();
-        },{deep: true})
+    },{deep: true})
 
 	const memberPoint :Record<string, any> = ref({})
 
@@ -97,7 +98,7 @@
 		loading.value = false
     }
 
-	let menuButtonInfo = {};
+	let menuButtonInfo: any = {};
 	// 如果是小程序，获取右上角胶囊的尺寸信息，避免导航栏右侧内容与胶囊重叠(支付宝小程序非本API，尚未兼容)
 	// #ifdef MP-WEIXIN || MP-BAIDU || MP-TOUTIAO || MP-QQ
 	menuButtonInfo = uni.getMenuButtonBoundingClientRect();

@@ -76,8 +76,14 @@ return [
                         "componentName" => "CarouselSearch",
                         "componentTitle" => "轮播搜索",
                         "ignore" => [
+                            "componentBgColor",
+                            "componentBgUrl",
                             "marginTop",
-                            "marginBottom"
+                            "marginBottom",
+                            "topRounded",
+                            "bottomRounded",
+                            "pageBgColor",
+                            "marginBoth"
                         ],
                         "positionWay" => "fixed",
                         "fixedBgColor" => "",
@@ -212,8 +218,8 @@ return [
                         "componentStartBgColor" => "",
                         "componentEndBgColor" => "",
                         "componentGradientAngle" => "to bottom",
-                        "topRounded" => 0,
-                        "bottomRounded" => 0,
+                        "topRounded" => 12,
+                        "bottomRounded" => 12,
                         "elementBgColor" => "",
                         "topElementRounded" => 0,
                         "bottomElementRounded" => 0,
@@ -392,15 +398,15 @@ return [
                             ],
                             [
                                 "id" => "tgo5qmjawnk",
-                                "title" => "我的积分",
-                                "imageUrl" => "addon/shop/diy/index/style2/nav_my_point.png",
+                                "title" => "礼品卡",
+                                "imageUrl" => "addon/shop/diy/index/style2/nav_giftcard.png",
                                 "imgWidth" => 180,
                                 "imgHeight" => 180,
                                 "link" => [
-                                    "name" => "MEMBER_POINT",
-                                    "parent" => "MEMBER_LINK",
-                                    "title" => "我的积分",
-                                    "url" => "/app/pages/member/point",
+                                    "name" => "SHOP_GIFTCARD_INDEX",
+                                    "parent" => "SHOP_GIFTCARD_LINK",
+                                    "title" => "礼品卡",
+                                    "url" => "/addon/shop_giftcard/pages/index",
                                     "action" => ""
                                 ],
                                 "label" => [
@@ -463,13 +469,13 @@ return [
                         "componentStartBgColor" => "rgba(255, 255, 255, 1)",
                         "componentEndBgColor" => "",
                         "componentGradientAngle" => "to bottom",
-                        "topRounded" => 6,
-                        "bottomRounded" => 6,
+                        "topRounded" => 12,
+                        "bottomRounded" => 12,
                         "elementBgColor" => "",
                         "topElementRounded" => 0,
                         "bottomElementRounded" => 0,
                         "margin" => [
-                            "top" => 5,
+                            "top" => -1,
                             "bottom" => 5,
                             "both" => 10
                         ]
@@ -515,8 +521,8 @@ return [
                         "componentStartBgColor" => "rgba(255, 255, 255, 1)",
                         "componentEndBgColor" => "",
                         "componentGradientAngle" => "to bottom",
-                        "topRounded" => 6,
-                        "bottomRounded" => 6,
+                        "topRounded" => 12,
+                        "bottomRounded" => 12,
                         "elementBgColor" => "",
                         "topElementRounded" => 0,
                         "bottomElementRounded" => 0,
@@ -554,7 +560,7 @@ return [
                         "componentEndBgColor" => "",
                         "componentGradientAngle" => "to bottom",
                         "topRounded" => 0,
-                        "bottomRounded" => 0,
+                        "bottomRounded" => 12,
                         "elementBgColor" => "",
                         "topElementRounded" => 0,
                         "bottomElementRounded" => 0,
@@ -709,8 +715,8 @@ return [
                         "componentStartBgColor" => "#ffffff",
                         "componentEndBgColor" => "",
                         "componentGradientAngle" => "to bottom",
-                        "topRounded" => 6,
-                        "bottomRounded" => 6,
+                        "topRounded" => 12,
+                        "bottomRounded" => 12,
                         "elementBgColor" => "#FFFAF5",
                         "topElementRounded" => 0,
                         "bottomElementRounded" => 0,
@@ -871,8 +877,8 @@ return [
                         "topElementRounded" => 0,
                         "bottomElementRounded" => 0,
                         "margin" => [
-                            "top" => 5,
-                            "bottom" => 5,
+                            "top" => 12,
+                            "bottom" => 12,
                             "both" => 10
                         ]
                     ],
@@ -892,10 +898,10 @@ return [
                         "pageGradientAngle" => "to bottom",
                         "componentBgUrl" => "",
                         "componentBgAlpha" => 2,
-                        "componentStartBgColor" => "rgba(251, 148, 62, 1)",
-                        "componentEndBgColor" => "rgba(252, 49, 49, 1)",
+                        "componentStartBgColor" => "rgba(255, 169, 97, 1)",
+                        "componentEndBgColor" => "rgba(250, 61, 61, 1)",
                         "componentGradientAngle" => "to right",
-                        "topRounded" => 6,
+                        "topRounded" => 12,
                         "bottomRounded" => 0,
                         "elementBgColor" => "",
                         "topElementRounded" => 0,
@@ -922,13 +928,13 @@ return [
                             "name" => ""
                         ],
                         "textColor" => "#FFFFFF",
-                        "fontSize" => 16,
+                        "fontSize" => 15,
                         "fontWeight" => "normal",
                         "textAlign" => "center",
                         "subTitle" => [
                             "text" => "数量有限 抢完为止",
                             "color" => "#FFFFFF",
-                            "fontSize" => 14,
+                            "fontSize" => 12,
                             "control" => true,
                             "fontWeight" => "normal"
                         ],
@@ -946,8 +952,8 @@ return [
                         'pageGradientAngle' => 'to bottom',
                         'componentBgUrl' => '',
                         'componentBgAlpha' => 2,
-                        "componentStartBgColor" => "rgba(251, 148, 62, 1)",
-                        "componentEndBgColor" => "rgba(252, 49, 49, 1)",
+                        "componentStartBgColor" => "rgba(255, 169, 97, 1)",
+                        "componentEndBgColor" => "rgba(250, 61, 61, 1)",
                         "componentGradientAngle" => "to right",
                         "topRounded" => 0,
                         "bottomRounded" => 0,
@@ -976,8 +982,8 @@ return [
                         "pageGradientAngle" => "to bottom",
                         "componentBgUrl" => "",
                         "componentBgAlpha" => 2,
-                        "componentStartBgColor" => "rgba(251, 148, 62, 1)",
-                        "componentEndBgColor" => "rgba(252, 49, 49, 1)",
+                        "componentStartBgColor" => "rgba(255, 169, 97, 1)",
+                        "componentEndBgColor" => "rgba(250, 61, 61, 1)",
                         "componentGradientAngle" => "to right",
                         "topRounded" => 0,
                         "bottomRounded" => 0,
@@ -1026,17 +1032,17 @@ return [
                         'pageGradientAngle' => 'to bottom',
                         'componentBgUrl' => '',
                         'componentBgAlpha' => 2,
-                        "componentStartBgColor" => "rgba(251, 148, 62, 1)",
-                        "componentEndBgColor" => "rgba(252, 49, 49, 1)",
+                        "componentStartBgColor" => "rgba(255, 169, 97, 1)",
+                        "componentEndBgColor" => "rgba(250, 61, 61, 1)",
                         "componentGradientAngle" => "to right",
                         "topRounded" => 0,
-                        "bottomRounded" => 6,
+                        "bottomRounded" => 12,
                         "elementBgColor" => "",
-                        "topElementRounded" => 0,
-                        "bottomElementRounded" => 0,
+                        "topElementRounded" => 10,
+                        "bottomElementRounded" => 10,
                         "margin" => [
                             "top" => 0,
-                            "bottom" => 5,
+                            "bottom" => 9,
                             "both" => 10
                         ]
                     ],
@@ -1056,10 +1062,10 @@ return [
                         "pageGradientAngle" => "to bottom",
                         "componentBgUrl" => "",
                         "componentBgAlpha" => 2,
-                        "componentStartBgColor" => "rgba(252, 52, 49, 1)",
+                        "componentStartBgColor" => "rgba(253, 41, 52, 1)",
                         "componentEndBgColor" => "",
                         "componentGradientAngle" => "to bottom",
-                        "topRounded" => 6,
+                        "topRounded" => 12,
                         "bottomRounded" => 0,
                         "elementBgColor" => "",
                         "topElementRounded" => 0,
@@ -1086,13 +1092,13 @@ return [
                             "name" => ""
                         ],
                         "textColor" => "#FFFFFF",
-                        "fontSize" => 16,
+                        "fontSize" => 15,
                         "fontWeight" => "normal",
                         "textAlign" => "center",
                         "subTitle" => [
                             "text" => "数量有限 抢完为止",
                             "color" => "#FFFFFF",
-                            "fontSize" => 14,
+                            "fontSize" => 12,
                             "control" => true,
                             "fontWeight" => "normal"
                         ],
@@ -1110,8 +1116,8 @@ return [
                         'pageGradientAngle' => 'to bottom',
                         'componentBgUrl' => '',
                         'componentBgAlpha' => 2,
-                        "componentStartBgColor" => "rgba(252, 52, 49, 1)",
-                        "componentEndBgColor" => null,
+                        "componentStartBgColor" => "rgba(253, 41, 52, 1)",
+                        "componentEndBgColor" => "",
                         "componentGradientAngle" => "to bottom",
                         "topRounded" => 0,
                         "bottomRounded" => 0,
@@ -1159,14 +1165,14 @@ return [
                         'pageGradientAngle' => 'to bottom',
                         'componentBgUrl' => '',
                         'componentBgAlpha' => 2,
-                        "componentStartBgColor" => "rgba(252, 52, 49, 1)",
-                        "componentEndBgColor" => "rgba(251, 127, 59, 1)",
+                        "componentStartBgColor" => "rgba(253, 41, 52, 1)",
+                        "componentEndBgColor" => "rgba(255, 236, 236, 1)",
                         "componentGradientAngle" => "to bottom",
                         "topRounded" => 0,
-                        "bottomRounded" => 6,
+                        "bottomRounded" => 12,
                         "elementBgColor" => "",
-                        "topElementRounded" => 0,
-                        "bottomElementRounded" => 0,
+                        "topElementRounded" => 10,
+                        "bottomElementRounded" => 10,
                         "margin" => [
                             "top" => 0,
                             "bottom" => 5,
@@ -1188,13 +1194,13 @@ return [
                             "name" => ""
                         ],
                         "textColor" => "#303133",
-                        "fontSize" => 16,
-                        "fontWeight" => "bold",
+                        "fontSize" => 15,
+                        "fontWeight" => "normal",
                         "textAlign" => "center",
                         "subTitle" => [
                             "text" => "副标题",
                             "color" => "#999999",
-                            "fontSize" => 14,
+                            "fontSize" => 12,
                             "control" => false,
                             "fontWeight" => "normal"
                         ],
@@ -1221,8 +1227,8 @@ return [
                         "topElementRounded" => 0,
                         "bottomElementRounded" => 0,
                         "margin" => [
-                            "top" => 5,
-                            "bottom" => 5,
+                            "top" => 20,
+                            "bottom" => 15,
                             "both" => 0
                         ]
                     ],
@@ -1264,11 +1270,11 @@ return [
                         "componentStartBgColor" => "",
                         "componentEndBgColor" => "",
                         "componentGradientAngle" => "to bottom",
-                        "topRounded" => 8,
-                        "bottomRounded" => 8,
+                        "topRounded" => 12,
+                        "bottomRounded" => 12,
                         "elementBgColor" => "",
-                        "topElementRounded" => 0,
-                        "bottomElementRounded" => 0,
+                        "topElementRounded" => 12,
+                        "bottomElementRounded" => 12,
                         "margin" => [
                             "top" => 5,
                             "bottom" => 5,
@@ -1281,7 +1287,7 @@ return [
                         "id" => "65lv65b38ig0",
                         "componentName" => "ManyGoodsList",
                         "componentTitle" => "多商品组",
-                        "ignore" => [],
+                        "ignore" => ['componentBgUrl'],
                         "style" => "style-2",
                         "num" => 6,
                         "sortWay" => "default",
@@ -1359,11 +1365,11 @@ return [
                         "componentStartBgColor" => "rgba(255, 255, 255, 1)",
                         "componentEndBgColor" => "",
                         "componentGradientAngle" => "to bottom",
-                        "topRounded" => 4,
-                        "bottomRounded" => 4,
+                        "topRounded" => 12,
+                        "bottomRounded" => 12,
                         "elementBgColor" => "",
-                        "topElementRounded" => 0,
-                        "bottomElementRounded" => 0,
+                        "topElementRounded" => 12,
+                        "bottomElementRounded" => 12,
                         "margin" => [
                             "top" => 10,
                             "bottom" => 10,
@@ -1461,7 +1467,7 @@ return [
                             "bottom" => 0,
                             "both" => 0
                         ],
-                        "textColor" => "#303133",
+                        "textColor" => "#333333",
                         "pageStartBgColor" => "",
                         "pageEndBgColor" => "",
                         "pageGradientAngle" => "to bottom",
@@ -1470,7 +1476,8 @@ return [
                         "componentGradientAngle" => "to bottom",
                         "style" => "style-1",
                         "styleName" => "风格1",
-                        "bgUrl" => ""
+                        "bgUrl" => "",
+                        "isShowAccount" => true
                     ],
                     [
                         "path" => "edit-member-level",
@@ -1487,14 +1494,14 @@ return [
                         "textColor" => "#303133",
                         "componentStartBgColor" => "",
                         "componentEndBgColor" => "",
-                        "topRounded" => 8,
-                        "bottomRounded" => 0,
+                        "topRounded" => 12,
+                        "bottomRounded" => 12,
                         "elementBgColor" => "",
                         "topElementRounded" => 0,
                         "bottomElementRounded" => 0,
                         "margin" => [
                             "top" => -45,
-                            "bottom" => 10,
+                            "bottom" => 0,
                             "both" => 10
                         ],
                         "pageStartBgColor" => "",
@@ -1512,7 +1519,7 @@ return [
                         "componentTitle" => "订单中心",
                         "ignore" => [],
                         "textColor" => "#303133",
-                        "fontSize" => 16,
+                        "fontSize" => 15,
                         "fontWeight" => "normal",
                         "text" => "订单中心",
                         "more" => [
@@ -1526,14 +1533,14 @@ return [
                         ],
                         "componentStartBgColor" => "rgba(255, 255, 255, 1)",
                         "componentEndBgColor" => "",
-                        "topRounded" => 8,
-                        "bottomRounded" => 8,
+                        "topRounded" => 12,
+                        "bottomRounded" => 12,
                         "elementBgColor" => "",
                         "topElementRounded" => 0,
                         "bottomElementRounded" => 0,
                         "margin" => [
-                            "top" => 0,
-                            "bottom" => 5,
+                            "top" => 10,
+                            "bottom" => 0,
                             "both" => 10
                         ],
                         "pageStartBgColor" => "",
@@ -1553,14 +1560,14 @@ return [
                         "textColor" => "#303133",
                         "componentStartBgColor" => "",
                         "componentEndBgColor" => "",
-                        "topRounded" => 6,
-                        "bottomRounded" => 6,
+                        "topRounded" => 12,
+                        "bottomRounded" => 12,
                         "elementBgColor" => "",
                         "topElementRounded" => 0,
                         "bottomElementRounded" => 0,
                         "margin" => [
-                            "top" => 5,
-                            "bottom" => 5,
+                            "top" => 10,
+                            "bottom" => 0,
                             "both" => 10
                         ],
                         "list" => [
@@ -1582,7 +1589,35 @@ return [
                         "componentBgUrl" => "",
                         "componentBgAlpha" => 2,
                         "componentGradientAngle" => "to bottom",
-                        "imageHeight" => 90
+                        "imageHeight" => 100
+                    ],
+                    [
+                        "path" => "edit-horz-blank",
+                        "uses" => 0,
+                        "id" => "6cil3ipiis40",
+                        "componentName" => "HorzBlank",
+                        "componentTitle" => "辅助空白",
+                        "ignore" => ['pageBgColor','componentBgUrl'],
+                        "height" => 10,
+                        "textColor" => "#303133",
+                        "componentStartBgColor" => "rgba(255, 255, 255, 1)",
+                        "componentEndBgColor" => "",
+                        "topRounded" => 12,
+                        "bottomRounded" => 0,
+                        "elementBgColor" => "",
+                        "topElementRounded" => 0,
+                        "bottomElementRounded" => 0,
+                        "margin" => [
+                            "top" => 10,
+                            "bottom" => 0,
+                            "both" => 10
+                        ],
+                        "pageStartBgColor" => "",
+                        "pageEndBgColor" => "",
+                        "pageGradientAngle" => "to bottom",
+                        "componentBgUrl" => "",
+                        "componentBgAlpha" => 2,
+                        "componentGradientAngle" => "to bottom"
                     ],
                     [
                         "path" => "edit-text",
@@ -1594,17 +1629,17 @@ return [
                         "textColor" => "#303133",
                         "componentStartBgColor" => "rgba(255, 255, 255, 1)",
                         "componentEndBgColor" => "",
-                        "topRounded" => 8,
+                        "topRounded" => 0,
                         "bottomRounded" => 0,
                         "elementBgColor" => "",
                         "topElementRounded" => 0,
                         "bottomElementRounded" => 0,
                         "margin" => [
-                            "top" => 5,
+                            "top" => 0,
                             "bottom" => 0,
                             "both" => 10
                         ],
-                        "fontSize" => 16,
+                        "fontSize" => 15,
                         "fontWeight" => "normal",
                         "pageStartBgColor" => "",
                         "pageEndBgColor" => "",
@@ -1638,6 +1673,34 @@ return [
                         ]
                     ],
                     [
+                        "path" => "edit-horz-blank",
+                        "uses" => 0,
+                        "id" => "5jx57rrjl940",
+                        "componentName" => "HorzBlank",
+                        "componentTitle" => "辅助空白",
+                        "ignore" => ['pageBgColor','componentBgUrl'],
+                        "height" => 8,
+                        "textColor" => "#303133",
+                        "componentStartBgColor" => "rgba(255, 255, 255, 1)",
+                        "componentEndBgColor" => "",
+                        "topRounded" => 0,
+                        "bottomRounded" => 0,
+                        "elementBgColor" => "",
+                        "topElementRounded" => 0,
+                        "bottomElementRounded" => 0,
+                        "margin" => [
+                            "top" => 0,
+                            "bottom" => 0,
+                            "both" => 10
+                        ],
+                        "pageStartBgColor" => "",
+                        "pageEndBgColor" => "",
+                        "pageGradientAngle" => "to bottom",
+                        "componentBgUrl" => "",
+                        "componentBgAlpha" => 2,
+                        "componentGradientAngle" => "to bottom"
+                    ],
+                    [
                         "path" => "edit-graphic-nav",
                         "uses" => 0,
                         "id" => "5myxk1opz0c0",
@@ -1648,13 +1711,13 @@ return [
                         "componentStartBgColor" => "rgba(255, 255, 255, 1)",
                         "componentEndBgColor" => "",
                         "topRounded" => 0,
-                        "bottomRounded" => 8,
+                        "bottomRounded" => 12,
                         "elementBgColor" => "",
                         "topElementRounded" => 0,
                         "bottomElementRounded" => 0,
                         "margin" => [
                             "top" => 0,
-                            "bottom" => 0,
+                            "bottom" => 10,
                             "both" => 10
                         ],
                         "pageStartBgColor" => "",
@@ -1684,8 +1747,8 @@ return [
                                 "id" => "49kxbgr5lwue",
                                 "title" => "签到",
                                 "imageUrl" => "addon/shop/diy/member/style1/nav_sign_in.png",
-                                "imgWidth" => 88,
-                                "imgHeight" => 88,
+                                "imgWidth" => 92,
+                                "imgHeight" => 92,
                                 "link" => [
                                     "name" => "MEMBER_MY_SIGN_IN",
                                     "parent" => "MEMBER_LINK",
@@ -1719,8 +1782,8 @@ return [
                                     "bgColorEnd" => "#FE3423"
                                 ],
                                 "id" => "2aqy33banse8",
-                                "imgWidth" => 88,
-                                "imgHeight" => 88
+                                "imgWidth" => 92,
+                                "imgHeight" => 92
                             ],
                             [
                                 "title" => "地址管理",
@@ -1740,8 +1803,8 @@ return [
                                     "bgColorEnd" => "#FE3423"
                                 ],
                                 "id" => "hdk4145zk40",
-                                "imgWidth" => 88,
-                                "imgHeight" => 88
+                                "imgWidth" => 92,
+                                "imgHeight" => 92
                             ],
                             [
                                 "title" => "优惠券",
@@ -1761,15 +1824,15 @@ return [
                                     "bgColorEnd" => "#FE3423"
                                 ],
                                 "id" => "34t5xg9ik0i0",
-                                "imgWidth" => 88,
-                                "imgHeight" => 88
+                                "imgWidth" => 92,
+                                "imgHeight" => 92
                             ],
                             [
                                 "id" => "7dpefp0s9ew0",
                                 "title" => "分销中心",
                                 "imageUrl" => "addon/shop/diy/member/style1/nav_promote.png",
-                                "imgWidth" => 88,
-                                "imgHeight" => 88,
+                                "imgWidth" => 92,
+                                "imgHeight" => 92,
                                 "link" => [
                                     "name" => "SHOP_FENXIAO_INDEX",
                                     "parent" => "SHOP_FENXIAO_LINK",
@@ -1799,15 +1862,15 @@ return [
                                     "bgColorEnd" => "#FE3423"
                                 ],
                                 "id" => "692put4jerg0",
-                                "imgWidth" => 88,
-                                "imgHeight" => 88
+                                "imgWidth" => 92,
+                                "imgHeight" => 92
                             ],
                             [
                                 "id" => "78kxbgr4lipw",
                                 "title" => "核销台",
                                 "imageUrl" => "addon/shop/diy/member/style1/nav_verify_index.png",
-                                "imgWidth" => 88,
-                                "imgHeight" => 88,
+                                "imgWidth" => 92,
+                                "imgHeight" => 92,
                                 "link" => [
                                     "name" => "MEMBER_VERIFY_INDEX",
                                     "parent" => "MEMBER_LINK",
@@ -1824,11 +1887,32 @@ return [
                                 ]
                             ],
                             [
+                                "id" => "27kxbgr5lj3w",
+                                "title" => "礼品卡",
+                                "imageUrl" => "addon/shop/diy/member/style1/nav_giftcard.png",
+                                "imgWidth" => 92,
+                                "imgHeight" => 92,
+                                "link" => [
+                                    "name" => "SHOP_GIFTCARD_MY_CARD_LIST",
+                                    "parent" => "SHOP_GIFTCARD_LINK",
+                                    "title" => "我的卡包",
+                                    "url" => "/addon/shop_giftcard/pages/my_card_list",
+                                    "action" => ""
+                                ],
+                                "label" => [
+                                    "control" => false,
+                                    "text" => "热门",
+                                    "textColor" => "#FFFFFF",
+                                    "bgColorStart" => "#F83287",
+                                    "bgColorEnd" => "#FE3423"
+                                ]
+                            ],
+                            [
                                 "id" => "4o2q7yss59m0",
                                 "title" => "我的等级",
                                 "imageUrl" => "addon/shop/diy/member/style1/nav_my_level.png",
-                                "imgWidth" => 88,
-                                "imgHeight" => 88,
+                                "imgWidth" => 92,
+                                "imgHeight" => 92,
                                 "link" => [
                                     "name" => "MEMBER_MY_LEVEL",
                                     "parent" => "MEMBER_LINK",
@@ -1848,8 +1932,8 @@ return [
                                 "id" => "78fnsh8cx5k0",
                                 "title" => "我的收藏",
                                 "imageUrl" => "addon/shop/diy/member/style1/nav_collect.png",
-                                "imgWidth" => 88,
-                                "imgHeight" => 88,
+                                "imgWidth" => 92,
+                                "imgHeight" => 92,
                                 "link" => [
                                     "name" => ""
                                 ],
@@ -1865,8 +1949,8 @@ return [
                                 "id" => "27kxbgr5ljbw",
                                 "title" => "联系客服",
                                 "imageUrl" => "addon/shop/diy/member/style1/nav_service.png",
-                                "imgWidth" => 88,
-                                "imgHeight" => 88,
+                                "imgWidth" => 92,
+                                "imgHeight" => 92,
                                 "link" => [
                                     "name" => "MEMBER_CONTACT",
                                     "parent" => "MEMBER_LINK",
@@ -2002,7 +2086,7 @@ return [
                         "imageSize" => 40,
                         "aroundRadius" => 0,
                         "font" => [
-                            "size" => 14,
+                            "size" => 13,
                             "weight" => "normal",
                             "color" => "#303133"
                         ],
@@ -2072,7 +2156,7 @@ return [
                             ]
                         ],
                         "textColor" => "#303133",
-                        "pageStartBgColor" => null,
+                        "pageStartBgColor" => "",
                         "pageEndBgColor" => "rgba(255, 255, 255, 1)",
                         "pageGradientAngle" => "to bottom",
                         "componentBgUrl" => "",
@@ -2080,8 +2164,8 @@ return [
                         "componentStartBgColor" => "rgba(255, 255, 255, 1)",
                         "componentEndBgColor" => "rgba(255, 255, 255, 1)",
                         "componentGradientAngle" => "to bottom",
-                        "topRounded" => 8,
-                        "bottomRounded" => 8,
+                        "topRounded" => 17,
+                        "bottomRounded" => 17,
                         "elementBgColor" => "",
                         "topElementRounded" => 0,
                         "bottomElementRounded" => 0,
@@ -2128,7 +2212,7 @@ return [
                         "componentTitle" => "标题",
                         "path" => "edit-text",
                         "uses" => 0,
-                        "fontSize" => 16,
+                        "fontSize" => 15,
                         "position" => "",
                         "ignore" => [],
                         "style" => "style-2",
@@ -2143,7 +2227,7 @@ return [
                         "subTitle" => [
                             "text" => "",
                             "color" => "#999999",
-                            "fontSize" => 14,
+                            "fontSize" => 13,
                             "control" => true,
                             "fontWeight" => "normal"
                         ],
@@ -2176,7 +2260,7 @@ return [
                         "margin" => [
                             "top" => 0,
                             "bottom" => 0,
-                            "both" => 10
+                            "both" => 0
                         ]
                     ],
                     [
@@ -2251,8 +2335,8 @@ return [
                         "topRounded" => 0,
                         "bottomRounded" => 0,
                         "elementBgColor" => "",
-                        "topElementRounded" => 8,
-                        "bottomElementRounded" => 8,
+                        "topElementRounded" => 12,
+                        "bottomElementRounded" => 12,
                         "margin" => [
                             "top" => 0,
                             "bottom" => 0,

@@ -55,7 +55,7 @@ class AttrService extends BaseAdminService
      */
     public function getList(array $where = [], $field = 'attr_id,attr_name,sort')
     {
-        $order = 'attr_id desc';
+        $order = 'sort desc,attr_id desc';
         if (!empty($where[ 'order' ])) {
             $order = $where[ 'order' ] . ' ' . $where[ 'sort' ];
         }

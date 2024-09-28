@@ -5,7 +5,7 @@
                 <el-input v-model.trim="formData.category_name" clearable :placeholder="t('categoryNamePlaceholder')" class="input-width" maxlength="10" show-word-limit />
             </el-form-item>
             <el-form-item :label="t('pid')" prop="pid">
-                <el-select v-model="formData.pid" clearable :disabled="!!formData.child_count" :placeholder="t('pidPlaceholder')" class="input-width">
+                <el-select v-model="formData.pid" clearable :disabled="formData.child_count" :placeholder="t('pidPlaceholder')" class="input-width">
                     <el-option label="顶级分类" :value="0" />
                     <el-option v-for="(item) in optionList" :key="item.category_id" :label="item.category_name" :value="item.category_id" />
                 </el-select>

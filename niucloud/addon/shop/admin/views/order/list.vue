@@ -100,7 +100,12 @@
 													<img class="w-[50px] h-[50px]" v-else src="" alt="">
 												</div>
 												<div class="flex flex-col">
-													<p class="multi-hidden text-[14px]">{{ row.goods_name }}</p>
+                                                    <el-tooltip class="box-item" effect="light" placement="top">
+                                                        <template #content>
+                                                            <div class="max-w-[250px]">{{row.goods_name}}</div>
+                                                        </template>
+													    <p class="multi-hidden text-[14px]">{{ row.goods_name }}</p>
+                                                    </el-tooltip>
 													<span class="text-[12px] text-[#999] truncate">{{ row.sku_name }}</span>
 												</div>
 											</div>
@@ -156,7 +161,7 @@
 											<template v-if="item.status == 1">
 												<el-button type="primary" link @click="close(item)">{{ t('orderClose') }}</el-button>
 												<el-button type="primary" link @click="orderAdjustMoney(item)">{{ t('editPrice') }}</el-button>
-												<el-button type="primary" v-if="item.delivery_type != 'virtual'" link @click="orderEditAddressFn(item)">{{ t('editAddress') }}</el-button>
+												<el-button type="primary" v-if="item.delivery_type != 'virtual' && item.activity_type != 'giftcard'" link @click="orderEditAddressFn(item)">{{ t('editAddress') }}</el-button>
 											</template>
 											<el-button type="primary" link @click="delivery(item)" v-if="item.status == 2">{{ t('sendOutGoods') }}</el-button>
 											<el-button type="primary" link @click="finish(item)" v-if="item.status == 3">{{ t('confirmTakeDelivery') }}</el-button>

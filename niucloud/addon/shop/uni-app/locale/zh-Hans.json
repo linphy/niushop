@@ -9,8 +9,6 @@
     "pages.order.list": "订单列表",
     "pages.order.detail": "订单详情",
     "pages.order.payment": "待付款订单",
-    "pages.pay.index": "待支付",
-    "pages.pay.result": "支付成功",
     "pages.evaluate.order_evaluate": "商品评价",
     "pages.evaluate.order_evaluate_view": "商品评价",
     "pages.evaluate.list": "评价列表",

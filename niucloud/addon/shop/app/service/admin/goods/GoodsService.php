@@ -790,6 +790,7 @@ class GoodsService extends BaseAdminService
     public function getSelectPage(array $where = [])
     {
         $field = 'goods_id, goods_name, goods_type, goods_cover,goods_image, stock,sub_title,goods_desc';
+        $order = 'sort desc,create_time desc';
 
         $sku_where = [
             [ 'goodsSku.is_default', '=', 1 ],
@@ -800,22 +801,51 @@ class GoodsService extends BaseAdminService
             $sku_where[] = [ 'goods_name|sub_title', 'like', '%' . $where[ 'keyword' ] . '%' ];
         }
 
+        // 查询已选的
+        if (!empty($where[ 'sku_ids' ])) {
+            $goods_sku_model = new GoodsSku();
+            $goods_ids = $goods_sku_model->where([
+                [ 'sku_id', 'in', $where[ 'sku_ids' ] ]
+            ])->field('goods_id')->select()->toArray();
+            if (!empty($goods_ids)) {
+                $goods_ids = array_column($goods_ids, 'goods_id');
+            }
+        }
+
+        if (!empty($goods_ids) && empty($where[ 'goods_ids' ])) {
+            $where[ 'goods_ids' ] = $goods_ids;
+        }
+
         if (empty($where[ 'goods_ids' ])) {
             $sku_where[] = [ 'goods.stock', '>', 0 ];
         }
-        if (!empty($where[ 'goods_ids' ])) {
+        if ($where[ 'select_type' ] == 'selected') {
             $sku_where[] = [ 'goods.goods_id', 'in', $where[ 'goods_ids' ] ];
         }
 
-        $order = 'sort desc,create_time desc';
-
         $verify_goods_ids = [];
-
+        $verify_sku_ids = [];
         // 检测商品id集合是否存在，移除不存在的商品id，纠正数据准确性
         if (!empty($where[ 'verify_goods_ids' ])) {
             $verify_goods_ids = $this->model->where([
                 [ 'goods_id', 'in', $where[ 'verify_goods_ids' ] ]
             ])->field('goods_id')->select()->toArray();
+
+            if (!empty($verify_goods_ids)) {
+                $verify_goods_ids = array_column($verify_goods_ids, 'goods_id');
+            }
+        }
+
+        // 检测商品id集合是否存在，移除不存在的商品id，纠正数据准确性
+        if (!empty($where[ 'verify_sku_ids' ])) {
+            $goods_sku_model = new GoodsSku();
+            $verify_sku_ids = $goods_sku_model->where([
+                [ 'sku_id', 'in', $where[ 'verify_sku_ids' ] ]
+            ])->field('sku_id')->select()->toArray();
+
+            if (!empty($verify_sku_ids)) {
+                $verify_sku_ids = array_column($verify_sku_ids, 'sku_id');
+            }
         }
 
         $search_model = $this->model
@@ -830,10 +860,9 @@ class GoodsService extends BaseAdminService
             ->where($sku_where)->order($order)->append([ 'goods_type_name', 'goods_cover_thumb_small', 'goods_cover_thumb_mid' ]);
         $list = $this->pageQuery($search_model);
 
-        if (!empty($verify_goods_ids)) {
-            $verify_goods_ids = array_column($verify_goods_ids, 'goods_id');
-        }
         $list[ 'verify_goods_ids' ] = $verify_goods_ids;
+        $list[ 'verify_sku_ids' ] = $verify_sku_ids;
+
         return $list;
     }
 
@@ -845,35 +874,64 @@ class GoodsService extends BaseAdminService
     public function getSelectSku(array $where = [])
     {
         $field = 'goods_id, goods_name, goods_type, goods_cover, stock';
-
-        $sku_where = [
-            [ 'goodsSku.is_default', '=', 1 ],
-            [ 'status', '=', 1 ],
-            [ 'goods.stock', '>', 0 ]
-        ];
-
-        if (!empty($where[ 'keyword' ])) {
-            $sku_where[] = [ 'goods_name|sub_title', 'like', '%' . $where[ 'keyword' ] . '%' ];
-        }
-
-        if (!empty($where[ 'goods_ids' ])) {
-            $sku_where[] = [ 'goods.goods_id', 'in', $where[ 'goods_ids' ] ];
-        }
-
         $order = 'sort desc,create_time desc';
 
-        $list = $this->model
-            ->withSearch([ "goods_category", "goods_type" ], $where)
-            ->field($field)
-            ->with([
-                'skuList'
-            ])
-            ->withJoin([
-                'goodsSku' => [ 'sku_id', 'sku_name', 'goods_id', 'price', 'stock', 'sku_spec_format' ],
-            ])
-            ->where($sku_where)->order($order)->append([ 'goods_type_name', 'goods_cover_thumb_small', 'goods_cover_thumb_mid' ])->select()->toArray();
+        $select_goods_list = [];// 已选商品列表
 
-        return $list;
+        // 检测商品id集合是否存在，移除不存在的商品id，纠正数据准确性
+        if (!empty($where[ 'verify_goods_ids' ])) {
+            $verify_goods_ids = $this->model->where([
+                [ 'goods_id', 'in', $where[ 'verify_goods_ids' ] ]
+            ])->field('goods_id')->select()->toArray();
+
+            if (!empty($verify_goods_ids)) {
+                $verify_goods_ids = array_column($verify_goods_ids, 'goods_id');
+            }
+
+            $select_goods_list = $this->model
+                ->field($field)
+                ->with([
+                    'skuList'
+                ])
+                ->where([
+                    [ 'goods_id', 'in', $verify_goods_ids ]
+                ])
+                ->order($order)->append([ 'goods_type_name', 'goods_cover_thumb_small', 'goods_cover_thumb_mid' ])
+                ->select()->toArray();
+        }
+
+        // 检测商品id集合是否存在，移除不存在的商品id，纠正数据准确性
+        if (!empty($where[ 'verify_sku_ids' ])) {
+            $goods_sku_model = new GoodsSku();
+            $verify_sku_ids = $goods_sku_model->where([
+                [ 'sku_id', 'in', $where[ 'verify_sku_ids' ] ]
+            ])->field('sku_id')->select()->toArray();
+
+            if (!empty($verify_sku_ids)) {
+                $verify_sku_ids = array_column($verify_sku_ids, 'sku_id');
+            }
+
+            $goods_ids = $goods_sku_model->where([
+                [ 'sku_id', 'in', $verify_sku_ids ]
+            ])->field('goods_id')->select()->toArray();
+            if (!empty($goods_ids)) {
+                $goods_ids = array_column($goods_ids, 'goods_id');
+                $goods_ids = array_unique($goods_ids);
+            }
+
+            $select_goods_list = $this->model
+                ->field($field)
+                ->with([
+                    'skuList'
+                ])
+                ->where([
+                    [ 'goods_id', 'in', $goods_ids ]
+                ])
+                ->order($order)->append([ 'goods_type_name', 'goods_cover_thumb_small', 'goods_cover_thumb_mid' ])
+                ->select()->toArray();
+        }
+
+        return $select_goods_list;
     }
 
     /**

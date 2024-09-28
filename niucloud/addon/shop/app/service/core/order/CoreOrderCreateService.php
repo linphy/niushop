@@ -89,6 +89,8 @@ class CoreOrderCreateService extends BaseCoreService
 
             //附属信息
             'member_remark' => $this->param[ 'member_remark' ] ?? '',//买家留言
+            'relate_id' => $this->extend_data[ 'relate_id' ] ?? 0,//关联id
+            'activity_type' => $this->extend_data[ 'activity_type' ] ?? '', // 活动类型
 
         ];//总
 
@@ -210,6 +212,7 @@ class CoreOrderCreateService extends BaseCoreService
     public function getGoodsData()
     {
         $cart_ids = $this->param[ 'cart_ids' ] ?? [];
+        $this->extend_data = $this->param[ 'extend_data' ] ?? []; //活动数据：[ 'relate_id' => 1, 'activity_type' => 'giftcard' ]
         if (!empty($cart_ids)) {
             $this->cart_ids = $cart_ids;
             //查询购物车
@@ -260,9 +263,18 @@ class CoreOrderCreateService extends BaseCoreService
             $sku_info[ 'market_type' ] = $market_type;//活动类型
             $sku_info[ 'market_type_id' ] = $market_type_id;//活动id
             //活动操纵数据  market_data 活动信息
-            $temp = array_filter(event('ShopGoodsMarketCalculate', [ 'sku_info' => $sku_info, 'order_obj' => $this ]))[ 0 ] ?? [];
+            $temp = [];
+            $temp_list = array_filter(event('ShopGoodsMarketCalculate', [ 'sku_info' => $sku_info, 'sku_data' => $sku_data, 'order_obj' => $this ]));
+            foreach ($temp_list as $item) {
+                if (!empty($item)) $temp = $item;
+            }
             if (!empty($temp)) {
-                $sku_info = $temp;
+                $sku_info = $temp[ 'sku_info' ];
+                if (!empty($this->extend_data) && !empty($temp[ 'basic' ])) {
+                    if (isset($temp[ 'basic' ][ 'delivery_money' ])) {
+                        $this->extend_data[ 'delivery_money' ] = $temp[ 'basic' ][ 'delivery_money' ];
+                    }
+                }
             } else {
                 $price = $sku_info[ 'price' ];
                 $sku_info[ 'goods_money' ] = $price * $num;//小计

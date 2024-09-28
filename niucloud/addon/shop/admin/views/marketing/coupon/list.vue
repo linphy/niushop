@@ -32,8 +32,8 @@
                     </template>
 
                     <el-table-column prop="title" :label="t('title')" min-width="130" />
-                    <el-table-column prop="type_name" :label="t('type')" min-width="130" />
-                    <el-table-column prop="price" :label="t('price')" min-width="130" >
+                    <el-table-column prop="type_name" :label="t('type')" min-width="98" />
+                    <el-table-column prop="price" :label="t('price')" min-width="100" >
                         <template #default="{ row }">
                             <span >¥{{row.price}}</span>
                         </template>
@@ -63,7 +63,7 @@
                             <span v-else >满{{ row.min_condition_money }}元可用</span>
                         </template>
                     </el-table-column>
-                    <el-table-column  :label="t('validType')" min-width="210">
+                    <el-table-column  :label="t('validType')" min-width="190">
                         <template #default="{ row }">
                             <template v-if="row.receive_type == 1">
                                 <span v-if="row.valid_type == 1">  领取之日起{{ row.length || '' }} 天内有效</span>
@@ -84,7 +84,7 @@
                             <span v-else>--</span>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="status_name" :label="t('statusName')" min-width="130" />
+                    <el-table-column prop="status_name" :label="t('statusName')" min-width="98" />
                     <el-table-column :label="t('operation')" fixed="right" align="right" min-width="160">
                        <template #default="{ row }">
                         <el-button type="primary" link @click="spreadEvent(row)">{{ t('spreadGoods') }}</el-button>

@@ -56,14 +56,14 @@
 <!--				<div v-if="formData.interface_type == 2">-->
 <!--					<el-form-item label="APPKEY" class="input-item">-->
 <!--						<div>-->
-<!--							<el-input v-model="formData.kd100_app_key" clearable :placeholder="t('kd100AppKeyPlaceholder')" class="input-width" />-->
+<!--							<el-input v-model.trim="formData.kd100_app_key" clearable :placeholder="t('kd100AppKeyPlaceholder')" class="input-width" />-->
 <!--							<p class="text-[12px] text-[#b2b2b2]">{{ t('kd100AppKeyTips') }}</p>-->
 <!--						</div>-->
 <!--					</el-form-item>-->
 
 <!--					<el-form-item label="CUSTOMER" class="input-item">-->
 <!--						<div>-->
-<!--							<el-input v-model="formData.kd100_customer" :placeholder="t('kd100CustomerPlaceholder')" class="input-width" clearable />-->
+<!--							<el-input v-model.trim="formData.kd100_customer" :placeholder="t('kd100CustomerPlaceholder')" class="input-width" clearable />-->
 <!--							<p class="text-[12px] text-[#b2b2b2]">{{ t('kd100CustomerTips') }}</p>-->
 <!--						</div>-->
 <!--					</el-form-item>-->

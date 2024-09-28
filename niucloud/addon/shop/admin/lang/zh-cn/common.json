@@ -22,6 +22,7 @@
   "goodsSelectPopupClearGoods": "取消选择",
   "goodsSelectPopupGoodsMinTip": "所选商品数量不能少于",
   "goodsSelectPopupGoodsMaxTip": "所选商品数量不能超过",
+  "wayPlaceholder": "虚拟商品和实物商品只能选择其中一个类型，请重新选择",
   "goodsStyle": "商品样式",
   "goodsBgColor": "商品背景",
   "goodsNameColor": "商品名称",
@@ -61,5 +62,7 @@
   "goodsSet": "商品设置",
   "goodsSearchSet": "搜索设置",
   "goodsSearchText": "搜索内容",
-  "goodsSearchTextPlaceholder": "请输入搜索内容"
+  "goodsSearchTextPlaceholder": "请输入搜索内容",
+  "shopMemberInfoComponentUidTextColor":"编号颜色",
+  "shopMemberInfoComponentAccount":"账号信息"
 }

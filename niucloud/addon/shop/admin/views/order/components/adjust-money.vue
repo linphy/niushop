@@ -2,7 +2,7 @@
     <el-dialog v-model="showDialog" :title="t('adjustMoneyDialogTitle')" width="1000px" class="diy-dialog-wrap" :destroy-on-close="true">
         <div class="max-h-[600px] overflow-y-auto">
 			<h3 class="panel-title ml-[10px]">{{ t('adjustMoneyTips') }}</h3>
-	        <el-form label-width="50px" ref="formRef" class="page-form">
+	        <el-form label-width="50px" ref="formRef" class="page-form" v-if="goodsTypeArr.indexOf('real') != -1">
 		        <el-form-item :label="t('adjustMoneyDeliveryMoney')" prop="express_number">
 			        <el-input v-model.trim="deliveryMoney" clearable placeholder="0.00" class="!w-[200px]" maxlength="8" @keyup="deliveryChange($event)">
 			            <template #append>{{ t('adjustMoneyUnit') }}</template>
@@ -47,7 +47,8 @@
 	        </h3>
 	        <h3 class="panel-title ml-[10px]">
 		        <span class="text-primary">订单总额</span>
-		        <span> = 实际商品金额 + 运费</span>
+		        <span v-if="goodsTypeArr.indexOf('real') != -1"> = 实际商品金额 + 运费</span>
+                <span v-else> = 实际商品金额</span>
 	        </h3>
 
 		</div>
@@ -72,6 +73,7 @@ const loading = ref(false)
 
 const orderData:any = reactive({})
 const deliveryMoney:any = ref(0)
+const goodsTypeArr = ref([]) // 商品类型 
 const deliveryChange=(e:any)=>{
     filterDigit(e)
     deliveryMoney.value = e.target.value
@@ -80,10 +82,12 @@ const setFormData =  (data: any) => {
     for (let key in orderData){
         delete orderData[key]
     }
-	Object.assign(orderData,cloneDeep(data))
+    Object.assign(orderData,cloneDeep(data))
+    goodsTypeArr.value = [];
     orderData.order_goods.forEach((item:any)=> {
         item.adjust_money = ''; // 调价
         item.total = (parseFloat(item.goods_money) - parseFloat(item.discount_money)).toFixed(2); // 总计
+        goodsTypeArr.value.push(item.goods_type)
     })
     deliveryMoney.value = orderData.delivery_money;
 }

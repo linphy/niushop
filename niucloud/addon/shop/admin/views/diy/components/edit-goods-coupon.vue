@@ -38,11 +38,11 @@
 			<el-form label-width="90px" class="px-[10px]">
 
 				<el-form-item :label="t('couponTitle')">
-					<el-input v-model="diyStore.editComponent.couponTitle" clearable maxlength="8" show-word-limit/>
+					<el-input v-model.trim="diyStore.editComponent.couponTitle" clearable maxlength="8" show-word-limit/>
 				</el-form-item>
 
 				<el-form-item :label="t('couponSubTitle')">
-					<el-input v-model="diyStore.editComponent.couponSubTitle" clearable maxlength="10" show-word-limit/>
+					<el-input v-model.trim="diyStore.editComponent.couponSubTitle" clearable maxlength="10" show-word-limit/>
 				</el-form-item>
 
 			</el-form>
@@ -63,13 +63,10 @@
 					<coupon-select-popup ref="couponSelectPopupRef" v-model="diyStore.editComponent.couponIds" :min="1" :max="20" />
 				</el-form-item>
 				<el-form-item :label="t('couponNum')" v-if="diyStore.editComponent.source == 'all'">
-					<div class="flex items-center w-full ml-[5px]">
-						<el-slider class="flex-1" v-model="diyStore.editComponent.num" :min="1" max="20" size="small" />
-						<span class="ml-[15px]">{{ diyStore.editComponent.num }}</span>
-					</div>
+					<el-slider show-input v-model="diyStore.editComponent.num" :min="1" max="20" size="small" class="goods-coupon-slider" />
 				</el-form-item>
 				<el-form-item :label="t('couponBtnText')">
-					<el-input v-model="diyStore.editComponent.btnText" clearable maxlength="5" show-word-limit/>
+					<el-input v-model.trim="diyStore.editComponent.btnText" clearable maxlength="5" show-word-limit/>
 				</el-form-item>
 
 			</el-form>
@@ -175,4 +172,12 @@ defineExpose({})
 </script>
 
 <style lang="scss" scoped>
+</style>
+
+<style lang="scss">
+	.goods-coupon-slider {
+	.el-slider__input {
+		width: 100px;
+	}
+}
 </style>

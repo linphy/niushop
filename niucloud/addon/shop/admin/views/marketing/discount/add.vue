@@ -11,14 +11,14 @@
                 <!-- 活动名称： -->
                 <el-form-item :label="t('name')" prop="active_name">
                     <div>
-                        <el-input v-model="formData.active_name" clearable :placeholder="t('namePlaceholder')" class="input-width" :maxlength="20" />
+                        <el-input v-model.trim="formData.active_name" clearable :placeholder="t('namePlaceholder')" class="input-width" :maxlength="20" />
                         <p class=" text-[14px] text-[#999]">{{ t('nameTip') }}</p>
                     </div>
                 </el-form-item>
                 <!-- 活动标题： -->
                 <el-form-item :label="t('title')" prop="active_desc">
                     <div>
-                        <el-input v-model="formData.active_desc" clearable :placeholder="t('titlePlaceholder')" class="input-width" :maxlength="20" />
+                        <el-input v-model.trim="formData.active_desc" clearable :placeholder="t('titlePlaceholder')" class="input-width" :maxlength="20" />
                         <p class=" text-[14px] text-[#999]">{{ t('titleTip') }}</p>
                     </div>
                 </el-form-item>
@@ -166,8 +166,7 @@
                                     <el-button v-if="row.goodsSku.sku_spec_format" type="primary" link @click="skuDiscountSettingsEvent(formData.goods_list[row.index])">
                                         {{t('skuDiscountSettings') }}
                                     </el-button>
-                                    <el-button type="primary" link @click="deleteEvent(row.index)">{{t('delete') }}
-                                    </el-button>
+                                    <el-button type="primary" link @click="deleteEvent(row.index)">{{t('delete') }}</el-button>
                                 </template>
                             </el-table-column>
                         </el-table>
@@ -285,7 +284,7 @@
             callback(new Error(t('请选择活动开始时间')))
         } else if (!formData.value.discount_time[1]) {
             callback(new Error(t('请选择活动结束时间')))
-        } else  if (formData.value.discount_time[1] <= formData.value.discount_time[0]) {
+        } else if (formData.value.discount_time[1] <= formData.value.discount_time[0]) {
             callback(new Error(t('活动结束时间不能小于等于活动开始时间')))
         }
         callback()

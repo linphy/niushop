@@ -11,12 +11,12 @@
                 <!-- 优惠券信息 -->
                 <!-- 优惠券名称 -->
                 <el-form-item :label="t('title')" prop="title">
-                    <el-input v-model="formData.title" clearable :placeholder="t('titlePlaceholder')" class="input-width" :maxlength="20" />
+                    <el-input v-model.trim="formData.title" clearable :placeholder="t('titlePlaceholder')" class="input-width" :maxlength="20" />
                 </el-form-item>
 
                 <!-- 优惠券面额 -->
                 <el-form-item :label="t('price')" prop="price">
-                    <el-input v-model="formData.price" @keyup="filterDigit($event)"  clearable :placeholder="t('pricePlaceholder')" class="input-width" maxlength="5" />
+                    <el-input v-model.trim="formData.price" @keyup="filterDigit($event)"  clearable :placeholder="t('pricePlaceholder')" class="input-width" maxlength="5" />
                 </el-form-item>
 
                 <!-- 优惠券类型 -->
@@ -53,7 +53,7 @@
                 <el-form-item v-if="formData.threshold == 1" prop="min_condition_money">
                     最低满
                     <div class="flex items-center px-[5px]">
-                        <el-input v-model="formData.min_condition_money" @keyup="filterDigit($event)" clearable class="!w-[100px]" />
+                        <el-input v-model.trim="formData.min_condition_money" @keyup="filterDigit($event)" clearable class="!w-[100px]" />
                     </div>
                     元可用
                 </el-form-item>
@@ -69,7 +69,7 @@
                 <el-form-item v-show="formData.valid_type == 1">
                     领劵后立即生效，有效期
                     <div class="flex items-center px-[5px]">
-                        <el-input v-model="formData.length" @keyup="filterNumber($event)" clearable class="!w-[100px]" />
+                        <el-input v-model.trim="formData.length" @keyup="filterNumber($event)" clearable class="!w-[100px]" />
                     </div>
                     天
                 </el-form-item>
@@ -118,7 +118,7 @@
                 <el-form-item v-show="formData.limit == 1 && formData.receive_type == 1" prop="remain_count">
                     <div>
                         <el-input onkeypress='return( /[\d]/.test(String.fromCharCode(event.keyCode) ) )'
-                            v-model="formData.remain_count" clearable :placeholder="t('remainCountPlaceholder')"
+                            v-model.trim="formData.remain_count" clearable :placeholder="t('remainCountPlaceholder')"
                             class="input-width" :min="formData.remain_count" :max="100000" :controls="false" maxlength="6">
                             <template #append>张</template>
                         </el-input>
@@ -128,7 +128,7 @@
                 <!-- 用户可领取数量 -->
                 <el-form-item :label="t('userLimitCount')" prop="limit_count" v-show="formData.receive_type == 1">
                     <el-input onkeypress='return( /[\d]/.test(String.fromCharCode(event.keyCode) ) )'
-                        v-model="formData.limit_count" clearable :placeholder="t('userLimitCountPlaceholder')"
+                        v-model.trim="formData.limit_count" clearable :placeholder="t('userLimitCountPlaceholder')"
                         class="input-width" :min="1" :max="100000" maxlength="6">
                         <template #append>张</template>
                     </el-input>
@@ -241,9 +241,11 @@ const validTime = (rule: any, value: any, callback: any) => {
     if (formData.value.valid_type == 2 && formData.value.valid_time <= Date.now()) {
         callback(new Error(t('有效期不能小于等于当前时间')))
     }
-    if (formData.value.valid_type == 2 && formData.value.receive_type == 1 && timestampFn(formData.value.valid_time) <= timestampFn(formData.value.receive_time[1])) {
-        callback(new Error(t('有效期不能小于等于领取结束时间')))
-    }
+    if(formData.value.valid_type == 2 && formData.value.receive_type_time == 1 && formData.value.receive_type == 1){
+		if (timestampFn(formData.value.valid_time) <= timestampFn(formData.value.receive_time[1])) {
+			callback(new Error(t('有效期不能小于等于领取结束时间')))
+		}
+	}
     callback()
 }
 
@@ -271,10 +273,10 @@ const priceRule = (rule: any, value: any, callback: any) => {
 }
 
 const limitCountRule = (rule: any, value: any, callback: any) => {
-    if (formData.value.limit_count != '' && formData.value.limit_count < 1) {
+    if (!formData.value.limit_count || formData.value.limit_count != '' && formData.value.limit_count < 1) {
         callback(new Error(t('userLimitCountPlaceholder')))
     }
-    if(formData.value.limit == 1 && formData.value.limit_count > formData.value.remain_count){
+	if (formData.value.limit == 1 && formData.value.limit_count != '' && formData.value.remain_count != '' && parseInt(formData.value.limit_count) > parseInt(formData.value.remain_count)) {
         callback(new Error(t('限领张数不能大于发放数量')))
     }
     callback()
@@ -346,15 +348,15 @@ const getCouponInfoFn = (id: any) => {
     })
 }
 
-const goodsCategoryFormatting = (data) => {
-    const arr = []
-    data.forEach((item, index) => {
-        options.value.forEach((twoItem, twoIndex) => {
+const goodsCategoryFormatting = (data: any) => {
+    const arr: any = []
+    data.forEach((item: any, index: any) => {
+        options.value.forEach((twoItem: any, twoIndex) => {
             if (twoItem.value == item) {
                 arr[index] = []
                 arr[index].push(twoItem.value)
             } else {
-                twoItem.children.forEach((threeItem, threeIndex) => {
+                twoItem.children.forEach((threeItem: any, threeIndex: any) => {
                     if (threeItem.value == item) {
                         arr[index] = []
                         arr[index].push(twoItem.value)

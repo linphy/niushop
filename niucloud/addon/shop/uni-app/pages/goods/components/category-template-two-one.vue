@@ -1,16 +1,16 @@
 <template>
-	<view class="bg-[#F4F6F8] min-h-screen">
+	<view class=" bg-[var(--page-bg-color)] overflow-hidden min-h-screen">
 		<view class="mescroll-box" v-if="tabsData.length">
-			<view v-if="config.search.control" class="search-box z-10 bg-[#fff] fixed top-0 left-0 right-0 h-[106rpx] box-border">
-				<input class="search-ipt pl-[32rpx] text-[24rpx]" :class="{'pr-[106rpx]':searchName,'pr-[32rpx]':!searchName}" type="text" v-model="searchName" :placeholder="config.search.title"  @confirm="searchNameFn">
-				<view class="flex items-center h-[70rpx] absolute right-[56rpx] top-[18rpx]  z-2">
-					<u-icon v-if="searchName" name="close-circle-fill" color="#A5A6A6" size="28rpx" @click="searchName=''"></u-icon>
-					<view class="h-[70rpx] w-[40rpx] text-center leading-[70rpx]" @click.stop="searchNameFn"><text class="nc-iconfont nc-icon-sousuo-duanV6xx1 text-[32rpx]"></text></view>
+			<view v-if="config.search.control" class="search-box box-border z-10 fixed top-0 left-0 right-0  h-[100rpx] bg-[#fff]">
+				<view class="flex-1 search-input">
+					<text @click.stop="searchNameFn" class="nc-iconfont nc-icon-sousuo-duanV6xx1 btn"></text>
+					<input class="input" type="text" v-model="searchName" :placeholder="config.search.title" placeholderClass="text-[var(--text-color-light9)]" @confirm="searchNameFn">
+					<text v-if="searchName" class="nc-iconfont nc-icon-cuohaoV6xx1 clear" @click="searchName=''"></text>
 				</view>
 			</view>
-			<view class="tabs-box z-2 fixed left-0 bg-[#fff] bottom-[50px] top-0" :class="{ '!top-[106rpx]': config.search.control }">
+			<view class="tabs-box z-2 fixed left-0 bg-[#fff] bottom-[50px] top-0" :class="{ '!top-[100rpx]': config.search.control }">
 				<scroll-view :scroll-y="true" class="scroll-height">
-					<view class="bg-[#F4F6F8]">
+					<view class="bg-[var(--temp-bg)]">
 						<view class="tab-item truncate" :class="{ 'tab-item-active': index == tabActive,'rounded-br-[12rpx]':tabActive-1===index,'rounded-tr-[12rpx]':tabActive+1===index  }" v-for="(item, index) in tabsData" :key="index" @click="firstLevelClick(index, item)">
 							<view class="text-box px-[16rpx] truncate">
 								{{ item.category_name }}
@@ -20,30 +20,26 @@
 				</scroll-view>
 			</view>
 			<scroll-view class="h-[100vh]" :scroll-y="true">
-				<view class=" pl-[202rpx] scroll-ios pt-[20rpx] pr-[20rpx]" :class="{ '!pt-[126rpx]': config.search.control }">
-					<view class="bg-[#fff] grid grid-cols-3 gap-x-[50rpx] gap-y-[32rpx] py-[33rpx] px-[23rpx] rounded-[16rpx]" v-if="tabsData[tabActive]?.child_list && !loading">
+				<view class="pl-[188rpx] scroll-ios pt-[20rpx] pr-[20rpx]" :class="{ '!pt-[120rpx]': config.search.control }">
+					<view class="bg-[#fff] grid grid-cols-3 gap-x-[50rpx] gap-y-[32rpx] py-[32rpx] px-[24rpx] rounded-[var(--rounded-big)]" v-if="tabsData[tabActive]?.child_list && !loading">
 						<template v-for="(item, index) in tabsData[tabActive]?.child_list" :key="item.category_id">
-							<view class="" @click="toLink(item.category_id)">
-								<u--image  radius="12rpx" width="129rpx" height="129rpx" :src="img(item.image ? item.image : '')" model="aspectFill">
+							<view @click="toLink(item.category_id)" class=" flex items-center justify-center flex-col">
+								<u--image radius="var(--goods-rounded-big)" width="120rpx" height="120rpx" :src="img(item.image ? item.image : '')" model="aspectFill">
 									<template #error>
-										<image class="rounded-[12rpx] overflow-hidden w-[129rpx] h-[129rpx]" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
+										<image class="rounded-[var(--goods-rounded-big)] overflow-hidden w-[120rpx] h-[120rpx]" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
 									</template>
 								</u--image>
-								<view class="text-[24rpx] text-center mt-[12rpx] leading-[34rpx]">{{ item.category_name }}</view>
+								<view class="text-[24rpx] text-center mt-[16rpx] leading-[34rpx]">{{ item.category_name }}</view>
 							</view>
 						</template>
 					</view>
-					<view class="flex justify-center w-[100%] rounded-[16rpx] flex items-center" :class="{'noData1':config.search.control,'noData2':!(config.search.control)}" v-if="!tabsData[tabActive]?.child_list && !loading">
-						<mescroll-empty :option="{tip : '暂无商品分类'}"></mescroll-empty>
-					</view>
+					<mescroll-empty class="part" v-if="!tabsData[tabActive]?.child_list && !loading" :option="{tip : '暂无商品分类'}"></mescroll-empty>
 				</view>
 			</scroll-view>
 		</view>
 		<tabbar />
-		<view class="flex justify-center w-[100%] items-center justify-center h-[100vh]" v-if="!tabsData.length && !loading">
-			<mescroll-empty :option="{tip : '暂无商品分类'}"></mescroll-empty>
-		</view>
-		<u-loading-page bg-color="rgb(248,248,248)" :loading="loading" loadingText="" fontSize="16" color="#303133"></u-loading-page>
+		<mescroll-empty  v-if="!tabsData.length && !loading" :option="{tip : '暂无商品分类'}"></mescroll-empty>
+		<loading-page :loading="loading"></loading-page>
 	</view>
 </template>
 
@@ -78,7 +74,7 @@ onMounted(() => {
 /**
  * @description 获取分类数据
  * */
-const tabsData = ref<Array<Object>>([])
+const tabsData: any = ref<Array<Object>>([])
 const getCategoryData = () => {
     loading.value = true;
     getGoodsCategoryTree().then((res: any) => {
@@ -118,7 +114,7 @@ const toLink = (curr_goods_category: string) => {
 // 搜索名字
 const searchNameFn = () => {
 	// getMescroll().resetUpScroll();
-	if(searchName.value) redirect({ url: '/addon/shop/pages/goods/list', param: { goods_name: searchName.value } })
+	if(searchName.value) redirect({ url: '/addon/shop/pages/goods/list', param: { goods_name: encodeURIComponent(searchName.value) } })
 }
 </script>
 
@@ -180,14 +176,14 @@ const searchNameFn = () => {
 }
 
 .search-box {
-	// position: relative;
-	padding: 20rpx 24rpx;
+	display: flex;
+	align-items: center;
+	padding: 0 30rpx;
 }
 
 .search-box .search-ipt {
-	height: 64rpx;
-	background-color: #F6F8F8;
-	padding-left: 20rpx;
+	height: 58rpx;
+	background-color: #fff;
 	border-radius: 33rpx;
 }
 
@@ -196,21 +192,21 @@ const searchNameFn = () => {
 }
 
 .tabs-box {
-	width: 182rpx;
+	width: 168rpx;
 	font-size: 28rpx;
 }
 
 .tabs-box .tab-item {
-	height: 92rpx;
+	height: 96rpx;
 	text-align: center;
-	line-height: 92rpx;
+	line-height: 96rpx;
 	background-color:#fff;
 }
 
 .tabs-box .tab-item-active {
 	position: relative;
 	color: var(--primary-color);
-	background-color:#F4F6F8;
+	background-color: var(--temp-bg);
 	&::before {
 		display: inline-block;
 		position: absolute;
@@ -294,4 +290,15 @@ $white-bj: #fff;
 		height: calc(100vh - 40rpx - 100rpx - env(safe-area-inset-bottom));
 	}
 /*  #endif  */
+.mescroll-empty.empty-page.part{
+	width: 542rpx;
+	height: 542rpx;
+	margin-top: 0;
+	margin-left: 0;
+	padding-top: 50rpx;
+	.img{
+		width: 160rpx !important;
+		height: 120rpx !important;
+	}
+}
 </style>

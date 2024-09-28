@@ -47,7 +47,7 @@
                 <el-card class="box-card !border-none mb-[10px] table-search-wrap" shadow="never">
                     <el-form :inline="true" :model="tableData.searchParam" ref="searchFormRef">
                         <el-form-item :label="t('memberInfo')" prop="keywords">
-                            <el-input v-model="tableData.searchParam.keywords" class="w-[240px]" :placeholder="t('memberInfoPlaceholder')" />
+                            <el-input v-model.trim="tableData.searchParam.keywords" class="w-[240px]" :placeholder="t('memberInfoPlaceholder')" />
                         </el-form-item>
                         <el-form-item>
                             <el-button type="primary" @click="couponCollection()">{{ t('search') }}</el-button>

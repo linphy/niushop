@@ -393,7 +393,6 @@ class GoodsService extends BaseApiService
 
         foreach ($sku_list as $k => &$v) {
 
-            $v[ 'member_price' ] = $v[ 'price' ];
             if ($is_default) {
                 $v[ 'member_price' ] = $v[ 'price' ];
             } else {
@@ -405,6 +404,8 @@ class GoodsService extends BaseApiService
                         && !empty($member_info[ 'memberLevelData' ][ 'level_benefits' ][ 'discount' ])
                         && !empty($member_info[ 'memberLevelData' ][ 'level_benefits' ][ 'discount' ][ 'is_use' ])) {
                         $v[ 'member_price' ] = number_format($v[ 'price' ] * $member_info[ 'memberLevelData' ][ 'level_benefits' ][ 'discount' ][ 'discount' ] / 10, 2, '.', '');
+                    } else {
+                        $v[ 'member_price' ] = $v[ 'price' ];
                     }
 
                 } elseif ($member_discount == 'fixed_price') {

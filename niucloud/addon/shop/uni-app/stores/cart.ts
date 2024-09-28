@@ -22,8 +22,16 @@ const useCartStore = defineStore('cart', {
     actions: {
         // 查询购物车列表
         getList(callback: any = null) {
-            if (!getToken()) return;
-            getCartList({}).then(res => {
+            if (!getToken()) {
+                // 每次查询清空
+                for (let k in this.cartList) {
+                    delete this.cartList[k];
+                }
+                this.totalNum = 0;
+                this.totalMoney = 0;
+                return;
+            }
+            getCartList({}).then((res: any) => {
                 let data = res.data;
 
                 // 每次查询清空

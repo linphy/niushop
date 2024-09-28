@@ -32,7 +32,7 @@ class InvoiceService extends BaseAdminService
     public function getPage(array $where)
     {
         $order = 'id desc';
-        $search_model = $this->model->where([ [ 'id', '>', 0 ] ])->withSearch([ "is_invoice", "header_type", "header_name", "create_time", "invoice_time" ], $where)->where([ [ 'status', '=', InvoiceDict::OPEN ] ])->append([ 'header_type_name', 'type_name' ])->field('*')->order($order);
+        $search_model = $this->model->withSearch([ "is_invoice", "header_type", "header_name", "create_time", "invoice_time" ], $where)->where([ [ 'id', '>', 0 ],[ 'status', '=', InvoiceDict::OPEN ] ])->append([ 'header_type_name', 'type_name' ])->field('*')->order($order);
         return $this->pageQuery($search_model);
     }
 

@@ -12,8 +12,7 @@
                             {{ defaultDeliveryAddress ? defaultDeliveryAddress.full_address : t('defaultDeliveryAddressEmpty') }}
                             <el-button type="primary" @click="router.push('/shop/order/address')" link class="ml-[10px]">{{ defaultDeliveryAddress ? t('update') : t('toSetting') }}</el-button>
                         </div>
-                        <div class="text-error leading-none"
-                            v-if="formData.center.lat && defaultDeliveryAddress && (formData.center.lat != defaultDeliveryAddress.lat || formData.center.lng != defaultDeliveryAddress.lng)">
+                        <div class="text-error leading-none" v-if="formData.center.lat && defaultDeliveryAddress && (formData.center.lat != defaultDeliveryAddress.lat || formData.center.lng != defaultDeliveryAddress.lng)">
                             {{ t('deliveryAddressChange') }}</div>
                     </div>
                 </el-form-item>
@@ -35,7 +34,7 @@
                         </div>
                         {{ t('feeSettingTextOne') }}
                         <div class="w-[60px] mx-[5px]">
-                            <el-input v-model="formData.base_price" type="text" @keyup="filterDigit($event)"/>
+                            <el-input v-model.trim="formData.base_price" type="text" @keyup="filterDigit($event)"/>
                         </div>
                         {{ t('feeSettingTextTwo') }}
                         <div class="w-[60px] mx-[5px]">
@@ -43,7 +42,7 @@
                         </div>
                         {{ t('feeSettingTextThree') }}
                         <div class="w-[60px] mx-[5px]">
-                            <el-input v-model="formData.grad_price" type="text" @keyup="filterDigit($event)"/>
+                            <el-input v-model.trim="formData.grad_price" type="text" @keyup="filterDigit($event)"/>
                         </div>
                         {{ t('priceUnit') }}
                     </div>
@@ -52,15 +51,15 @@
                     <div class="flex">
                         {{ t('weightFeeTextOne') }}
                         <div class="w-[60px] mx-[5px]">
-                            <el-input v-model="formData.weight_start" type="text"  @keyup="filterDigit($event)"/>
+                            <el-input v-model.trim="formData.weight_start" type="text"  @keyup="filterDigit($event)"/>
                         </div>
                         {{ t('weightFeeTextTwo') }}
                         <div class="w-[60px] mx-[5px]">
-                            <el-input v-model="formData.weight_unit" type="text"  @keyup="filterDigit($event)"/>
+                            <el-input v-model.trim="formData.weight_unit" type="text"  @keyup="filterDigit($event)"/>
                         </div>
                         {{ t('weightFeeTextThree') }}
                         <div class="w-[60px] mx-[5px]">
-                            <el-input v-model="formData.weight_price" type="text"  @keyup="filterDigit($event)" />
+                            <el-input v-model.trim="formData.weight_price" type="text"  @keyup="filterDigit($event)" />
                         </div>
                         {{ t('priceUnit') }}
                     </div>
@@ -80,12 +79,12 @@
                                         </div>
                                         <div class="pb-[18px]">
                                             <el-form-item :label="t('startPrice')" prop="start_price">
-                                                <el-input v-model="formData.area[index].start_price" type="text"  @keyup="filterDigit($event)" />
+                                                <el-input v-model.trim="formData.area[index].start_price" type="text"  @keyup="filterDigit($event)" />
                                             </el-form-item>
                                         </div>
                                         <div class="pb-[10px]" v-show="formData.fee_type == 'region'">
                                             <el-form-item :label="t('deliveryPrice')" prop="delivery_price">
-                                                <el-input v-model="formData.area[index].delivery_price" type="text"   @keyup="filterDigit($event)"/>
+                                                <el-input v-model.trim="formData.area[index].delivery_price" type="text"   @keyup="filterDigit($event)"/>
                                             </el-form-item>
                                         </div>
                                         <el-form-item :label="t('areaType')">
@@ -132,13 +131,13 @@ const router = useRouter()
 const loading = ref(false)
 const pageName = route.meta.title
 const formRef = ref<FormInstance>()
-const areaFromRef = ref<FormInstance[]>()
+const areaFromRef: any = ref<FormInstance[]>()
 interface addressType{
     full_address:string
     lat:string
     lng:string
 }
-const defaultDeliveryAddress = ref<addressType|null>(null)
+const defaultDeliveryAddress:any = ref<addressType|null>(null)
 const getDefaultDeliveryAddress = async () => {
     await getShopDefaultDeliveryAddressInfo().then(({ data }) => {
         defaultDeliveryAddress.value = data
