@@ -1,4 +1,4 @@
-import { ref, reactive, onMounted, nextTick, computed } from 'vue';
+import { ref, onMounted, nextTick, computed } from 'vue';
 import Sortable from 'sortablejs';
 import { range } from 'lodash-es';
 import { onPageScroll, onHide, onShow } from '@dcloudio/uni-app';
@@ -7,8 +7,8 @@ import { getLocation } from '@/utils/common';
 
 export function useDiyGroup(params: any = {}) {
 
-    let scrollVal = ""; //组件滚动值集合
-    const componentsScrollBool = ref({}); //组件是否根据滚动进行相应改变
+    let scrollVal: any = ""; //组件滚动值集合
+    const componentsScrollBool: any = ref({}); //组件是否根据滚动进行相应改变
     const diyStore = useDiyStore();
 
     const positionFixed = ref(['fixed', 'top_fixed', 'right_fixed', 'bottom_fixed', 'left_fixed']);
@@ -60,13 +60,12 @@ export function useDiyGroup(params: any = {}) {
         return false;
     }
 
-
     // 监听页面加载完成
     const onMountedLifeCycle = () => {
         onMounted(() => {
             // #ifdef H5
             if (diyStore.mode == 'decorate') {
-                var el = document.getElementById('componentList');
+                var el: any = document.getElementById('componentList');
                 const sortable = Sortable.create(el, {
                     draggable: '.draggable-element',
                     animation: 200,
@@ -77,7 +76,7 @@ export function useDiyGroup(params: any = {}) {
                         diyStore.value.splice(event.newIndex!, 0, temp);
 
                         nextTick(() => {
-                            sortable.sort(range(diyStore.value.length).map(value => {
+                            sortable.sort(range(diyStore.value.length).map((value: any) => {
                                 return value.toString();
                             }));
 
@@ -94,17 +93,16 @@ export function useDiyGroup(params: any = {}) {
                         // 第一次获取经纬度
                         getLocation()
                     }
+					
+					// 初始化组件滚动值
+					scrollVal = uni.getStorageSync('componentsScrollValGroup');
+					if (scrollVal) {
+					    for (let key in scrollVal) {
+					        componentsScrollBool.value[key] = -1;
+					    }
+					}
                 }, 500)
-
-                // 初始化组件滚动值
-                scrollVal = uni.getStorageSync('componentsScrollValGroup');
-                if (scrollVal) {
-                    for (let key in scrollVal) {
-                        componentsScrollBool.value[key] = -1;
-                    }
-                }
             });
-
         });
     }
 
@@ -120,7 +118,7 @@ export function useDiyGroup(params: any = {}) {
     const placeholderEvent = () => {
     }
 
-    let isPagesHide = ref(false)
+    const isPagesHide = ref(false)
     onShow(() => {
         isPagesHide.value = false;
     })
@@ -129,7 +127,7 @@ export function useDiyGroup(params: any = {}) {
     })
 
     // 监听滚动事件
-    let scrollValStr = ref()
+    const scrollValStr = ref()
     const onPageScrollLifeCycle = () => {
         onPageScroll((e) => {
             if (scrollVal && !isPagesHide.value) {
