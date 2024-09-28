@@ -113,7 +113,7 @@
                         <div class="attachment-item mr-[10px] w-[120px]" v-for="(item, index) in attachment.data" :key="index">
                             <div class="attachment-wrap w-full rounded cursor-pointer overflow-hidden relative flex items-center justify-center h-[120px]">
                                 <el-image :src="img(item.url)" fit="contain" v-if="type == 'image'" :preview-src-list="item.image_list"/>
-                                <video :src="img(item.url)" v-else-if="type == 'video'"></video>
+                                <video :src="img(item.url)" v-else-if="type == 'video'" @click="previewVideo(index)"></video>
                                 <icon :name="item.url" size="24px" v-else-if="type == 'icon'"></icon>
                             </div>
                             <div class="flex items-center">
@@ -197,8 +197,7 @@ import {
     getIconList
 } from '@/app/api/sys'
 import { debounce, img, getToken } from '@/utils/common'
-import { ElMessage, UploadFile, UploadFiles, ElMessageBox } from 'element-plus'
-import storage from '@/utils/storage'
+import { ElMessage, UploadFile, UploadFiles, ElMessageBox, MessageParams } from 'element-plus'
 
 const attachmentCategoryName = ref('')
 const operate = ref(false)
@@ -261,6 +260,7 @@ const attachmentParam = reactive({
  * 查询分组
  */
 const getAttachmentCategoryList = debounce(() => {
+
     const getFn = prop.type == 'icon' ? getIconCategoryList : attachmentCategoryList
     getFn({
         type: prop.type,
@@ -359,7 +359,7 @@ const deleteAttachmentCategory = (index: number) => {
 }
 
 const uploadRef = ref<Record<string, any> | null>(null)
-
+const time = ref<any>(null)
 // 上传文件
 const upload = computed(() => {
     const headers: Record<string, any> = {}
@@ -377,12 +377,34 @@ const upload = computed(() => {
                 getAttachmentList()
                 uploadRef.value?.handleRemove(uploadFile)
             } else {
-                uploadFile.status = 'fail'
-                ElMessage({ message: response.msg, type: 'error' })
+                if(time.value==null) {
+                    time.value = setTimeout(() => {
+                        uploadFile.status = 'fail'
+                        showElMessage({ message: response.msg, type: 'error' })
+                        clearTimeout(time.value)
+                        time.value=null
+                    },500)
+                
+                }else{
+                    clearTimeout(time.value)
+                    time.value=null
+                }
             }
         }
     }
 })
+
+const messageCache = new Map()
+
+const showElMessage = (options: MessageParams) => {
+    const cacheKey = options.message
+    const cachedMessage = messageCache.get(cacheKey)
+
+    if (!cachedMessage || Date.now() - cachedMessage.timestamp > 5000) { // 5秒内重复内容不再弹出，可自定义过期时间
+        messageCache.set(cacheKey, { timestamp: Date.now() })
+        ElMessage(options)
+    }
+}
 
 // 全选
 const selectAll = ref(false)
@@ -427,7 +449,7 @@ const selectFile = (data: any) => {
         if (prop.limit == 1 && length == prop.limit) {
             delete selectedFile[keys[0]]
             selectedFileIndex.splice(selectedFileIndex.indexOf(keys[0]),1);
-        } else if (length >= prop.limit) {
+        } else if (prop.limit && length >= prop.limit) {
             ElMessage.info(t('upload.triggerUpperLimit'))
             return
         }

@@ -40,12 +40,12 @@
                             :end-placeholder="t('endDate')" />
                     </el-form-item>
                     <el-form-item :label="t('cashOutNumber')" prop="cash_out_no">
-                        <el-input v-model="orderTableData.searchParam.cash_out_no" class="w-[240px]"
+                        <el-input v-model.trim="orderTableData.searchParam.cash_out_no" class="w-[240px]"
                             :placeholder="t('cashOutNumberPlaceholder')" />
                     </el-form-item>
 
                     <el-form-item :label="t('memberInfo')" prop="keyword">
-                        <el-input v-model="orderTableData.searchParam.keyword" class="w-[240px]"
+                        <el-input v-model.trim="orderTableData.searchParam.keyword" class="w-[240px]"
                             :placeholder="t('memberInfoPlaceholder')" />
                     </el-form-item>
 
@@ -129,7 +129,7 @@
                         </template>
                     </el-table-column>
 
-                    <el-table-column :label="t('operation')" align="right" fixed="right" width="230">
+                    <el-table-column :label="t('operation')" align="right" fixed="right" width="120">
                         <template #default="{ row }">
                             <el-button v-for="(item, index) in operationBtn[row.status.toString()].value" :key="index + 'a'"
                                 @click="fnProcessing(operationBtn[row.status.toString()].clickArr[index], row)"
@@ -158,6 +158,19 @@
                 <el-form-item :label="t('cashOutMethod')">
                     <div class="input-width"> {{ Transfertype[cashOutInfo.transfer_type].name }} </div>
                 </el-form-item>
+                <template v-if="cashOutInfo.transfer_type == 'alipay'">
+                    <el-form-item :label="t('alipayAccount')">
+                        <div class="input-width"> {{ cashOutInfo.transfer_account }} </div>
+                    </el-form-item>
+                </template>
+                <template v-if="cashOutInfo.transfer_type == 'bank'">
+                    <el-form-item :label="t('bankName')">
+                        <div class="input-width"> {{ cashOutInfo.transfer_bank }} </div>
+                    </el-form-item>
+                    <el-form-item :label="t('bankAccount')">
+                        <div class="input-width"> {{ cashOutInfo.transfer_account }} </div>
+                    </el-form-item>
+                </template>
                 <el-form-item :label="t('applicationForWithdrawalAmount')">
                     <div class="input-width"> {{ cashOutInfo.apply_money }} </div>
                 </el-form-item>
@@ -183,7 +196,7 @@
         <el-dialog v-model="auditShowDialog" :title="t('rejectionAudit')" width="500px" :destroy-on-close="true">
             <el-form :model="auditFailure" label-width="90px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
                 <el-form-item :label="t('reasonsRefusal')" prop="label_name">
-                    <el-input v-model="auditFailure.refuse_reason" clearable maxlength="200" :show-word-limit="true" :placeholder="t('reasonsRefusalPlaceholder')" :rows="4" class="input-width" type="textarea" />
+                    <el-input v-model.trim="auditFailure.refuse_reason" clearable maxlength="200" :show-word-limit="true" :placeholder="t('reasonsRefusalPlaceholder')" :rows="4" class="input-width" type="textarea" />
                 </el-form-item>
             </el-form>
             <template #footer>

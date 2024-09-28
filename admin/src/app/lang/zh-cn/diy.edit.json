@@ -86,6 +86,7 @@
   "graphicNavShowStyle": "展示风格",
   "graphicNavStyleFixed": "固定显示",
   "graphicNavStyleSingleSlide": "单行滑动",
+  "graphicNavStyleMultiLine": "多行滑动",
   "graphicNavStylePageSlide": "分页滑动",
   "graphicNavRowCount": "每行数量",
   "graphicNavPageCount": "显示方式",

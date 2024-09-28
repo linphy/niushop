@@ -46,7 +46,7 @@
                 <el-form :inline="true" :model="memberAccountLogTableData.searchParam" ref="searchFormRef">
 
                     <el-form-item :label="t('memberInfo')" prop="keywords">
-                        <el-input v-model="memberAccountLogTableData.searchParam.keywords" class="w-[240px]" :placeholder="t('memberInfoPlaceholder')" />
+                        <el-input v-model.trim="memberAccountLogTableData.searchParam.keywords" class="w-[240px]" :placeholder="t('memberInfoPlaceholder')" />
                     </el-form-item>
 
                     <el-form-item :label="t('balanceType')" prop="balance_type">
@@ -59,7 +59,7 @@
                     <el-form-item :label="t('fromType')" prop="from_type">
                         <el-select v-model="memberAccountLogTableData.searchParam.from_type" clearable :placeholder="t('fromTypePlaceholder')" class="input-width">
                             <el-option :label="t('selectPlaceholder')" value="" />
-                            <el-option :label="item.name" :value="key" v-for="(item, key) in fromTypeList"  :key="key"/>
+                            <el-option :label="item.name" :value="key" v-for="(item, key) in fromTypeList" :key="key"/>
                         </el-select>
                     </el-form-item>
                     <el-form-item :label="t('createTime')" prop="create_time">

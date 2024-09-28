@@ -8,7 +8,7 @@
                 <span>{{saveInfo.username}}</span>
             </el-form-item>
             <el-form-item :label="t('realName')">
-                <el-input v-model="saveInfo.real_name" :placeholder="t('realNamePlaceholder')" clearable class="input-width" />
+                <el-input v-model.trim="saveInfo.real_name" :placeholder="t('realNamePlaceholder')" clearable class="input-width" />
             </el-form-item>
         </el-form>
         <template #footer>
@@ -31,8 +31,7 @@ import useUserStore from '@/stores/modules/user'
 const userStore = useUserStore()
 const router = useRouter()
 // 提交信息
-const saveInfo = reactive({})
-
+const saveInfo: any = reactive({})
 const formRef = ref<FormInstance>()
 const loading = ref(true)
 const dialogVisible = ref(false)
@@ -61,7 +60,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
             setUserInfo(saveInfo).then((res: any) => {
                 loading.value = false
                 dialogVisible.value = false
-                let data = deepClone(userStore.userInfo) 
+                let data: any = deepClone(userStore.userInfo)
                 data.head_img = saveInfo.head_img
                 userStore.setUserInfo(data)
             }).catch(() => {

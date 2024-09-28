@@ -22,6 +22,30 @@
                 </template>
             </el-alert>
 
+            <el-card class="box-card !border-none mb-[10px] table-search-wrap" shadow="never">
+                <div class="flex justify-between">
+                    <el-form :inline="true" :model="cronTableData.searchParam" ref="searchFormRef">
+                        <el-form-item :label="t('title')" prop="key">
+                            <el-select v-model="cronTableData.searchParam.key" placeholder="全部" filterable remote clearable :remote-method="getAddonDevelopFn">
+                                <el-option label="全部" value="all" />
+                                <el-option v-for="item in templateList" :key="item.key" :label="item.name" :value="item.key" />
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item :label="t('status')" prop="status">
+                            <el-select v-model="cronTableData.searchParam.status" placeholder="全部" filterable remote clearable :remote-method="getAddonDevelopFn">
+                                <el-option label="全部" value="all" />
+                                <el-option label="启用" value="1" />
+                                <el-option label="关闭" value="0" />
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="loadCronList()">{{ t('search') }}</el-button>
+                            <el-button @click="resetForm(searchFormRef)">{{ t('reset') }}</el-button>
+                        </el-form-item>
+                    </el-form>
+                </div>
+            </el-card>
+
             <div class="mt-[20px]">
                 <el-table :data="cronTableData.data" size="large" v-loading="cronTableData.loading">
                     <template #empty>
@@ -36,10 +60,23 @@
                         </template>
                     </el-table-column>
                     <el-table-column prop="status_name" :label="t('openStatus')" min-width="100" />
-                    <el-table-column :label="t('operation')" align="right" fixed="right" width="130">
+                    <el-table-column :label="t('operation')" align="right" fixed="right" width="180">
                         <template #default="{ row }">
-                            <el-button type="primary" link @click="editEvent(row)">{{ t('edit') }}</el-button>
-                            <el-button type="primary" link @click="deleteEvent(row.id)">{{ t('delete') }}</el-button>
+                            <div class="flex items-center">
+                                <el-button type="primary" link @click="editEvent(row)">{{ t('edit') }}</el-button>
+                                <el-button type="primary" link @click="deleteEvent(row.id)">{{ t('delete') }}</el-button>
+                                <el-dropdown class="ml-[12px]">
+                                    <span class="el-dropdown-link text-primary">
+                                        {{ t('more') }}
+                                    </span>
+                                    <template #dropdown>
+                                    <el-dropdown-menu>
+                                        <el-dropdown-item @click="doEvent(row)">{{ t('doOne') }}</el-dropdown-item>
+                                        <el-dropdown-item @click="toLogList(row.id)">{{ t('cronLog') }}</el-dropdown-item>
+                                    </el-dropdown-menu>
+                                    </template>
+                                </el-dropdown>
+                            </div>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -68,13 +105,13 @@
                         <el-select v-model="formData.time.week" class="ml-2 w-[120px]" v-if="formData.time.type == 'week'">
                             <el-option v-for="(item, index) in week_list" :key="index" :label="item" :value="index" />
                         </el-select>
-                        <el-input v-model="formData.time.day" class="ml-2 w-[120px]" v-if="['month', 'day'].indexOf(formData.time.type) != -1">
+                        <el-input v-model.trim="formData.time.day" class="ml-2 w-[120px]" v-if="['month', 'day'].indexOf(formData.time.type) != -1">
                             <template #append>{{ t('day') }}</template>
                         </el-input>
-                        <el-input v-model="formData.time.hour" class="ml-2 w-[120px]" v-if="['month', 'day', 'hour', 'week'].indexOf(formData.time.type) != -1">
+                        <el-input v-model.trim="formData.time.hour" class="ml-2 w-[120px]" v-if="['month', 'day', 'hour', 'week'].indexOf(formData.time.type) != -1">
                             <template #append>{{ t('hour') }}</template>
                         </el-input>
-                        <el-input v-model="formData.time.min" class="ml-2 w-[120px]" v-if="['month', 'day', 'hour', 'week', 'min'].indexOf(formData.time.type) != -1">
+                        <el-input v-model.trim="formData.time.min" class="ml-2 w-[120px]" v-if="['month', 'day', 'hour', 'week', 'min'].indexOf(formData.time.type) != -1">
                             <template #append>{{ t('min') }}</template>
                         </el-input>
                     </div>
@@ -108,7 +145,8 @@ import {
     getWeek,
     addCron,
     editCron,
-    deleteCron
+    deleteCron,
+    doCron
 } from '@/app/api/sys'
 import { ElMessageBox, FormInstance } from 'element-plus'
 import { useRouter, useRoute } from 'vue-router'
@@ -124,15 +162,20 @@ const cronTableData = reactive({
     loading: true,
     data: [],
     searchParam: {
-        title: '',
         type: '',
-        last_time: ''
+        status: 'all'
     }
 })
 const templateList = ref([])
 const date_type = ref([])
 const week_list = ref([])
 const searchFormRef = ref<FormInstance>()
+
+const resetForm = (formEl: FormInstance | undefined) => {
+    if (!formEl) return
+    formEl.resetFields()
+    loadCronList()
+}
 
 const setTypeList = async () => {
     templateList.value = await (await getCronTemplate()).data
@@ -264,6 +307,20 @@ const deleteEvent = (id: number) => {
     })
 }
 
+const doEvent = (row: any) => {
+    ElMessageBox.confirm(t(`确认要立即执行一次"${row.name}"任务吗？`), t('warning'),
+        {
+            confirmButtonText: t('confirm'),
+            cancelButtonText: t('cancel'),
+            type: 'warning'
+        }
+    ).then(() => {
+        doCron({id: row.id}).then((res) => {
+        }).catch(() => {
+        })
+    })
+}
+
 const cronDialog: Record<string, any> | null = ref(null)
 /**
  * 查看任务
@@ -272,6 +329,10 @@ const cronDialog: Record<string, any> | null = ref(null)
 const infoEvent = (data: any) => {
     cronDialog.value.setFormData(data)
     cronDialog.value.showDialog = true
+}
+
+const toLogList = (id: number) => {
+    router.push({ path: '/tools/schedule_log', query: { id: id } })
 }
 
 </script>

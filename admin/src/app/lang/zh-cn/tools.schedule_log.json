@@ -1,0 +1,11 @@
+{
+	"id": "日志编号",
+	"name": "任务名称",
+	"key": "key",
+	"class": "调用目标字符串",
+	"executeResult": "日志信息",
+	"status": "执行状态",
+	"executeTime": "执行时间",
+	"info": "详情",
+	"cronInfo": "日志详情"
+}
