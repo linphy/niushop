@@ -1,1 +1,0 @@
-import{_ as o}from"./notice-records-info.vue_vue_type_script_setup_true_lang-c5e08b5e.js";import"./index-49a7c6d3.js";/* empty css                   *//* empty css                  *//* empty css                   *//* empty css                  *//* empty css                     */export{o as default};
