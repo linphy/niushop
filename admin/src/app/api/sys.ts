@@ -480,6 +480,22 @@ export function getCronLogList(params: any) {
     return request.get(`sys/schedule/log/list`, { params })
 }
 
+/**
+ * 删除任务日志
+ * @returns
+ */
+export function deleteCronLog(params: Record<string, any>) {
+    return request.put(`sys/schedule/log/delete`, params, { showSuccessMessage: true })
+}
+
+/**
+ * 清空任务日志
+ * @returns
+ */
+export function clearCronLog(params: Record<string, any>) {
+    return request.put(`sys/schedule/log/clear`, params, { showSuccessMessage: true })
+}
+
 /***************************************************** 协议管理 ****************************************************/
 
 /**
@@ -650,14 +666,6 @@ export function setDeveloperToken(params: Record<string, any>) {
     return request.put(`sys/config/developer_token`, params, { showSuccessMessage: true })
 }
 
-/**
- * 获取布局设置
- * @returns
- */
-export function getWebsiteLayout() {
-    return request.get('sys/web/layout')
-}
-
 /***************************************************** 报表导出 ****************************************************/
 
 /**
@@ -715,4 +723,3 @@ export function deleteExport(id: number) {
 export function getInstallConfig() {
     return request.get('sys/install/config')
 }
-

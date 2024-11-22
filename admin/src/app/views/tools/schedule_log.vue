@@ -39,10 +39,17 @@
             </el-card>
 
             <div class="mt-[20px]">
-                <el-table :data="cronTableData.data" size="large" v-loading="cronTableData.loading">
+                <div class="mb-[10px] flex items-center">
+                    <el-checkbox v-model="toggleCheckbox" size="large" class="px-[14px]" @change="toggleChange" :indeterminate="isIndeterminate" />
+                    <el-button @click="batchDelete" size="small" :loading="deleteLoading">{{ t('batchDelete') }}</el-button>
+                    <el-button @click="clearAll" size="small" :loading="clearLoading">{{ t('clearAll') }}</el-button>
+                </div>
+
+                <el-table :data="cronTableData.data" size="large" v-loading="cronTableData.loading" ref="cronLogListTableRef" @selection-change="handleSelectionChange">
                     <template #empty>
                         <span>{{ !cronTableData.loading ? t('emptyData') : '' }}</span>
                     </template>
+                    <el-table-column type="selection" width="55" />
                     <el-table-column prop="id" :label="t('id')" min-width="80" />
                     <el-table-column prop="name" :label="t('name')" min-width="150" />
                     <el-table-column prop="key" :label="t('key')" min-width="150" />
@@ -57,6 +64,7 @@
                     <el-table-column :label="t('operation')" align="right" fixed="right" width="130">
                         <template #default="{ row }">
                             <el-button type="primary" link @click="infoEvent(row)">{{ t('info') }}</el-button>
+                            <el-button type="primary" link @click="delEvent(row)">{{ t('delete') }}</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -109,8 +117,8 @@
 <script lang="ts" setup>
 import { reactive, ref, computed } from 'vue'
 import { t } from '@/lang'
-import { getCronLogList, getCronTemplate } from '@/app/api/sys'
-import { ElMessageBox, FormInstance } from 'element-plus'
+import { getCronLogList, getCronTemplate, deleteCronLog, clearCronLog } from '@/app/api/sys'
+import { ElMessageBox, ElMessage, FormInstance } from 'element-plus'
 import { useRouter, useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -166,6 +174,10 @@ loadCronLogList()
 
 const showDialog = ref(false)
 const loading = ref(true)
+const repeat = ref(false)
+const deleteLoading = ref(false)
+const clearLoading = ref(false)
+
 /**
  * 表单数据
  */
@@ -197,6 +209,134 @@ const infoEvent = (row: any) => {
 
     loading.value = false
     showDialog.value = true
+}
+
+// 删除日志
+const delEvent = (data: any) => {
+    ElMessageBox.confirm(t('deleteTips'), t('warning'),
+        {
+            confirmButtonText: t('confirm'),
+            cancelButtonText: t('cancel'),
+            type: 'warning'
+        }
+    ).then(() => {
+        if (repeat.value) return
+        repeat.value = true
+
+        deleteCronLog({
+            ids: data.id
+        }).then((res: any) => {
+            if (res.code == 1) {
+                loadCronLogList()
+            }
+            repeat.value = false
+        }).catch(() => {
+            repeat.value = false
+        })
+    })
+}
+
+// 批量复选框
+const toggleCheckbox = ref()
+
+// 复选框中间状态
+const isIndeterminate = ref(false)
+
+// 监听批量复选框事件
+const toggleChange = (value: any) => {
+    isIndeterminate.value = false
+    cronLogListTableRef.value.toggleAllSelection()
+}
+
+const cronLogListTableRef = ref()
+
+// 选中数据
+const multipleSelection: any = ref([])
+
+// 监听表格单行选中
+const handleSelectionChange = (val: []) => {
+    multipleSelection.value = val
+
+    toggleCheckbox.value = false
+    if (multipleSelection.value.length > 0 && multipleSelection.value.length < cronTableData.data.length) {
+        isIndeterminate.value = true
+    } else {
+        isIndeterminate.value = false
+    }
+
+    if (multipleSelection.value.length == cronTableData.data.length && cronTableData.data.length && multipleSelection.value.length) {
+        toggleCheckbox.value = true
+    }
+}
+
+// 批量删除
+const batchDelete = () => {
+    if (multipleSelection.value.length == 0) {
+        ElMessage({
+            type: 'warning',
+            message: `${t('batchEmptySelectedCronLogTips')}`
+        })
+        return
+    }
+
+    ElMessageBox.confirm(t('batchDeleteTips'), t('warning'),
+        {
+            confirmButtonText: t('confirm'),
+            cancelButtonText: t('cancel'),
+            type: 'warning'
+        }
+    ).then(() => {
+        if (repeat.value) return
+        repeat.value = true
+        deleteLoading.value = true
+
+        const ids: any = []
+        multipleSelection.value.forEach((item: any) => {
+            ids.push(item.id)
+        })
+
+        deleteCronLog({
+            ids: ids
+        }).then(() => {
+            loadCronLogList()
+            toggleCheckbox.value = false
+            repeat.value = false
+            deleteLoading.value = false
+        }).catch(() => {
+            repeat.value = false
+            deleteLoading.value = false
+        })
+    })
+}
+
+// 清空日志
+const clearAll = () => {
+    
+    ElMessageBox.confirm(t('clearAllTips'), t('warning'),
+        {
+            confirmButtonText: t('confirm'),
+            cancelButtonText: t('cancel'),
+            type: 'warning'
+        }
+    ).then(() => {
+        if (repeat.value) return
+        repeat.value = true
+        clearLoading.value = true
+
+        const schedule_id = route.query.id ?? ''
+
+        clearCronLog({
+            schedule_id: schedule_id
+        }).then(() => {
+            loadCronLogList()
+            toggleCheckbox.value = false
+            repeat.value = false
+            clearLoading.value = false
+        }).catch(() => {
+            repeat.value = false
+            clearLoading.value = false
+        })
+    })
 }
 
 </script>

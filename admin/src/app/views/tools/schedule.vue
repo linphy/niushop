@@ -51,9 +51,9 @@
                     <template #empty>
                         <span>{{ !cronTableData.loading ? t('emptyData') : '' }}</span>
                     </template>
-
-                    <el-table-column prop="name" :label="t('title')" min-width="150" />
+                    
                     <el-table-column prop="key" :label="t('key')" min-width="150" />
+                    <el-table-column prop="name" :label="t('title')" min-width="150" />
                     <el-table-column :label="t('crondType')" min-width="150">
                         <template #default="{ row }">
                             {{ row.crontab_content }}
