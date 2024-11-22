@@ -56,7 +56,7 @@ class PrinterTemplateService extends BaseAdminService
     public function getList(array $where = [], $field = 'template_id,template_type,template_name,value,create_time')
     {
         $order = 'create_time desc';
-        return $this->model->where([ [ 'template_id', ">", 0 ]  ])->withSearch([ "template_id", "template_type", "template_name" ], $where)->field($field)->order($order)->append([ 'template_type_name' ])->select()->toArray();
+        return $this->model->where([ [ 'template_id', ">", 0 ] ])->withSearch([ "template_id", "template_type", "template_name" ], $where)->field($field)->order($order)->append([ 'template_type_name' ])->select()->toArray();
     }
 
     /**

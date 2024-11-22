@@ -372,7 +372,7 @@ class ServiceGenerator extends BaseGenerator
         {
             foreach ($col as $v)
             {
-                $content.= PHP_EOL.'   $info['."'".$v."'".'] = strval($info['."'".$v."'])";
+                $content.= PHP_EOL.'   $info['."'".$v."'".'] = strval($info['."'".$v."']);";
             }
 
         }
@@ -381,7 +381,7 @@ class ServiceGenerator extends BaseGenerator
 
     /**
      * 关联表方法
-     * @return void
+     * @return string
      */
     public function getWithAllFunction()
     {

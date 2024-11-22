@@ -51,4 +51,34 @@ class CoreScheduleLogService extends BaseCoreService
 
     }
 
+    /**
+     * 删除计划任务执行记录
+     * @param $ids
+     * @return bool
+     */
+    public function del($ids)
+    {
+        $res = $this->model::destroy(function($query) use ($ids) {
+            $query->where([ [ 'id', 'in', $ids ] ]);
+        });
+        return $res;
+    }
+
+    /**
+     * 清空计划任务执行记录
+     * @param $data
+     * @return bool
+     */
+    public function clear($data)
+    {
+        $where = [];
+        if ($data[ 'schedule_id' ]) {
+            $where[] = [ 'schedule_id', '=', $data[ 'schedule_id' ] ];
+        }
+        $res = $this->model::destroy(function($query) use ($where) {
+            $query->where($where);
+        });
+        return $res;
+    }
+
 }

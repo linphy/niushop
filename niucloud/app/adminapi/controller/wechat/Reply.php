@@ -34,8 +34,8 @@ class Reply extends BaseAdminController
     public function getKeywordLists()
     {
         $data = $this->request->params([
-            ['keyword', ''],
-            ['name', '']
+            [ 'keyword', '' ],
+            [ 'name', '' ]
         ]);
         $wechat_reply_service = new WechatReplyService();
         return success($wechat_reply_service->getKeywordPage($data));
@@ -49,12 +49,12 @@ class Reply extends BaseAdminController
     {
         $wechat_reply_service = new WechatReplyService();
         $data = $this->request->params([
-            ['name', ''],
-            ['keyword', ''],
-            ['matching_type', '', false],
-            ['reply_method', ''],
-            ['content', ''],
-            ['sort', ''],
+            [ 'name', '' ],
+            [ 'keyword', '' ],
+            [ 'matching_type', '', false ],
+            [ 'reply_method', '' ],
+            [ 'content', '' ],
+            [ 'sort', '' ],
         ]);
         $wechat_reply_service->addKeyword($data);
         return success('ADD_SUCCESS');
@@ -68,12 +68,12 @@ class Reply extends BaseAdminController
     {
         $wechat_reply_service = new WechatReplyService();
         $data = $this->request->params([
-            ['name', ''],
-            ['keyword', ''],
-            ['matching_type', '', false],
-            ['reply_method', ''],
-            ['content', ''],
-            ['sort', ''],
+            [ 'name', '' ],
+            [ 'keyword', '' ],
+            [ 'matching_type', '', false ],
+            [ 'reply_method', '' ],
+            [ 'content', '' ],
+            [ 'sort', '' ],
         ]);
         $wechat_reply_service->editKeyword($id, $data);
         return success('EDIT_SUCCESS');
@@ -107,7 +107,7 @@ class Reply extends BaseAdminController
     public function editDefault()
     {
         $data = $this->request->params([
-            ['content', ''],
+            [ 'content', '' ],
         ]);
         $wechat_reply_service = new WechatReplyService();
         $wechat_reply_service->editDefault($data);
@@ -131,12 +131,11 @@ class Reply extends BaseAdminController
     public function editSubscribe()
     {
         $data = $this->request->params([
-            ['content', ''],
+            [ 'content', '' ],
         ]);
         $wechat_reply_service = new WechatReplyService();
         $wechat_reply_service->editSubscribe($data);
         return success('SET_SUCCESS');
     }
-
 
 }

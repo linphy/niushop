@@ -11,7 +11,6 @@
 
 namespace app\model\wechat;
 
-use app\dict\channel\ReplyDict;
 use core\base\BaseModel;
 
 /**

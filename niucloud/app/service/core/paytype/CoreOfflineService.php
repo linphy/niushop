@@ -60,6 +60,7 @@ class CoreOfflineService extends BaseCoreService
         $refund_no = $params['refund_no'];//交易流水号
         $voucher = $params['voucher'] ?? '';
 
+        //线下退款凭证校验
         if (empty($voucher)) throw new CommonException('VOUCHER_NOT_EMPTY');
 
         $pay = (new CoreRefundService())->findByRefundNo($refund_no);

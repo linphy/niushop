@@ -131,8 +131,6 @@ Route::group('member', function() {
     /***************************************************** 会员等级 ****************************************************/
     //会员等级分页列表
     Route::get('level', 'member.MemberLevel/pages');
-    //会员等级列表
-    Route::get('level/list', 'member.MemberLevel/lists');
     //会员等级详情
     Route::get('level/:id', 'member.MemberLevel/info');
     //会员等级添加

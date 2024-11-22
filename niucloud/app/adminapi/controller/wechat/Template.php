@@ -28,10 +28,10 @@ class Template extends BaseAdminController
     public function sync()
     {
         $data = $this->request->params([
-            ['keys', []]
+            [ 'keys', [] ]
         ]);
         $wechat_template_service = new WechatTemplateService();
-        return success(data:$wechat_template_service->syncAll($data['keys']));
+        return success(data:$wechat_template_service->syncAll($data[ 'keys' ]));
     }
 
     /**
@@ -43,6 +43,5 @@ class Template extends BaseAdminController
         $wechat_template_service = new WechatTemplateService();
         return success($wechat_template_service->getList());
     }
-
 
 }

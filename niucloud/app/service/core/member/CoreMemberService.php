@@ -16,6 +16,7 @@ use app\model\member\Member;
 use app\service\core\sys\CoreConfigService;
 use core\base\BaseCoreService;
 use core\dict\DictLoader;
+use core\exception\CommonException;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
@@ -239,16 +240,19 @@ class CoreMemberService extends BaseCoreService
 
             foreach ($gifts as $key => $item) {
                 if (!$item['is_use'] || !isset($dict[$key]) || !isset($dict[$key]['grant']) || empty($dict[$key]['grant'])) continue;
-
-                $grant = $dict[$key]['grant'];
-                if ($grant instanceof \Closure) {
-                    $grant($member_id, $item, $param);
-                } else if (class_exists($grant)) {
-                    (new $grant())->handle($member_id, $item, $param);
+                try {
+                    $grant = $dict[$key]['grant'];
+                    if ($grant instanceof \Closure) {
+                        $grant($member_id, $item, $param);
+                    } else if (class_exists($grant)) {
+                        (new $grant())->handle($member_id, $item, $param);
+                    }
+                } catch (CommonException $e) {
+                    Log::write('会员礼包'.$key.'发放失败，错误原因：'. $e->getMessage().$e->getFile().$e->getLine());
                 }
             }
             return true;
-        } catch (\Exception $e) {
+        } catch (CommonException $e) {
             Log::write('会员礼包发放失败，错误原因：'. $e->getMessage().$e->getFile().$e->getLine());
             Log::write('参数：'. json_encode([
                 'member_id' => $member_id,

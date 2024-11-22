@@ -422,7 +422,7 @@ CREATE TABLE `pay_refund` (
   `main_id` int NOT NULL DEFAULT 0 COMMENT '操作人',
   `pay_refund_no` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '外部支付方式的退款单号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '退款记录表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '支付退款记录表' ROW_FORMAT = Dynamic;
 
 
 DROP TABLE IF EXISTS `pay_transfer`;
@@ -827,7 +827,7 @@ CREATE TABLE `sys_user` (
   `create_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '添加时间',
   `login_count` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '登录次数',
   `is_del` tinyint(3) UNSIGNED NOT NULL DEFAULT 0,
-  `delete_time` tinyint(4) NOT NULL DEFAULT 0 COMMENT '删除时间',
+  `delete_time` int(11) NOT NULL DEFAULT 0 COMMENT '删除时间',
   `update_time` int(11) NOT NULL DEFAULT 0 COMMENT '更新时间',
   `status` tinyint(3) UNSIGNED NOT NULL DEFAULT 1 COMMENT '后台管理员状态 1有效0无效',
   `role_ids` varchar(255) NOT NULL DEFAULT '' COMMENT '权限组',

@@ -33,18 +33,6 @@ class MemberLevel extends BaseAdminController
     }
 
     /**
-     * 会员等级列表
-     * @return Response
-     */
-    public function lists()
-    {
-        $data = $this->request->params([
-            [ 'level_name', '' ],
-        ]);
-        return success(( new MemberLevelService() )->getList($data));
-    }
-
-    /**
      * 会员等级详情
      * @param int $id
      * @return Response

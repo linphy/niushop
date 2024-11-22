@@ -14,7 +14,10 @@ namespace app\api\controller\sys;
 use app\service\api\diy\DiyConfigService;
 use app\service\api\member\MemberConfigService;
 use app\service\api\member\MemberLevelService;
+use app\service\api\member\MemberService;
+use app\service\api\site\SiteService;
 use app\service\api\sys\ConfigService;
+use app\service\api\wechat\WechatAuthService;
 use core\base\BaseApiController;
 use think\Response;
 
@@ -75,13 +78,18 @@ class Config extends BaseApiController
      */
     public function init()
     {
+        $data = $this->request->params([
+            [ 'url', '' ],
+        ]);
+
         $res = [];
         $res[ 'tabbar_list' ] = ( new DiyConfigService() )->getBottomList();
         $res[ 'map_config' ] = ( new ConfigService() )->getMap();
         $res[ 'site_info' ] = ( new ConfigService() )->getWebSite();
         $res[ 'member_level' ] = ( new MemberLevelService() )->getList();
-        $res[ 'login_config' ] = ( new MemberConfigService() )->getLoginConfig();
+        $res[ 'login_config' ] = ( new MemberConfigService() )->getLoginConfig($data[ 'url' ]);
 
+        ( new MemberService() )->initMemberData();
         return success($res);
     }
 }

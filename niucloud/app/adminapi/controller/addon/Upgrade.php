@@ -22,8 +22,9 @@ class Upgrade extends BaseAdminController
      * @param $app_key
      * @return Response
      */
-    public function upgrade($addon = ''){
-        return success(data:(new UpgradeService())->upgrade($addon));
+    public function upgrade($addon = '')
+    {
+        return success(data:( new UpgradeService() )->upgrade($addon));
     }
 
     /**
@@ -31,8 +32,9 @@ class Upgrade extends BaseAdminController
      * @param $app_key
      * @return Response
      */
-    public function execute($addon = ''){
-        return success(data:(new UpgradeService())->execute());
+    public function execute($addon = '')
+    {
+        return success(data:( new UpgradeService() )->execute());
     }
 
     /**
@@ -40,16 +42,18 @@ class Upgrade extends BaseAdminController
      * @param $addon
      * @return Response
      */
-    public function getUpgradeContent($addon = '') {
-        return success(data:(new UpgradeService())->getUpgradeContent($addon));
+    public function getUpgradeContent($addon = '')
+    {
+        return success(data:( new UpgradeService() )->getUpgradeContent($addon));
     }
 
     /**
      * 获取正在进行的升级任务
      * @return Response
      */
-    public function getUpgradeTask() {
-        return success(data:(new UpgradeService())->getUpgradeTask());
+    public function getUpgradeTask()
+    {
+        return success(data:( new UpgradeService() )->getUpgradeTask());
     }
 
     /**
@@ -57,15 +61,17 @@ class Upgrade extends BaseAdminController
      * @param $addon
      * @return Response
      */
-    public function upgradePreCheck($addon = '') {
-        return success(data:(new UpgradeService())->upgradePreCheck($addon));
+    public function upgradePreCheck($addon = '')
+    {
+        return success(data:( new UpgradeService() )->upgradePreCheck($addon));
     }
 
     /**
      * 清除
      * @return Response
      */
-    public function clearUpgradeTask() {
-        return success(data:(new UpgradeService())->clearUpgradeTask());
+    public function clearUpgradeTask()
+    {
+        return success(data:( new UpgradeService() )->clearUpgradeTask());
     }
 }

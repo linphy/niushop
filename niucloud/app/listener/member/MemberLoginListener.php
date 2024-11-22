@@ -12,8 +12,8 @@
 namespace app\listener\member;
 
 /**
- * 会员登录时间
- * Class MemberLogin
+ * 会员登录事件
+ * Class MemberLoginListener
  * @package app\listener\member
  */
 class MemberLoginListener
@@ -24,6 +24,8 @@ class MemberLoginListener
      */
     public function handle(object $member)
     {
+        // 新人专享活动
+        event("MemberLoginAfter", [ 'member_id' => $member[ 'member_id' ] ]);
         return;
 
     }

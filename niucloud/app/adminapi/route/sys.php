@@ -191,6 +191,10 @@ Route::group('sys', function() {
 
     //任务执行记录列表
     Route::get('schedule/log/list', 'sys.ScheduleLog/lists');
+    //删除执行记录
+    Route::put('schedule/log/delete', 'sys.ScheduleLog/del');
+    //清空执行记录
+    Route::put('schedule/log/clear', 'sys.ScheduleLog/clear');
 
     /***************************************************** 应用管理 ****************************************************/
     Route::get('applist', 'sys.App/getAppList');

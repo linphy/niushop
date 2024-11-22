@@ -41,6 +41,17 @@ class CorePosterService extends BaseCoreService
     }
 
     /**
+     * 删除
+     * @param $condition
+     * @return \think\Response
+     */
+    public function del($condition)
+    {
+        ( new Poster() )->delete($condition);
+        return true;
+    }
+
+    /**
      * 海报类型
      * @param string $type
      * @return array
@@ -129,7 +140,7 @@ class CorePosterService extends BaseCoreService
             $dir = 'upload/poster';
             $temp1 = md5(json_encode($poster));
             $temp2 = md5(json_encode($poster_data));
-            $file_path = 'poster' . $temp1 . '_' . $temp2 . '_' . $channel . '.png';
+            $file_path = 'poster' . $temp1 . '_' . $temp2 .'_'.$channel. '.png';
             $path = $dir . '/' . $file_path;
 
             //判断当前海报是否存在,存在直接返回地址,不存在的话则创建
@@ -198,7 +209,7 @@ class CorePosterService extends BaseCoreService
                 }
             }
         }
-
+        
         if (!is_dir($dir) && !mkdir($dir, 0777, true) && !is_dir($dir)) {
             throw new \RuntimeException(sprintf('Directory "%s" was not created', $dir));
         }

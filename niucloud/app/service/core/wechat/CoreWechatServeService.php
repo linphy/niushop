@@ -38,7 +38,7 @@ class CoreWechatServeService extends BaseCoreService
     public function authorization(string $url = '', string $scopes = 'snsapi_base')
     {
         $oauth = CoreWechatService::app()->getOauth();
-        return $oauth->scopes([$scopes])->redirect($url);
+        return $oauth->scopes([ $scopes ])->redirect($url);
     }
 
     /**
@@ -52,7 +52,7 @@ class CoreWechatServeService extends BaseCoreService
             $oauth = CoreWechatService::app()->getOauth();
             return $oauth->userFromCode($code);
         } catch (\Exception $e) {
-            throw new CommonException($e->getCode());
+            throw new CommonException($e->getCode() . '：' . $e->getMessage());
         }
     }
 
@@ -86,7 +86,7 @@ class CoreWechatServeService extends BaseCoreService
         $server = $app->getServer();
         $server->with(function($message, \Closure $next) {
             // 你的自定义逻辑
-            return (new CoreWechatMessageService)->message($message);
+            return ( new CoreWechatMessageService )->message($message);
         });
         $response = $server->serve();
         return $response;
@@ -126,7 +126,8 @@ class CoreWechatServeService extends BaseCoreService
      * @throws InvalidArgumentException
      * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
-    public function scan(string $key, int $expire_seconds = 6 * 24 * 3600, $params = []){
+    public function scan(string $key, int $expire_seconds = 6 * 24 * 3600, $params = [])
+    {
         $api = CoreWechatService::appApiClient();
         if (is_int($key) && $key > 0) {
             $type = 'QR_SCENE';
@@ -135,7 +136,7 @@ class CoreWechatServeService extends BaseCoreService
             $type = 'QR_STR_SCENE';
             $sceneKey = 'scene_str';
         }
-        $scene = [$sceneKey => $key];
+        $scene = [ $sceneKey => $key ];
         $param = [
             'expire_seconds' => $expire_seconds,
             'action_name' => $type,

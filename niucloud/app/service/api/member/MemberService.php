@@ -139,4 +139,13 @@ class MemberService extends BaseApiService
         $detail['verify_code_barcode'] = image_to_base64($barcode_path);
         return $detail;
     }
+
+    /**
+     * 初始化会员数据
+     */
+    public function initMemberData(){
+        if ($this->member_id) {
+            event("MemberLoginAfter", ['member_id' => $this->member_id]);
+        }
+    }
 }

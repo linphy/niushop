@@ -51,4 +51,24 @@ class ScheduleLogService extends BaseAdminService
 
     }
 
+    /**
+     * 删除计划任务执行记录
+     * @param $ids
+     * @return bool
+     */
+    public function del($ids)
+    {
+        return (new CoreScheduleLogService())->del($ids);
+    }
+
+    /**
+     * 清空计划任务执行记录
+     * @param $data
+     * @return bool
+     */
+    public function clear($data)
+    {
+        return (new CoreScheduleLogService())->clear($data);
+    }
+
 }
