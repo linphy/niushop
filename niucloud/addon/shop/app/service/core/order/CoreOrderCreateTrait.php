@@ -25,6 +25,7 @@ use addon\shop\app\service\core\delivery\CoreDeliveryService;
 use addon\shop\app\service\core\delivery\CoreExpressService;
 use addon\shop\app\service\core\delivery\CoreLocalDeliveryService;
 use addon\shop\app\service\core\delivery\CoreStoreService;
+use addon\shop\app\service\core\goods\CoreGoodsLimitBuyService;
 use app\service\core\member\CoreMemberAddressService;
 use core\exception\CommonException;
 use Exception;
@@ -50,6 +51,7 @@ trait CoreOrderCreateTrait
     public $extend_data = [];//活动数据
     public $config = [];//配置集合
     public $discount = [];//优惠整合
+    public $limit_buy = [];//限购
 
     public $delivery = [];//配送相关
 
@@ -425,23 +427,30 @@ trait CoreOrderCreateTrait
                     }
                     $surplus_money = $coupon_money;
                     $match_count = count($match_goods_list);
+                    $match_goods_list = array_values($match_goods_list);
                     //根据商品金额计算个订单项享受的优惠
                     foreach ($match_goods_list as $k => $v) {
                         $item_order_goods_money = $this->calculateOrderGoodsMoney($v);
                         $item_sku_id = $v[ 'sku_id' ];
-                        if ($k == ( $match_count + 1 )) {
+                        if ($k == ( $match_count - 1 )) {
                             $item_coupon_money = $surplus_money;
                         } else {
                             if ($match_order_goods_money == 0 || $coupon_money == 0) {
                                 $item_coupon_money = 0;
                             } else {
                                 $item_coupon_money = $this->moneyFormat($item_order_goods_money / $match_order_goods_money * $coupon_money);
+                                if ($item_coupon_money == 0) {
+                                    $item_coupon_money = $item_order_goods_money;
+                                }
+                                if($item_coupon_money > $surplus_money){
+                                    $item_coupon_money = $surplus_money;
+                                }
                             }
                         }
                         $this->goods_data[ $item_sku_id ][ 'discount_money' ] += $item_coupon_money;
 //                        $this->goods_data[$item_sku_id]['order_goods_money'] = $this->calculateOrderGoodsMoney($this->goods_data[$item_sku_id]);
 
-                        $surplus_money -= $item_coupon_money;
+                        $surplus_money = bcsub($surplus_money, $item_coupon_money, 2);
                     }
                     //优惠累增
                     $this->basic[ 'discount_money' ] += $coupon_money;
@@ -462,7 +471,6 @@ trait CoreOrderCreateTrait
         }
 
     }
-
 
     /**
      * 优惠项格式
@@ -616,7 +624,6 @@ trait CoreOrderCreateTrait
                 $this->basic[ 'delivery_money' ] = round($this->basic[ 'delivery_money' ] ?? 0);
             }
 
-
         }
 
         return true;
@@ -652,6 +659,19 @@ trait CoreOrderCreateTrait
                 }
             }
 
+        }
+        return true;
+    }
+
+    /**
+     * 检测限购
+     * @return bool
+     */
+    public function checkGoodsLimitBuy()
+    {
+        $error = ( new CoreGoodsLimitBuyService() )->checkGoodsLimitBuy($this->member_id, $this->limit_buy);
+        if (!empty($error)) {
+            $this->setError($error);
         }
         return true;
     }

@@ -58,7 +58,7 @@ return [
         'member' => '会员',
         'system' => '系统'
     ],
-    'dict_shop_goods_evalute' => [
+    'dict_shop_goods_evaluate' => [
         'audit_no' => '无需审核',
         'audit' => '待审核',
         'audit_adopt' => '审核通过',
@@ -116,7 +116,8 @@ return [
         'shop_link_point_index' => '积分商城',
         'shop_link_point_list' => '积分商品列表',
         'shop_link_point_order_list' => '积分兑换记录',
-        'shop_link_discount_list' => '限时折扣列表'
+        'shop_link_discount_list' => '限时折扣列表',
+        'shop_link_newcomer_list' => '新人专享'
     ],
     'dict_diy_poster' => [
         'shop_goods_component_type_basic' => '商品组件',
@@ -137,6 +138,7 @@ return [
         'agree_audit_refund_goods' => '卖家同意退货',
         'refuse_audit_refund_goods' => '卖家拒绝退货',
         'active_refund' => '卖家主动退款',
+        'shop_active_refund' => '商家主动退款',
         'finish' => '退款完成',
         'close' => '关闭退款'
     ],
@@ -168,6 +170,8 @@ return [
     'dict_shop_active_class' => [
         'discount' => '限时折扣',
         'exchange' => '积分商城',
+        'manjiansong' => '满减送',
+        'newcomer_discount' => '新人专享'
     ],
     'dict_shop_active_type' => [
         'shop' => '店铺活动',
@@ -180,11 +184,39 @@ return [
         'shop' => '店铺整体商品',
     ],
 
-
     'dict_shop_point_exchange_type' => [
         'goods' => '商品',
         'coupon' => '优惠卷',
         'balance' => '余额',
+    ],
+
+    'dict_shop_manjian_condition_type' => [
+        'over_n_yuan' => '满N元',
+        'over_n_piece' => '满N件'
+    ],
+
+    'dict_shop_manjian_goods_type' => [
+        'all_goods' => '全部商品参与',
+        'selected_goods' => '指定商品参与',
+        'selected_goods_not' => '指定商品不参与'
+    ],
+
+    'dict_shop_manjian_join_member_type' => [
+        'all_member' => '所有会员参与',
+        'selected_member_level' => '指定会员等级',
+        'selected_member_label' => '指定会员标签'
+    ],
+
+    'dict_shop_manjian_rule_type' => [
+        'ladder' => '阶梯优惠',
+        'cycle' => '循环优惠',
+    ],
+
+    'dict_shop_manjian_status' => [
+        'not_active' => '未开始',
+        'active' => '进行中',
+        'end' => '已结束',
+        'close' => '已关闭',
     ],
 
     'dict_member' => [
@@ -207,6 +239,38 @@ return [
     ],
     'dict_shop_batch_delivery_type' => [
         'delivery' => '批量导入发货',
-    ]
+    ],
+
+    // 商品排行榜单
+    'dict_shop_goods_rank_rank_type' => [
+        'day' => '天',
+        'week' => '周',
+        'month' => '月',
+        'quarter' => '季度'
+    ],
+    'dict_shop_goods_rank_goods_source' => [
+        'goods' => '指定商品',
+        'category' => '指定分类',
+        'brand' => '指定品牌',
+        'label' => '指定标签'
+    ],
+
+    'dict_shop_goods_rank_rule_type' => [
+        'sale' => '按销量',
+        'collect' => '按收藏数',
+        'evaluate' => '按评价数',
+        'access' => '按浏览量'
+    ],
+
+    //商品统计
+    'dict_shop_goods_statistics_type' => [
+        'access_num' => '访问次数',
+        'cart_num' => '加入购物车数量',
+        'sale_num' => '商品销量',
+        'pay_num' => '支付件数',
+        'collect_num' => '收藏数量',
+        'pay_money' => '支付总金额',
+    ],
+
 
 ];

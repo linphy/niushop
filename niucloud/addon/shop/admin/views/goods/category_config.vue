@@ -1,5 +1,5 @@
 <template>
-    <div class="main-container pt-[20px] bg-[#fff]" v-loading="loading">
+    <div class="main-container pt-[20px] bg-[#fff]" >
         <div class="flex ml-[18px] justify-between items-center mb-[5px]">
             <span class="text-page-title">{{ pageName }}</span>
         </div>
@@ -7,7 +7,7 @@
             <el-tab-pane :label="t('tabGoodsCategory')" name="/shop/goods/category" />
             <el-tab-pane :label="t('tabGoodsCategoryConfig')" name="/shop/goods/category/config" />
         </el-tabs>
-        <el-form v-if="Object.keys(formData).length" :model="formData" label-width="170" ref="formRef" :rules="rules" class="page-form">
+        <el-form v-if="Object.keys(formData).length" :model="formData" label-width="170" ref="formRef" :rules="rules" class="page-form" v-loading="loading">
             <el-card class="box-card !border-none" shadow="never">
                 <h3 class="panel-title !text-[16px] pl-[15px]">{{ t('categoryTemplate') }}</h3>
                 <el-form-item :label="t('categoryType')">
@@ -97,7 +97,7 @@
                 </template>
             </el-card>
         </el-form>
-        <div class="fixed-footer-wrap" v-if="!loading">
+        <div class="fixed-footer-wrap">
             <div class="fixed-footer">
                 <el-button type="primary" @click="onSave(formRef)">{{ t('save') }}</el-button>
             </div>

@@ -43,16 +43,20 @@
 						</view>
 
 						<view class="ml-[20rpx] flex-1 flex flex-col justify-between">
-							<view>
-								<view class="text-[28rpx] leading-[1.4] multi-hidden">
-									{{ item.goods_name }}
-								</view>
-								<view v-if="item.goods_label_name&&item.goods_label_name.length" class="mt-[16rpx] text-[var(--text-color-light9)] text-[24rpx] multi-hidden">
-									{{item.goods_label_name.map(el=>el.label_name).join(' | ')}}
-								</view>
+							<view class="text-[28rpx] leading-[1.4] multi-hidden">
+								{{ item.goods_name }}
+							</view>
+							
+							<view v-if="item.goods_label_name && item.goods_label_name.length" class="flex flex-wrap mb-[auto]">
+								<template v-for="(tagItem, tagIndex) in item.goods_label_name">
+									<image class="img-tag" v-if="tagItem.style_type == 'icon' && tagItem.icon" :src="img(tagItem.icon)" mode="heightFix" @error="diyGoods.error(tagItem,'icon')"></image>
+									<view class="base-tag" v-else-if="tagItem.style_type == 'diy' || !tagItem.icon" :style="diyGoods.baseTagStyle(tagItem)">
+										{{tagItem.label_name}}
+									</view>
+								</template>
 							</view>
 
-							<view class="relative overflow-hidden w-full h-[88rpx] flex justify-between rounded-[100rpx]" :class="{'bg-[var(--primary-color-light)]': item.activeGoods.active_goods_status=='active','bg-[#FFF6F1]': item.activeGoods.active_goods_status!='active' }">
+							<view class="relative overflow-hidden w-full h-[88rpx] flex justify-between mt-[20rpx] rounded-[100rpx]" :class="{'bg-[var(--primary-color-light)]': item.activeGoods.active_goods_status=='active','bg-[#FFF6F1]': item.activeGoods.active_goods_status!='active' }">
 								<view class="mr-[20rpx] pl-[30rpx] flex-1 flex flex-col justify-center">
 									<view class="text-[var(--price-text-color)] flex items-baseline" :class="{'!text-[#FF8540]':item.activeGoods.active_goods_status!='active'}">
 										<text class="text-[26rpx] leading-[26rpx] font-500 mr-[4rpx] price-font">￥</text>
@@ -85,7 +89,7 @@
 		<view v-if="!discountList.length && !loading" class="h-[calc(100vh-550rpx)] fixed left-0 right-0" :style="{'top':mescrollTop}">
 			<!-- <u-empty text="暂无活动，请看看其他商品吧！" width="347rpx" height="265rpx" :icon="img('static/resource/images/system/empty.png')"/>
 			<button shape="circle" plain="true" class="w-[220rpx] mt-[42rpx] text-[28rpx] h-[66rpx] leading-[62rpx] !text-[var()] !border-[var(--primary-color)] border-[2rpx] rounded-full" @click="redirect({ url: '/addon/shop/pages/goods/list' })">去逛逛</button> -->
-			<mescroll-empty  :option="{tip : '暂无商品，请看看其他商品吧！','btnText': '去逛逛'}"></mescroll-empty>
+			<mescroll-empty  :option="{tip : '暂无商品，请看看其他商品吧！','btnText': '去逛逛'}" @emptyclick="redirect({ url: '/addon/shop/pages/goods/list' })"></mescroll-empty>
 		</view>
 		<loading-page :loading="bannerListLoading"></loading-page>
     </view>
@@ -101,13 +105,14 @@ import MescrollEmpty from '@/components/mescroll/mescroll-empty/mescroll-empty.v
 import useMescroll from '@/components/mescroll/hooks/useMescroll.js'
 import { onPageScroll, onReachBottom } from '@dcloudio/uni-app'
 import { topTabar } from '@/utils/topTabbar'
+import {useGoods} from '@/addon/shop/hooks/useGoods'
 
 let menuButtonInfo: any = {};
 // 如果是小程序，获取右上角胶囊的尺寸信息，避免导航栏右侧内容与胶囊重叠(支付宝小程序非本API，尚未兼容)
 // #ifdef MP-WEIXIN || MP-BAIDU || MP-TOUTIAO || MP-QQ
 menuButtonInfo = uni.getMenuButtonBoundingClientRect();
 // #endif
-
+const diyGoods = useGoods();
 const headStyle = computed(() => {
 	let style = Object.keys(menuButtonInfo).length ? (pxToRpx(Number(menuButtonInfo.height)) + pxToRpx(menuButtonInfo.top) + pxToRpx(8) + 368) + 'rpx' : '490rpx'
 	return style
@@ -199,11 +204,11 @@ const toRedirect =(index:any)=>{
 }
 
 const toLink = (item : any) => {
-	if(item.activeGoods.active_goods_status!='active'){
-		uni.showToast({ title: `活动${item.activeGoods.active_goods_status_name}`, icon: 'none' })
+	if (item.activeGoods.active_goods_status != 'active') {
+		uni.showToast({ title: `活动${ item.activeGoods.active_goods_status_name }`, icon: 'none' })
 		return;
 	}
-	redirect({ url: '/addon/shop/pages/goods/detail', param: { sku_id :item.goodsSku.sku_id } })
+	redirect({ url: '/addon/shop/pages/goods/detail', param: { sku_id: item.goodsSku.sku_id, type: 'discount' } })
 }
 
 const mescrollTop = ref('')
@@ -213,6 +218,7 @@ const calculateHeight = ()=>{
 </script>
 
 <style lang="scss" scoped>
+@import '@/addon/shop/styles/common.scss';
 .swiper.ns-indicator-dots :deep(.uni-swiper-dots-horizontal) {
 	bottom:40rpx
 }

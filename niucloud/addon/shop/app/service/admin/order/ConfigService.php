@@ -11,6 +11,7 @@
 
 namespace addon\shop\app\service\admin\order;
 
+use addon\shop\app\service\admin\goods\EvaluateService;
 use addon\shop\app\service\core\order\CoreOrderConfigService;
 use core\base\BaseAdminService;
 
@@ -38,6 +39,9 @@ class ConfigService extends BaseAdminService
      */
     public function setConfig($params)
     {
+        if ($params['evaluate_is_to_examine'] == 0) {
+            ( new EvaluateService() )->auditEditBatch();
+        }
         return $this->order_config_service->setConfig($params);
     }
 

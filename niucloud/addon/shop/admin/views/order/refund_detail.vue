@@ -27,7 +27,7 @@
 						<el-form-item :label="t('deliveryType')">
 							<div class="input-width">{{ formData.order_main.delivery_type_name }}</div>
 						</el-form-item>
-						<div>
+						<div v-if="formData.order_main.delivery_type == 'express' || formData.order_main.delivery_type == 'local_delivery'">
 							<el-form-item :label="t('takerName')">
 								<div class="input-width">{{ formData.order_main.taker_name }}</div>
 							</el-form-item>
@@ -36,6 +36,20 @@
 							</el-form-item>
 							<el-form-item :label="t('takerFullAddress')">
 								<div class="input-width">{{ formData.order_main.taker_full_address }}</div>
+							</el-form-item>
+						</div>
+						<div v-if="formData.order_main.delivery_type == 'store'">
+							<el-form-item :label="t('storeName')">
+								<div class="input-width">{{ formData.store.store_name }}</div>
+							</el-form-item>
+							<el-form-item :label="t('storeAddress')">
+								<div class="input-width">{{ formData.store.full_address }}</div>
+							</el-form-item>
+							<el-form-item :label="t('storeMobile')">
+								<div class="input-width">{{ formData.store.store_mobile }}</div>
+							</el-form-item>
+							<el-form-item :label="t('tradeTime')">
+								<div class="input-width">{{ formData.store.trade_time }}</div>
 							</el-form-item>
 						</div>
 					</el-col>
@@ -63,7 +77,8 @@
 					</el-col>
 					<el-col :span="8">
 						<el-form-item :label="t('refundMoney')">
-							<div class="input-width">￥{{ formData.apply_money }}</div>
+							<div class="input-width" v-if="formData.status == 8">￥{{ formData.money }}</div>
+							<div class="input-width" v-else>￥{{ formData.apply_money }}</div>
 						</el-form-item>
 						<el-form-item :label="t('refundReason')">
 							<div class="input-width">{{ formData.reason }}</div>
@@ -141,6 +156,7 @@
 								</div>
 								<div class="flex flex-col flex-1">
 									<span>{{ row.goods_name }}</span>
+									<span class="text-[12px] text-[#999] truncate">{{ row.sku_name }}</span>
 								</div>
 							</div>
 						</template>

@@ -24,32 +24,43 @@
 							<text class="text-[38rpx]">{{t('priceUnit')}}</text>
 						</view>
 					</view>
-					<text class="text-[26rpx] line-through ml-[16rpx]" v-if="goodsDetail.market_price && parseFloat(goodsDetail.market_price)">
-						￥{{ parseFloat(goodsDetail.market_price).toFixed(2) }}
-					</text>
 				</view>
 			</view>
 			
 			<view class="bg-[var(--page-bg-color)] overflow-hidden rounded-[40rpx] -mt-[28rpx] relative">
 				<view class="datail-title relative px-[30rpx] pt-[40rpx]">
 					<view class="text-[#333] font-medium text-[30rpx] multi-hidden leading-[40rpx]">
+						<view class="brand-tag middle" v-if="goodsDetail.goods.goods_brand">
+							{{goodsDetail.goods.goods_brand.brand_name}}
+						</view>
 						{{ goodsDetail.goods.goods_name }}
 					</view>
-					<view class="flex items-start mt-[24rpx]">
-						<view class="flex flex-wrap" v-if="goodsDetail.label_info && goodsDetail.label_info.length">
-							<view v-for="item in goodsDetail.label_info" :key="item.label_id"
-								class="tag-item text-[#FA6400] mb-[10rpx] h-[36rpx] leading-[32rpx] text-[20rpx] px-[12rpx] border-[2rpx] border-solid border-[#FA6400] mr-[15rpx] truncate">
-								{{ item.label_name }}
-							</view>
+					<view class="flex justify-between items-start mt-[24rpx]  ">
+						<view class="text-[24rpx] leading-[34rpx] text-[var(--text-color-light6)]" v-if="goodsDetail.market_price && parseFloat(goodsDetail.market_price)">
+							<text class="whitespace-nowrap mr-[4rpx]">划线价:</text>
+							<text class="line-through">￥{{ goodsDetail.market_price }}</text>
 						</view>
-						<view class="text-[22rpx] mb-[10rpx] text-[var(--text-color-light9)] flex items-baseline ml-auto">
-							<text class="whitespace-nowrap">销量</text>
-							<text class="mx-[2rpx]">{{ goodsDetail.sale_num }}</text>
-							<text>{{ goodsDetail.goods.unit }}</text>
+						<view class="text-[24rpx] leading-[34rpx] text-[var(--text-color-light6)]" v-if="goodsDetail.stock && parseFloat(goodsDetail.stock)">
+							<text class="whitespace-nowrap mr-[4rpx]">库存:</text>
+							<text class="">{{ goodsDetail.stock }}</text>
+							<text class="">{{ goodsDetail.goods.unit }}</text>
+						</view>
+						<view class="text-[24rpx] leading-[34rpx] text-[var(--text-color-light6)] flex items-baseline">
+							<text class="whitespace-nowrap mr-[4rpx]">销量:</text>
+							<text class="mx-[2rpx]">{{ goodsDetail.goods.sale_num }}</text>
+							<text class="">{{ goodsDetail.goods.unit }}</text>
 						</view>
 					</view>
+					<view class="flex flex-wrap mt-[16rpx]" v-if="goodsDetail.label_info && goodsDetail.label_info.length">
+						<block v-for="item in goodsDetail.label_info" :key="item.label_id">
+							<image class="img-tag middle" v-if="item.style_type == 'icon' && item.icon" :src="img(item.icon)" mode="heightFix" @error="diyGoods.error(item,'icon')"></image>
+							<view class="base-tag middle" v-else-if="item.style_type == 'diy' || !item.icon" :style="diyGoods.baseTagStyle(item)">
+								{{item.label_name}}
+							</view>
+						</block>
+					</view>
 				</view>
-				<view class="mt-[var(--top-m)] sidebar-margin card-template" v-if="isGoodsPropertyTemp">
+				<view class="mt-[24rpx] sidebar-margin card-template" v-if="isGoodsPropertyTemp">
 					<view @click="servicesDataShow = !servicesDataShow" v-if="goodsDetail.service && goodsDetail.service.length" class="card-template-item">
 						<text class="text-[#333] text-[26rpx] leading-[30rpx] font-400 shrink-0">服务</text>
 						<view class="text-[#343434] text-[26rpx] leading-[30rpx] font-400 truncate ml-auto">
@@ -223,13 +234,15 @@ import { ref, computed, getCurrentInstance, nextTick } from 'vue';
 import { onLoad, onShow,onUnload,onPageScroll } from '@dcloudio/uni-app'
 import { img, redirect,handleOnloadParams, deepClone, goback } from '@/utils/common';
 import { t } from '@/locale';
-import {   getEvaluateList } from '@/addon/shop/api/goods';
+import { getEvaluateList } from '@/addon/shop/api/goods';
 import { getExchangeGoodsDetail } from '@/addon/shop/api/point';
 import goodsSku from '@/addon/shop/pages/point/components/goods-sku.vue';
 import useMemberStore from '@/stores/member'
 import { useShare }from '@/hooks/useShare'
 import sharePoster from '@/components/share-poster/share-poster.vue'
+import {useGoods} from '@/addon/shop/hooks/useGoods'
 
+const diyGoods = useGoods();
 // 分享
 const{setShare} = useShare()
 
@@ -568,6 +581,7 @@ onUnload(()=>{
 })
 </script>
 <style lang="scss" scoped>
+@import '@/addon/shop/styles/common.scss';
 .remove-border {
 	&::after {
 		border: none;

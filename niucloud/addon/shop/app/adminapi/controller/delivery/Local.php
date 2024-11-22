@@ -39,6 +39,16 @@ class Local extends BaseAdminController
             ['weight_price', 0],
             ['delivery_type', ''],
             ['area', []],
+
+            ['time_is_open', 0],
+            ['time_type', 0],
+            ['time_week', ''],
+            ['time_interval', 30],
+            ['advance_day', 0],
+            ['most_day', 7],
+            ['start_time', 0],
+            ['end_time', 0],
+            ['delivery_time', ''],
         ]);
         return success(data:(new LocalService())->setLocal($data));
     }

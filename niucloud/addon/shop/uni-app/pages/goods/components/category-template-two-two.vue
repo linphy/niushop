@@ -63,7 +63,7 @@
 					<u-popup :show="labelPopup" mode="top" @close="labelPopup = false">
 						<view class="flex flex-wrap pt-[20rpx] pb-[24rpx]" @touchmove.prevent.stop>
 							<text
-								class="px-[14rpx] flex-shrink-0 w-[160rpx] box-border ml-[20rpx] mb-[26rpx] h-[60rpx] text-center leading-[56rpx] text-[26rpx] border-[2rpx] border-solid !rounded-[100rpx] text-[#333] truncate"
+								class="px-[14rpx] flex-shrink-0 w-[160rpx] box-border ml-[20rpx] mb-[26rpx] h-[60rpx] text-center leading-[56rpx] text-[24rpx] border-[2rpx] border-solid !rounded-[100rpx] text-[#333] truncate"
 								:class="{ 'bg-[var(--primary-color-light)] font-500 text-[var(--primary-color)] border-[var(--primary-color)]': index === subActive, 'border-[var(--temp-bg)]  bg-[var(--temp-bg)]': index != subActive }"
 								v-for="(item, index) in tabsData[tabActive]?.child_list"
 								:key="tabsData[tabActive].category_id" @click="subMenuClick(index, item)">{{ item.category_name }}</text>
@@ -85,74 +85,74 @@
 							</view>
 							<view class="flex flex-1 flex-wrap flex-col">
 								<view class="max-h-[80rpx] text-[26rpx] leading-[40rpx] multi-hidden">
-									{{ item.goods_name }}
-								</view>
+									{{ item.goods_name }}</view>
 								<view class="flex  items-end justify-between flex-1">
 									<view class="text-[var(--price-text-color)] price-font -mb-[8rpx]">
 										<text class="text-[24rpx] font-500">￥</text>
 										<text class="text-[40rpx] font-500">{{ parseFloat(goodsPrice(item)).toFixed(2).split('.')[0] }}</text>
 										<text class="text-[24rpx] font-500">.{{ parseFloat(goodsPrice(item)).toFixed(2).split('.')[1] }}</text>
-										<image class="h-[24rpx] w-[72rpx] ml-[6rpx]" v-if="priceType(item) == 'member_price'" :src="img('addon/shop/VIP.png')" mode="aspectFit" />
-										<image class="h-[24rpx] w-[72rpx] ml-[6rpx]" v-if="priceType(item) == 'discount_price'" :src="img('addon/shop/discount.png')" mode="aspectFit" />
+										<image class="h-[24rpx] max-w-[46rpx] ml-[6rpx]" v-if="priceType(item) == 'member_price'" :src="img('addon/shop/VIP.png')" mode="heightFix" />
 									</view>
-									<view
-										v-if="(item.goods_type == 'real' || (item.goods_type == 'virtual' && item.virtual_receive_type != 'verify')) &&
-										item.goodsSku.sku_spec_format === '' && cartList['goods_' + item.goods_id] && cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id] && config.cart.control && config.cart.event === 'cart'"
-										class="flex items-center">
-										<view class="relative w-[32rpx] h-[32rpx]">
-											<text class="text-[32rpx] text-color nc-iconfont nc-icon-jianshaoV6xx absolute flex items-center justify-center -left-[8rpx] -bottom-[8rpx] -right-[8rpx] -top-[8rpx]" @click.stop="reduceCart(cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id])"></text>
-										</view>
-										<text class="text-[#333] text-[24rpx] mx-[16rpx]">{{ cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id].num }}</text>
-										<view class="relative w-[32rpx] h-[32rpx]">
-											<text class="text-[32rpx] text-color iconfont iconjiahao2fill absolute flex items-center justify-center -left-[8rpx] -bottom-[8rpx] -right-[8rpx] -top-[8rpx]" :id="'itemCart' + index" @click.stop="addCartBtn(item,cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id], 'itemCart' + index)"></text>
-										</view>
-									</view>
-									<template v-else-if="(item.goods_type == 'virtual' && config.cart.event !== 'cart') || item.goods_type == 'real'">
-										<view v-if="config.cart.control && config.cart.style === 'style-1'" class="h-[44rpx] relative  pl-[20rpx]">
-											<view :id="'itemCart' + index"
-												class="w-[102rpx] box-border text-center text-[#fff] primary-btn-bg h-[46rpx] text-[22rpx] leading-[46rpx] rounded-[100rpx]"
-												@click.stop="itemCart(item, 'itemCart' + index)">
-												{{ config.cart.text }}
+									<block v-if="!item.isMaxBuy">
+										<view
+											v-if="(item.goods_type == 'real' || (item.goods_type == 'virtual' && item.virtual_receive_type != 'verify')) &&
+											item.goodsSku.sku_spec_format === '' && cartList['goods_' + item.goods_id] && cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id] && config.cart.control && config.cart.event === 'cart'"
+											class="flex items-center">
+											<view class="relative w-[32rpx] h-[32rpx]">
+												<text class="text-[32rpx] text-color nc-iconfont nc-icon-jianshaoV6xx absolute flex items-center justify-center -left-[8rpx] -bottom-[8rpx] -right-[8rpx] -top-[8rpx]" @click.stop="reduceCart(item,cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id])"></text>
 											</view>
-											<view
-												v-if="cartList['goods_' + item.goods_id] && cartList['goods_' + item.goods_id].totalNum"
-												:class="['absolute right-[-16rpx] top-[-16rpx] rounded-[30rpx] h-[30rpx] min-w-[30rpx] text-center leading-[30rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border box-border border-[2rpx] border-solid border-[#fff]', cartList['goods_' + item.goods_id].totalNum > 9 ? 'px-[10rpx]' : '']">
-												{{ cartList['goods_' + item.goods_id].totalNum }}
+											<text class="text-[#333] text-[24rpx] mx-[16rpx]">{{ cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id].num }}</text>
+											<view class="relative w-[32rpx] h-[32rpx]">
+												<text class="text-[32rpx] text-color iconfont iconjiahao2fill absolute flex items-center justify-center -left-[8rpx] -bottom-[8rpx] -right-[8rpx] -top-[8rpx]" :id="'itemCart' + index" @click.stop="addCartBtn(item,cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id], 'itemCart' + index)"></text>
 											</view>
 										</view>
-										<view v-if="config.cart.control && config.cart.style === 'style-2'" class="w-[44rpx] h-[44rpx] relative">
-											<text :id="'itemCart' + index"
-												class="text-color nc-iconfont nc-icon-tianjiaV6xx text-[44rpx]"
-												@click.stop="itemCart(item, 'itemCart' + index)"></text>
-											<view
-												v-if="cartList['goods_' + item.goods_id] && cartList['goods_' + item.goods_id].totalNum"
-												:class="['absolute right-[-16rpx] top-[-16rpx] rounded-[30rpx] h-[30rpx] min-w-[30rpx] text-center leading-[30rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border box-border border-[2rpx] border-solid border-[#fff]', cartList['goods_' + item.goods_id].totalNum > 9 ? 'px-[10rpx]' : '']">
-												{{ cartList['goods_' + item.goods_id].totalNum }}
+										<template v-else-if="(item.goods_type == 'virtual' && config.cart.event !== 'cart') || item.goods_type == 'real'">
+											<view v-if="config.cart.control && config.cart.style === 'style-1'" class="h-[44rpx] relative  pl-[20rpx]">
+												<view :id="'itemCart' + index"
+													class="w-[102rpx] box-border text-center text-[#fff] primary-btn-bg h-[46rpx] text-[22rpx] leading-[46rpx] rounded-[100rpx]"
+													@click.stop="itemCart(item, 'itemCart' + index)">
+													{{ config.cart.text }}
+												</view>
+												<view
+													v-if="cartList['goods_' + item.goods_id] && cartList['goods_' + item.goods_id].totalNum"
+													:class="['absolute right-[-16rpx] top-[-16rpx] rounded-[30rpx] h-[30rpx] min-w-[30rpx] text-center leading-[30rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border box-border border-[2rpx] border-solid border-[#fff]', cartList['goods_' + item.goods_id].totalNum > 9 ? 'px-[10rpx]' : '']">
+													{{ cartList['goods_' + item.goods_id].totalNum }}
+												</view>
 											</view>
-										</view>
-										<view v-if="config.cart.control && config.cart.style === 'style-3'" class="w-[44rpx] h-[44rpx] relative">
-											<text :id="'itemCart' + index"
-												class="text-color nc-iconfont nc-icon-gouwucheV6xx-2 !text-[44rpx]"
-												@click.stop="itemCart(item, 'itemCart' + index)"></text>
-											<view
-												v-if="cartList['goods_' + item.goods_id] && cartList['goods_' + item.goods_id].totalNum"
-												:class="['absolute right-[-16rpx] top-[-16rpx] rounded-[30rpx] h-[30rpx] min-w-[30rpx] text-center leading-[30rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border box-border border-[2rpx] border-solid border-[#fff]', cartList['goods_' + item.goods_id].totalNum > 9 ? 'px-[10rpx]' : '']">
-												{{ cartList['goods_' + item.goods_id].totalNum }}
+											<view v-if="config.cart.control && config.cart.style === 'style-2'" class="w-[44rpx] h-[44rpx] relative">
+												<text :id="'itemCart' + index"
+													class="text-color nc-iconfont nc-icon-tianjiaV6xx text-[44rpx]"
+													@click.stop="itemCart(item, 'itemCart' + index)"></text>
+												<view
+													v-if="cartList['goods_' + item.goods_id] && cartList['goods_' + item.goods_id].totalNum"
+													:class="['absolute right-[-16rpx] top-[-16rpx] rounded-[30rpx] h-[30rpx] min-w-[30rpx] text-center leading-[30rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border box-border border-[2rpx] border-solid border-[#fff]', cartList['goods_' + item.goods_id].totalNum > 9 ? 'px-[10rpx]' : '']">
+													{{ cartList['goods_' + item.goods_id].totalNum }}
+												</view>
 											</view>
-										</view>
-										<view v-if="config.cart.control && config.cart.style === 'style-4'" class="w-[44rpx] h-[44rpx] relative">
-											<view :id="'itemCart' + index"
-												class=" flex items-center justify-center text-[#fff] bg-color h-[44rpx] w-[44rpx] rounded-[22rpx] text-center"
-												@click.stop="itemCart(item, 'itemCart' + index)">
-												<text class="nc-iconfont nc-icon-gouwucheV6xx-2 !text-[26rpx]"></text>
+											<view v-if="config.cart.control && config.cart.style === 'style-3'" class="w-[44rpx] h-[44rpx] relative">
+												<text :id="'itemCart' + index"
+													class="text-color nc-iconfont nc-icon-gouwucheV6xx-2 !text-[44rpx]"
+													@click.stop="itemCart(item, 'itemCart' + index)"></text>
+												<view
+													v-if="cartList['goods_' + item.goods_id] && cartList['goods_' + item.goods_id].totalNum"
+													:class="['absolute right-[-16rpx] top-[-16rpx] rounded-[30rpx] h-[30rpx] min-w-[30rpx] text-center leading-[30rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border box-border border-[2rpx] border-solid border-[#fff]', cartList['goods_' + item.goods_id].totalNum > 9 ? 'px-[10rpx]' : '']">
+													{{ cartList['goods_' + item.goods_id].totalNum }}
+												</view>
 											</view>
-											<view
-												v-if="cartList['goods_' + item.goods_id] && cartList['goods_' + item.goods_id].totalNum"
-												:class="['absolute right-[-16rpx] top-[-16rpx] rounded-[30rpx] h-[30rpx] min-w-[30rpx] text-center leading-[30rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border border-[2rpx] border-solid border-[#fff]', cartList['goods_' + item.goods_id].totalNum > 9 ? 'px-[10rpx]' : '']">
-												{{ cartList['goods_' + item.goods_id].totalNum }}
+											<view v-if="config.cart.control && config.cart.style === 'style-4'" class="w-[44rpx] h-[44rpx] relative">
+												<view :id="'itemCart' + index"
+													class=" flex items-center justify-center text-[#fff] bg-color h-[44rpx] w-[44rpx] rounded-[22rpx] text-center"
+													@click.stop="itemCart(item, 'itemCart' + index)">
+													<text class="nc-iconfont nc-icon-gouwucheV6xx-2 !text-[26rpx]"></text>
+												</view>
+												<view
+													v-if="cartList['goods_' + item.goods_id] && cartList['goods_' + item.goods_id].totalNum"
+													:class="['absolute right-[-16rpx] top-[-16rpx] rounded-[30rpx] h-[30rpx] min-w-[30rpx] text-center leading-[30rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border border-[2rpx] border-solid border-[#fff]', cartList['goods_' + item.goods_id].totalNum > 9 ? 'px-[10rpx]' : '']">
+													{{ cartList['goods_' + item.goods_id].totalNum }}
+												</view>
 											</view>
-										</view>
-									</template>
+										</template>
+									</block>
 								</view>
 							</view>
 						</view>
@@ -221,7 +221,7 @@
 		<loading-page :loading="loading"></loading-page>
 		<tabbar />
 		<!-- 强制绑定手机号 -->
-		<bind-mobile ref="bindMobileRef" /> 
+		<bind-mobile ref="bindMobileRef" />
 	</view>
 </template>
 
@@ -299,6 +299,8 @@ const getListFn = (mescroll: mescrollStructure) => {
 			list.value = []; //如果是第一页需手动制空列表
 		}
 		list.value = list.value.concat(newArr);
+		// 商品限购
+		goodsMaxBuy();
 		loading.value = false;
 		mescroll.endSuccess(newArr.length);
 		if (!list.value.length) listLoading.value = true
@@ -306,6 +308,35 @@ const getListFn = (mescroll: mescrollStructure) => {
 		loading.value = false;
 		listLoading.value = true
 		mescroll.endErr(); // 请求失败, 结束加载
+	})
+}
+
+const goodsMaxBuy = ()=>{
+	list.value.forEach((data,index)=>{
+		data.isMaxBuy = false;
+
+		let maxBuyNum = -1;
+		// 限购 - 是否开启限购
+		if(data.is_limit){
+			if(data.max_buy){
+				let max_buy = 0;
+				if(data.limit_type == 1){ //单次限购
+					max_buy = data.max_buy;
+				}else{ // 单人限购
+					let buyVal = data.max_buy - (data.has_buy||0);
+					max_buy = buyVal > 0 ? buyVal : 0;
+				}
+
+				if(max_buy > data.stock){
+					maxBuyNum = data.stock
+				}else if(max_buy <= data.stock){
+					maxBuyNum = max_buy;
+				}
+			}
+		}
+		if(maxBuyNum == 0){
+			data.isMaxBuy = true;
+		}
 	})
 }
 
@@ -336,7 +367,16 @@ const animationAddCart = (row: any, id: any) => {
 		obj.num = row.num;
 		obj.id = row.id;
 	}
-	cartStore.increase(obj, 1, () => {
+
+	// 起购
+	let num = 1;
+	if(row.min_buy > 0 && !row.num){
+		num = row.min_buy;
+	}else{
+		num = 1;
+	}
+
+	cartStore.increase(obj, num, () => {
 		cartRepeatFlag.value = false
 	});
 	// #ifdef  MP-WEIXIN
@@ -484,9 +524,13 @@ const itemCart = (row: any, id: any) => {
         cartRef.value.open(row.goodsSku.sku_id)
     } else {
         //单规格添加购物车
-		if (parseInt(row.goodsSku.num||0) >= parseInt(row.goodsSku.stock)) {
+		if (parseInt(row.goodsSku.num||0) > parseInt(row.goodsSku.stock)) {
 		    uni.showToast({ title: '商品库存不足', icon: 'none' })
 		    return;
+		}
+		if(row.min_buy && row.min_buy > parseInt(row.stock)){
+			uni.showToast({ title: '商品库存小于起购数量', icon: 'none' })
+			return;
 		}
         animationAddCart(row, id)
     }
@@ -499,16 +543,56 @@ const addCartBtn = (item: any, row: any, id: string) => {
         return;
     }
 
+	// 起购
+	let num = row.num;
+	if(item.min_buy > 0 && item.min_buy > row.num){
+		num = item.min_buy;
+	}
+
+	/************** 限购-start *****************/
+	let maxBuyNum = -1;
+	// 限购 - 是否开启限购
+	if(item.is_limit && item.max_buy){
+		let max_buy = 0;
+		if(item.limit_type == 1){ //单次限购
+			max_buy = item.max_buy;
+		}else{ // 单人限购
+			let buyVal = item.max_buy - (item.has_buy||0);
+			max_buy = buyVal > 0 ? buyVal : 0;
+		}
+
+		if(max_buy > item.goodsSku.stock){
+			maxBuyNum = item.goodsSku.stock
+		}else if(max_buy <= item.goodsSku.stock){
+			maxBuyNum = max_buy;
+		}
+	}
+	if(item.is_limit && num >= item.max_buy){
+		let tips = `该商品单次限购${item.max_buy}件`;
+		if(item.limit_type != 1){ //单次限购
+			tips = `该商品每人限购${item.max_buy}件`;
+		}
+		uni.showToast({ title: tips, icon: 'none' })
+		return false;
+	}
+	/************** 限购-end *****************/
+
     let obj = cloneDeep(item)
-    obj.num = row.num;
+    obj.num = num;
     obj.id = row.id;
     animationAddCart(obj, id)
 }
 
 //点击购物车减号
-const reduceCart = (row: any) => {
+const reduceCart = (data: any,row: any) => {
 	if(cartRepeatFlag.value) return false
 	cartRepeatFlag.value = true
+
+	let reduceNum = 1;
+	if(data.min_buy > 0 && data.min_buy == row.num){
+		reduceNum = data.min_buy;
+	}
+
 	cartStore.reduce({
 		id: row.id,
 		goods_id: row.goods_id,
@@ -516,10 +600,10 @@ const reduceCart = (row: any) => {
 		stock: row.stock,
 		sale_price: row.sale_price,
 		num: row.num
-	}, 1, () => {
+	}, reduceNum, () => {
 		cartRepeatFlag.value = false
 	})
-	
+
 }
 
 //进入购物车
@@ -566,15 +650,11 @@ const settlement = () => {
     })
 }
 
-// 价格类型 
+// 价格类型
 const priceType = (data:any) =>{
 	let type = "";
-    if(data.is_discount && data.goodsSku.sale_price != data.goodsSku.price){
-        type = 'discount_price'// 折扣
-    }else if(data.member_discount && getToken() && data.goodsSku.member_price != data.goodsSku.price) {
+    if(data.member_discount && getToken() && data.goodsSku.member_price != data.goodsSku.price) {
         type = 'member_price' // 会员价
-    }else{
-        type = ""
     }
     return type;
 }
@@ -582,9 +662,7 @@ const priceType = (data:any) =>{
 // 商品价格
 const goodsPrice = (data:any) => {
     let price = "0.00";
-    if (data.is_discount && data.goodsSku.sale_price != data.goodsSku.price) {
-        price = data.goodsSku.sale_price ? data.goodsSku.sale_price : data.goodsSku.price // 折扣价
-    } else if (data.member_discount && getToken() && data.goodsSku.member_price != data.goodsSku.price) {
+    if (data.member_discount && getToken() && data.goodsSku.member_price != data.goodsSku.price) {
         price = data.goodsSku.member_price ? data.goodsSku.member_price : data.goodsSku.price // 会员价
     } else {
         price = data.goodsSku.price
@@ -676,7 +754,7 @@ const goodsPrice = (data:any) => {
 
 .tabs-box {
 	width: 168rpx;
-	font-size: 28rpx;
+	font-size: 26rpx;
 }
 
 .tabs-box .tab-item {

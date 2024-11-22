@@ -185,6 +185,7 @@ class ElectronicSheet extends BaseAdminController
             [ 'print_type', 'single' ], // 打印方式，single：单订单，multiple：多订单
             [ 'order_id', '' ], // 订单id
             [ 'electronic_sheet_id', 0 ], // 电子面单id
+            [ 'order_goods_ids', '' ],
             [ 'list', [] ] // 多个包裹，格式：[{ delivery_id : 0, electronic_sheet_id : 0 }]
 //            [ 'is_delivery', 0 ], // 是否发货 todo 后续扩展
         ]);

@@ -32,8 +32,14 @@ class Label extends BaseModel
      */
     protected $name = 'shop_goods_label';
 
+    // 设置json类型字段
+    protected $json = [ 'color_json' ];
+
+    // 设置JSON数据返回数组
+    protected $jsonAssoc = true;
+
     /**
-     * 搜索器:商品标签标签名称
+     * 搜索器:商品标签名称
      * @param $value
      * @param $data
      */
@@ -42,6 +48,27 @@ class Label extends BaseModel
         if ($value != '') {
             $query->where("label_name", "like", "%" . $this->handelSpecialCharacter($value) . "%");
         }
+    }
+
+    /**
+     * 搜索器:商品标签分组id
+     * @param $value
+     * @param $data
+     */
+    public function searchGroupIdAttr($query, $value, $data)
+    {
+        if ($value) {
+            $query->where("group_id", "=", $value);
+        }
+    }
+
+    /**
+     * 关联商品标签分组
+     * @return \think\model\relation\HasOne
+     */
+    public function group()
+    {
+        return $this->hasOne(LabelGroup::class, 'group_id', 'group_id');
     }
 
 }

@@ -50,9 +50,7 @@ const useCartStore = defineStore('cart', {
                                 sale_price: item.goodsSku.price
                             };
 
-                            if (item.goods.is_discount && item.goodsSku.sale_price != item.goodsSku.price) {
-                                cart.sale_price = item.goodsSku.sale_price ? item.goodsSku.sale_price : item.goodsSku.price // 折扣价
-                            } else if (item.goods.member_discount && getToken() && item.goodsSku.member_price != item.goodsSku.price) {
+                            if (item.goods.member_discount && getToken() && item.goodsSku.member_price != item.goodsSku.price) {
                                 cart.sale_price = item.goodsSku.member_price ? item.goodsSku.member_price : item.goodsSku.price // 会员价
                             }
 
@@ -135,7 +133,7 @@ const useCartStore = defineStore('cart', {
             if (!getToken()) return;
 
             let num = data.num || 0; // 当前数量
-            let updateNum = num - 1; // 变更数量
+            let updateNum = num - step; // 变更数量
 
             let api = updateNum > 0 ? editCart : deleteCart;
 

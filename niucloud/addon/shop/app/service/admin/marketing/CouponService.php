@@ -17,6 +17,7 @@ use addon\shop\app\model\coupon\Coupon;
 use addon\shop\app\model\coupon\CouponGoods;
 use addon\shop\app\model\coupon\CouponMember;
 use addon\shop\app\service\admin\goods\CategoryService;
+use app\service\core\sys\CoreConfigService;
 use core\exception\AdminException;
 use core\base\BaseAdminService;
 use core\exception\CommonException;
@@ -69,6 +70,18 @@ class CouponService extends BaseAdminService
      */
     public function getPage(array $where = [])
     {
+        $verify_coupon_ids = [];
+        // 检测商品id集合是否存在，移除不存在的商品id，纠正数据准确性
+        if (!empty($where[ 'verify_coupon_ids' ])) {
+            $verify_coupon_ids = $this->model->where([
+                [ 'id', 'in', $where[ 'verify_coupon_ids' ] ]
+            ])->withSearch([ "title", "status" ], $where)->field('id')->select()->toArray();
+
+            if (!empty($verify_coupon_ids)) {
+                $verify_coupon_ids = array_column($verify_coupon_ids, 'id');
+            }
+        }
+
         $field = 'id,title,price,type,receive_type,start_time,end_time,remain_count,receive_count,status,limit_count,min_condition_money,receive_status,valid_type,length,valid_end_time';
         $order = 'id desc';
         $search_model = $this->model->where([ [ 'id', '>', 0 ] ])->withSearch([ "title", "status" ], $where)->append([ 'type_name', 'receive_type_name', 'status_name' ])->field($field)->order($order);
@@ -83,6 +96,7 @@ class CouponService extends BaseAdminService
             //查询已使用数量
             $v[ 'receive_use_count' ] = $coupon_member_model->where([ [ 'coupon_id', '=', $v[ 'id' ] ], [ 'use_time', '>', 1 ] ])->count();
         }
+        $list[ 'verify_coupon_ids' ] = $verify_coupon_ids;
         return $list;
     }
 
@@ -252,7 +266,10 @@ class CouponService extends BaseAdminService
      */
     public function edit(int $id, array $data)
     {
-
+        $coupon_ids = $this->checkCouponInUse();
+        if (in_array($id, $coupon_ids)) {
+            throw new AdminException('SHOP_COUPON_IN_USE_NOT_ALLOW_EDIT');
+        }
         if ($data[ 'threshold' ] == 2) {
             $data[ 'min_condition_money' ] = 0;
         }
@@ -275,10 +292,12 @@ class CouponService extends BaseAdminService
                 } else {
                     $data[ 'start_time' ] = '';
                     $data[ 'end_time' ] = '';
+                    $data[ 'status' ] = 1;
                 }
             } else {
                 $data[ 'start_time' ] = '';
                 $data[ 'end_time' ] = '';
+                $data[ 'status' ] = 1;
             }
 
             if ($data[ 'valid_type' ] == 2) {
@@ -371,6 +390,10 @@ class CouponService extends BaseAdminService
     {
         $coupon = $this->getInfo($id);
         if (empty($coupon)) throw new AdminException('COUPON_NOT_EXIST');
+        $coupon_ids = $this->checkCouponInUse();
+        if (in_array($id, $coupon_ids)) {
+            throw new AdminException('SHOP_COUPON_IN_USE_NOT_ALLOW_EDIT');
+        }
         $coupon_member_model = new CouponMember();
         if ($coupon[ 'status' ] == CouponDict::NORMAL) {
             // 检测是否存在未使用的优惠券
@@ -409,6 +432,10 @@ class CouponService extends BaseAdminService
      */
     public function setStatus($id, $status)
     {
+        $coupon_ids = $this->checkCouponInUse();
+        if (in_array($id, $coupon_ids)) {
+            throw new AdminException('SHOP_COUPON_IN_USE_NOT_ALLOW_EDIT');
+        }
         $data = array(
             'receive_status' => $status
         );
@@ -424,6 +451,10 @@ class CouponService extends BaseAdminService
      */
     public function couponInvalid($id)
     {
+        $coupon_ids = $this->checkCouponInUse();
+        if (in_array($id, $coupon_ids)) {
+            throw new AdminException('SHOP_COUPON_IN_USE_NOT_ALLOW_EDIT');
+        }
         $data = array(
             'status' => CouponDict::INVALID
         );
@@ -431,6 +462,27 @@ class CouponService extends BaseAdminService
         $coupon_member_model = new CouponMember();
         if ($res) $coupon_member_model->where([ [ 'coupon_id', '=', $id ], [ 'status', '=', CouponMemberDict::WAIT_USE ] ])->update([ 'status' => CouponMemberDict::INVALID ]);
         return true;
+    }
+
+    /**
+     * 优惠券使用检测
+     * @return array
+     */
+    public function checkCouponInUse()
+    {
+        $coupon_ids = [];
+        $sign_config = ( new CoreConfigService() )->getConfig('SIGN_CONFIG');
+        if (!empty($sign_config) && !empty($sign_config['value'])) {
+            $sign_info = $sign_config['value'];
+            $coupon_ids = $sign_info['day_award']['shop_coupon']['coupon_id'];
+            if (!empty($sign_info['continue_award'])) {
+                foreach ($sign_info['continue_award'] as $item) {
+                    $coupon_ids = array_merge($coupon_ids, $item['shop_coupon']['coupon_id']);
+                }
+            }
+            $coupon_ids = array_values(array_unique($coupon_ids));
+        }
+        return $coupon_ids;
     }
 
 }

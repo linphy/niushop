@@ -17,7 +17,7 @@ use core\base\BaseAdminService;
 
 /**
  * 配送员服务层
- * Class StoreService
+ * Class DeliverService
  * @package addon\shop\app\service\admin\delivery
  */
 class DeliverService extends BaseAdminService
@@ -51,7 +51,7 @@ class DeliverService extends BaseAdminService
     public function getInfo(int $id)
     {
         $field = 'deliver_id,deliver_name,deliver_mobile';
-        $info = $this->model->field($field)->where([['deliver_id', '=', $id]])->findOrEmpty()->toArray();
+        $info = $this->model->field($field)->where([['deliver_id', '=', $id] ])->findOrEmpty()->toArray();
         return $info;
     }
 
@@ -65,7 +65,6 @@ class DeliverService extends BaseAdminService
         $data['create_time'] = time();
         $res = $this->model->create($data);
         return $res->deliver_id;
-
     }
 
     /**

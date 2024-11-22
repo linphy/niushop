@@ -2,7 +2,7 @@
 	<view @touchmove.prevent.stop>
 		<u-popup :show="goodsSkuPop" @close="closeFn" mode="bottom">
 			<view v-if="Object.keys(goodsDetail).length"  @touchmove.prevent.stop class="rounded-t-[20rpx] overflow-hidden bg-[#fff] py-[32rpx] relative">
-				<view class="flex mb-[58rpx] px-[32rpx]">
+				<view class="flex px-[32rpx] mb-[58rpx]">
 					<u--image width="180rpx" height="180rpx" :radius="'var(--goods-rounded-big)'" :src="img(detail.sku_image)" model="aspectFill">
 						<template #error>
 							<image class="w-[180rpx] h-[180rpx] rounded-[var(--goods-rounded-big)] overflow-hidden" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
@@ -15,8 +15,7 @@
 								<text class="text-[32rpx] font-bold price-font mr-[4rpx]">￥</text>
 								<text class="text-[48rpx] price-font">{{ parseFloat(goodsPrice(detail)).toFixed(2).split('.')[0] }}</text>
 								<text class="text-[32rpx] price-font">.{{ parseFloat(goodsPrice(detail)).toFixed(2).split('.')[1] }}</text>
-								<image class="h-[24rpx] ml-[6rpx]" :src="img('addon/shop/VIP.png')" mode="heightFix" />
-								<image class="h-[24rpx] ml-[6rpx]" v-if="priceType(detail) == 'discount_price'" :src="img('addon/shop/discount.png')" mode="heightFix" />
+								<image class="h-[24rpx] ml-[6rpx] max-w-[44rpx]" v-if="priceType(detail) == 'member_price'" :src="img('addon/shop/VIP.png')" mode="heightFix" />
 							</view>
 							<view class="text-[26rpx] leading-[32rpx] text-[#303133] mt-[12rpx]">库存{{ detail.stock }}{{ goodsDetail.goods.unit }}</view>
 						</view>
@@ -37,40 +36,44 @@
 					</view>
 					<view class="flex justify-between items-center mt-[8rpx]">
 						<view class="text-[26rpx]">购买数量</view>
+						<text v-if="maxBuyShow > 0 && minBuyShow > 1" class="ml-[20rpx] mr-[auto] text-[24rpx] text-[var(--primary-color)]">
+							({{ minBuyShow }}{{ goodsDetail.goods.unit }}起售，限购{{ maxBuyShow }}{{ goodsDetail.goods.unit }})
+						</text>
+						<text v-else-if="maxBuyShow > 0" class="ml-[20rpx] mr-[auto] text-[24rpx] text-[var(--primary-color)]">(限购{{ maxBuyShow }}{{ goodsDetail.goods.unit }})</text>
+						<text v-else-if="minBuyShow > 1" class="ml-[20rpx] mr-[auto] text-[24rpx] text-[var(--primary-color)]">({{ minBuyShow }}{{ goodsDetail.goods.unit }}起售)</text>
 						<u-number-box
 							v-if="cartList['goods_' + detail.goods_id] && cartList['goods_' + detail.goods_id]['sku_' + detail.sku_id]"
-							v-model="buyNum" :min="0" :max="detail.stock" integer :step="1" input-width="98rpx"
+							v-model="buyNum" :min="minBuy" :max="maxBuy" integer :step="1" input-width="98rpx"
 							input-height="54rpx">
 							<template #minus>
-								<view class="relative w-[34rpx] h-[34rpx]">
-									<text class="text-[34rpx] nc-iconfont nc-icon-jianV6xx font-500 absolute flex items-center justify-center -left-[8rpx] -bottom-[8rpx] -right-[8rpx] -top-[8rpx]" :class="{ '!text-[var(--text-color-light9)]': buyNum <= 0 }"></text>
+								<view class="relative w-[34rpx] h-[34rpx]" @click="reduceNumChange()">
+									<text class="text-[34rpx] nc-iconfont nc-icon-jianV6xx font-500 absolute flex items-center justify-center -left-[8rpx] -bottom-[8rpx] -right-[8rpx] -top-[8rpx]" :class="{ '!text-[var(--text-color-light9)]': buyNum <= minBuy }"></text>
 								</view>
 							</template>
 							<template #input>
 								<input class="text-[#303133] text-[28rpx] mx-[10rpx] w-[80rpx] h-[44rpx] bg-[var(--temp-bg)] leading-[44rpx] text-center rounded-[6rpx]" type="number" @input="goodsSkuInputFn" @blur="goodsSkuBlurFn" v-model="buyNum"  />
 							</template>
 							<template #plus>
-								<view class="relative w-[34rpx] h-[34rpx]">
-									<text class="text-[34rpx] nc-iconfont nc-icon-jiahaoV6xx font-500 absolute flex items-center justify-center -left-[8rpx] -bottom-[8rpx] -right-[8rpx] -top-[8rpx]" :class="{ '!text-[var(--text-color-light9)]': buyNum === detail.stock }"></text>
+								<view class="relative w-[34rpx] h-[34rpx]" @click="addNumChange()">
+									<text class="text-[34rpx] nc-iconfont nc-icon-jiahaoV6xx font-500 absolute flex items-center justify-center -left-[8rpx] -bottom-[8rpx] -right-[8rpx] -top-[8rpx]" :class="{ '!text-[var(--text-color-light9)]': buyNum >= maxBuy }"></text>
 								</view>
 							</template>
 						</u-number-box>
-						<u-number-box v-else v-model="buyNum" :min="1" :max="detail.stock" integer :step="1" input-width="98rpx" input-height="54rpx">
+						<u-number-box v-else v-model="buyNum" :min="minBuy" :max="maxBuy" integer :step="1" input-width="98rpx" input-height="54rpx">
 							<template #minus>
-								<view class="relative w-[34rpx] h-[34rpx]">
-									<text class="text-[34rpx] nc-iconfont nc-icon-jianV6xx font-500 absolute flex items-center justify-center -left-[8rpx] -bottom-[8rpx] -right-[8rpx] -top-[8rpx]" :class="{ '!text-[var(--text-color-light9)]': buyNum <= 1 }"></text>
+								<view class="relative w-[34rpx] h-[34rpx]" @click="reduceNumChange()">
+									<text class="text-[34rpx] nc-iconfont nc-icon-jianV6xx font-500 absolute flex items-center justify-center -left-[8rpx] -bottom-[8rpx] -right-[8rpx] -top-[8rpx]" :class="{ '!text-[var(--text-color-light9)]': buyNum <= minBuy }"></text>
 								</view>
 							</template>
 							<template #input>
 								<input class="text-[#303133] text-[28rpx] mx-[10rpx] w-[80rpx] h-[44rpx] bg-[var(--temp-bg)] leading-[44rpx] text-center rounded-[6rpx]" type="number" @input="goodsSkuInputFn" @blur="goodsSkuBlurFn" v-model="buyNum"  />
 							</template>
 							<template #plus>
-								<view class="relative w-[34rpx] h-[34rpx]">
-									<text class="text-[34rpx] nc-iconfont nc-icon-jiahaoV6xx font-500 absolute flex items-center justify-center -left-[8rpx] -bottom-[8rpx] -right-[8rpx] -top-[8rpx]" :class="{ '!text-[var(--text-color-light9)]': buyNum === detail.stock }"></text>
+								<view class="relative w-[34rpx] h-[34rpx]" @click="addNumChange()">
+									<text class="text-[34rpx] nc-iconfont nc-icon-jiahaoV6xx font-500 absolute flex items-center justify-center -left-[8rpx] -bottom-[8rpx] -right-[8rpx] -top-[8rpx]" :class="{ '!text-[var(--text-color-light9)]': buyNum >= maxBuy }"></text>
 								</view>
 							</template>
 						</u-number-box>
-
 					</view>
 				</scroll-view>
 				<view class="px-[20rpx]">
@@ -101,6 +104,11 @@ const info: any = ref({})//获取原始数据
 const detail:any = ref({})//展示数据
 const buyNum = ref(1)
 
+const maxBuy = ref(0); // 限购
+const minBuy = ref(0); // 起售
+const maxBuyShow = ref(0); // 限购，只展示
+const minBuyShow = ref(0); // 起售，只展示
+
 const getGoodsSkuFn = (sku_id: any) => {
 	getGoodsSku(sku_id).then((res: any) => {
 		info.value = res.data
@@ -121,18 +129,34 @@ const getGoodsSkuFn = (sku_id: any) => {
 
 const goodsSkuInputFn = ()=>{
 	setTimeout(() => {
-		if(buyNum.value >= detail.value.stock){
-			buyNum.value = detail.value.stock;
+		if(!buyNum.value || buyNum.value <= minBuy.value ){
+			buyNum.value = minBuy.value || 1;
+		}
+		if(buyNum.value >= maxBuy.value){
+			buyNum.value = maxBuy.value;
+		}
+		// 起售大于库存，初始值也应该是零
+		if(minBuy.value > buyNum.value){
+			buyNum.value = 0;
 		}
 	},0)
 }
 const goodsSkuBlurFn = ()=>{
 	setTimeout(() => {
-		if(!buyNum.value || buyNum.value <= 0 ){
-			buyNum.value = 1;
+		if(!buyNum.value || buyNum.value <= minBuy.value ){
+			buyNum.value = minBuy.value || 1;
 		}
-		if(buyNum.value >= detail.value.stock){
-			buyNum.value = detail.value.stock;
+		if(buyNum.value >= maxBuy.value){
+			buyNum.value = maxBuy.value;
+		}
+		
+		// 起售大于库存，初始值也应该是零
+		if(minBuy.value > buyNum.value){
+			buyNum.value = 0;
+			uni.showToast({
+			    title: '库存数量小于起购数量',
+			    icon: 'none'
+			});
 		}
 	},0)
 }
@@ -171,7 +195,7 @@ const goodsDetail = computed(() => {
 			})
 		})
 		getSkuId();
-
+		
 		// 当前详情内容
 		if (data.skuList && Object.keys(data.skuList).length) {
 			data.skuList.forEach((item: any) => {
@@ -181,6 +205,42 @@ const goodsDetail = computed(() => {
 			})
 		}
 	}
+	/************************** 限购-start **************************/
+	maxBuy.value = detail.value.stock
+	// 限购 - 是否开启限购
+	if(data.goods.is_limit){
+		if(data.goods && data.goods.max_buy){
+			let max_buy = 0;
+			if(data.goods.limit_type == 1){ //单次限购
+				max_buy = data.goods.max_buy;
+			}else{ // 单人限购
+				let buyVal = data.goods.max_buy - (data.has_buy||0);
+				max_buy = buyVal > 0 ? buyVal : 0;
+			}
+			
+			if(max_buy > detail.value.stock){
+				maxBuy.value = detail.value.stock
+			}else if(max_buy <= detail.value.stock){
+				maxBuy.value = max_buy;
+			}
+		}
+		// 仅用于展示
+		maxBuyShow.value = data.goods.max_buy; // 限购
+		// 限购开启且最大购买变为零时，初始值也应该是零
+		if(maxBuy.value == 0){
+			buyNum.value = 0;
+		}
+	}
+	// 起售
+	minBuy.value = data.goods.min_buy;
+	buyNum.value = minBuy.value > 0 ? data.goods.min_buy : 1;
+	// 仅用于展示
+	minBuyShow.value = data.goods.min_buy;
+	// 起售大于库存，初始值也应该是零
+	if(minBuy.value > detail.value.stock){
+		buyNum.value = 0;
+	}
+	/************************** 限购-end **************************/
 	return data;
 })
 
@@ -191,16 +251,18 @@ watch(
 			buyNum.value = toRaw(cartList.value['goods_' + detail.value.goods_id]['sku_' + detail.value.sku_id].num);
 			detail.value.cart_id = toRaw(cartList.value['goods_' + detail.value.goods_id]['sku_' + detail.value.sku_id].id)
 		} else {
-			buyNum.value = 1
-			detail.value.cart_id = ''
+			// 起售大于库存，初始值也应该是零
+			let num = 1;
+			if(minBuy.value > 0){ num = minBuy.value; }
+			if(minBuy.value > detail.value.stock){ num = 0; }
+			buyNum.value = num;
+			detail.value.cart_id = '';
 		}
 
 	}
 )
 const change = (data: any, index: any) => {
 	currSpec.value.name[index] = data.name;
-	buyNum.value = 1
-	// getSkuId();
 }
 
 const getSkuId = () => {
@@ -210,6 +272,31 @@ const getSkuId = () => {
 			currSpec.value.skuId = skuItem.sku_id
 		}
 	})
+}
+
+const addNumChange = () => {
+	if(minBuy.value && minBuy.value > detail.value.stock){
+		uni.showToast({ title: '商品库存小于起购数量', icon: 'none' })
+		return;
+	}
+	if(goodsDetail.value.goods.is_limit){
+		let tips = `该商品单次限购${goodsDetail.value.goods.max_buy}件`;
+		if(goodsDetail.value.goods.limit_type != 1){ //单次限购
+			tips = `该商品每人限购${goodsDetail.value.goods.max_buy}件`;
+		}
+		if(buyNum.value >= goodsDetail.value.goods.max_buy){
+			uni.showToast({ title: tips, icon: 'none' })
+		}
+	}
+}
+
+const reduceNumChange = () => {
+	if(goodsDetail.value.goods.is_limit && minBuy.value){
+		let tips = `该商品起购${minBuy.value}件`;
+		if(buyNum.value <= minBuy.value){
+			uni.showToast({ title: tips, icon: 'none' })
+		}
+	}
 }
 
 const save = () => {
@@ -226,9 +313,7 @@ const save = () => {
 
         let price = 0
 
-        if (goodsDetail.value.goods.is_discount && detail.value.sale_price != detail.value.price) {
-            price = detail.value.sale_price ? detail.value.sale_price : detail.value.price // 折扣价
-        } else if (goodsDetail.value.goods.member_discount && getToken() && detail.value.member_price != detail.value.price) {
+         if (goodsDetail.value.goods.member_discount && getToken() && detail.value.member_price != detail.value.price) {
             price = detail.value.member_price ? detail.value.member_price : detail.value.price // 会员价
         } else {
             price = detail.value.price
@@ -241,7 +326,8 @@ const save = () => {
             sku_id: detail.value.sku_id,
             stock: detail.value.stock,
             sale_price: price,
-            num: buyNum.value,
+            num: buyNum.value
+			
         }, 0, () => {
             uni.showToast({
                 title: '加入购物车成功',
@@ -256,9 +342,7 @@ const save = () => {
 // 商品价格
 const goodsPrice = (data:any) => {
     let price = "0.00";
-    if (goodsDetail.value.goods.is_discount && data.sale_price != data.price) {
-        price = data.sale_price ? data.sale_price : data.price // 折扣价
-    } else if (goodsDetail.value.goods.member_discount && getToken() && data.member_price != data.price) {
+    if (goodsDetail.value.goods.member_discount && getToken() && data.member_price != data.price) {
         price = data.member_price ? data.member_price : data.price // 会员价
     } else {
         price = data.price
@@ -269,9 +353,7 @@ const goodsPrice = (data:any) => {
 // 价格类型 
 const priceType = (data:any) => {
     let type = "";
-    if (goodsDetail.value.goods.is_discount && data.sale_price != data.price) {
-        type = 'discount_price'// 折扣
-    } else if (goodsDetail.value.goods.member_discount && getToken() && data.member_price != data.price) {
+    if (goodsDetail.value.goods.member_discount && getToken() && data.member_price != data.price) {
         type = 'member_price' // 会员价
     } else {
         type = ""

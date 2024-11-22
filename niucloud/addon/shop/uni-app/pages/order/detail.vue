@@ -7,8 +7,7 @@
 					<top-tabbar :data="topTabbarData" :scrollBool="topTabarObj.getScrollBool()" />
 					<!-- #endif -->
 					<view class="flex justify-between items-center pt-[40rpx]">
-						<view class="text-[#fff] text-[36rpx] font-500 leading-[42rpx]">{{ detail.status_name.name }}
-						</view>
+						<view class="text-[#fff] text-[36rpx] font-500 leading-[42rpx]">{{ detail.status_name.name }}</view>
 						<image v-if="detail.status == 1" class="w-[180rpx] h-[140rpx]" :src="img('addon/shop/detail/payment.png')" mode="aspectFit" />
 						<image v-if="detail.status == 2" class="w-[180rpx] h-[140rpx]" :src="img('addon/shop/detail/deliver_goods.png')" mode="aspectFit" />
 						<image v-if="detail.status == 3" class="w-[180rpx] h-[140rpx]" :src="img('addon/shop/detail/receive.png')" mode="aspectFit" />
@@ -62,8 +61,8 @@
 					</view>
 				</view>
 				<view class="sidebar-margin card-template" :style="detail.delivery_type == 'virtual' ? 'margin-top: -86rpx' : 'margin-top: 20rpx'">
-					<view class="order-goods-item flex justify-between flex-wrap mt-[30rpx]"
-						v-for="(goodsItem, goodsIndex) in detail.order_goods" :key="goodsIndex">
+					<block v-for="(goodsItem, goodsIndex) in detail.order_goods" :key="goodsIndex">
+					<view class="order-goods-item flex justify-between flex-wrap mt-[30rpx]">
 						<view class="w-[150rpx] h-[150rpx] rounded-[var(--goods-rounded-big)] overflow-hidden" @click="goodsEvent(goodsItem.goods_id)">
 							<u--image class="overflow-hidden" radius="var(--goods-rounded-big)" width="150rpx" height="150rpx"
 								:src="img(goodsItem.goods_image_thumb_small ? goodsItem.goods_image_thumb_small : '')"
@@ -97,6 +96,11 @@
 										<text class="text-[40rpx] font-200">{{ parseFloat(goodsItem.price).toFixed(2) }}</text>
 										<text class="text-[32rpx] ml-[4rpx]">元</text>
 									</block>
+									<block v-if="goodsItem.extend && goodsItem.extend && goodsItem.extend.is_newcomer">
+										<text class="text-[24rpx]">￥</text>
+										<text class="text-[40rpx] font-500">{{ parseFloat(goodsItem.price).toFixed(2).split('.')[0] }}</text>
+										<text class="text-[24rpx] font-500">.{{ parseFloat(goodsItem.price).toFixed(2).split('.')[1] }}</text>
+									</block>
 									<block v-if="parseFloat(goodsItem.price) && !goodsItem.extend">
 										<text class="text-[24rpx]">￥</text>
 										<text class="text-[40rpx] font-500">{{ parseFloat(goodsItem.price).toFixed(2).split('.')[0] }}</text>
@@ -106,16 +110,21 @@
 								<text class="text-right text-[26rpx]">x{{ goodsItem.num }}</text>
 							</view>
 						</view>
-						<view class="flex justify-end  self-end w-[100%] mt-[30rpx]" v-if="(goodsItem.status != '1') || (goodsItem.is_enable_refund == 1)">
-							<view v-if="goodsItem.status != '1'"
-								class="text-[22rpx] text-[#303133] leading-[50rpx] px-[20rpx] border-[2rpx] border-solid border-[#999] rounded-full"
-								@click="redirect({ url: '/addon/shop/pages/refund/detail', param: { order_refund_no : goodsItem.order_refund_no } })">
-								查看退款</view>
-							<view v-else-if="goodsItem.is_enable_refund == 1"
-								class="text-[22rpx] text-[#303133]  leading-[50rpx] px-[20rpx] border-[2rpx] border-solid border-[#999] rounded-full ml-[20rpx]"
-								@click="applyRefund(goodsItem.order_goods_id)">申请退款</view>
-						</view>
 					</view>
+					<view class="flex items-center box-border mt-[8rpx]" v-if="goodsItem.extend && goodsItem.extend.is_newcomer && goodsItem.num>1">
+						<image class="h-[24rpx] w-[56rpx]" :src="img('addon/shop/newcomer.png')" mode="heightFix" />
+						<view class="text-[24rpx] text-[#FFB000] leading-[34rpx] ml-[8rpx]">第1{{goodsItem.unit}}，￥{{parseFloat(goodsItem.extend.newcomer_price).toFixed(2)}}/{{goodsItem.unit}}；第{{goodsItem.num>2?'2~'+goodsItem.num:'2'}}{{goodsItem.unit}}，￥{{parseFloat(goodsItem.price).toFixed(2)}}/{{goodsItem.unit}}</view>
+					</view>
+					<view class="flex justify-end w-[100%] mt-[30rpx]" v-if="(goodsItem.status != '1') || (goodsItem.is_enable_refund == 1)">
+						<view v-if="goodsItem.status != '1'"
+							class="text-[22rpx] text-[#303133] leading-[50rpx] px-[20rpx] border-[2rpx] border-solid border-[#999] rounded-full"
+							@click="redirect({ url: '/addon/shop/pages/refund/detail', param: { order_refund_no : goodsItem.order_refund_no } })">
+							查看退款</view>
+						<view v-else-if="goodsItem.is_enable_refund == 1"
+							class="text-[22rpx] text-[#303133]  leading-[50rpx] px-[20rpx] border-[2rpx] border-solid border-[#999] rounded-full ml-[20rpx]"
+							@click="applyRefund(goodsItem.order_goods_id)">申请退款</view>
+					</view>
+					</block>
 				</view>
 				<view class="sidebar-margin mt-[var(--top-m)] card-template">
 					<view class="justify-between card-template-item">
@@ -153,7 +162,7 @@
 						<swiper class="h-[450rpx]" circular indicator-dots="true" v-if="verifyInfo.length > 1">
 							<swiper-item v-for="(item,index) in verifyInfo" :key="index">
 								<view class="flex flex-col items-center justify-center">
-									<image :src="item.qrcode" class="w-[300rpx]" mode="widthFix"></image>
+									<image :src="item.qrcode" class="w-[300rpx] h-[auto]" mode="widthFix"></image>
 								</view>
 								<view class="flex items-center justify-center mt-[30rpx]">
 									<text class="text-[28rpx] font-500">{{item.code}}</text>
@@ -165,7 +174,7 @@
 						</swiper>
 						<block v-else>
 							<view class="flex flex-col items-center justify-center">
-								<image :src="verifyInfo[0].qrcode" class="w-[300rpx]" mode="widthFix"></image>
+								<image :src="verifyInfo[0].qrcode" class="w-[300rpx] h-[auto]" mode="widthFix"></image>
 							</view>
 							<view class="flex items-center justify-center mt-[30rpx]">
 								<text class="text-[28rpx] font-500">{{verifyInfo[0].code}}</text>
@@ -255,12 +264,12 @@
 							 v-if="detail.status == 1" @click="orderBtnFn('close')">{{ t('orderClose') }}</view>
 						<view class="min-w-[180rpx] box-border  text-[26rpx] h-[70rpx] flex-center text-center text-[#fff] primary-btn-bg rounded-full ml-[20rpx]"
 							 v-if="detail.status == 1" @click="orderBtnFn('pay')">{{ t('topay') }}</view>
-						<view v-if="detail.status == 3" 
+						<view v-if="detail.status == 3"
 							class="min-w-[180rpx] box-border  text-[26rpx] h-[70rpx] flex-center text-center  text-[#fff]  primary-btn-bg rounded-full ml-[20rpx]"
 							@click="orderBtnFn('finish')">{{ t('orderFinish') }}</view>
-						<block v-if="detail.status == 5">
+						<block v-if="detail.status == 5 && isShowEvaluate">
 							<view
-								v-if="detail.is_evaluate == 1 || (detail.is_evaluate != 1 && evaluateConfig.is_evaluate == 1)" 
+								v-if="detail.is_evaluate == 1 || (detail.is_evaluate != 1 && evaluateConfig.is_evaluate == 1)"
 								class="min-w-[180rpx] box-border text-[26rpx]  h-[70rpx] flex-center border-[2rpx] border-solid border-[#999] rounded-full ml-[20rpx] !text-[var(--text-color-light6)]"
 								@click="orderBtnFn('evaluate')">
 								{{ detail.is_evaluate == 1 ? t('selectedEvaluate') : t('evaluate') }}
@@ -306,6 +315,7 @@
 	const orderId = ref('')
 	const orderStepsShow = ref(false)
 	const evaluateConfig = ref<Object>({});
+	const isShowEvaluate = ref(true)
 
 	const sendMessageTitle = ref('')
 	const sendMessagePath = ref('')
@@ -343,6 +353,17 @@
 				let obj: any = {};
 				obj.order_goods_id = res.data.order_goods[0].order_goods_id
 				getVerifyCodeFn(obj);
+			}
+
+			let evaluateCount = 0;
+			for (let i = 0; i < detail.value.order_goods.length; i++) {
+				if (detail.value.order_goods[i].status != 1 || detail.value.order_goods[i].is_enable_refund == 1) {
+					evaluateCount++;
+				}
+			}
+
+			if (evaluateCount == detail.value.order_goods.length) {
+				isShowEvaluate.value = false;
 			}
 
 			sendMessageTitle.value = detail.value.order_goods[0].goods_name
@@ -539,13 +560,13 @@
 		return status
 	}
 
-	/************ 虚拟商品核销-start ***************/ 
+	/************ 虚拟商品核销-start ***************/
 	const verifyGoodsData = ref({}) //虚拟商品
 	const isShowVerify = computed(() => {
 		let bool =  false;
 		if(detail.value.order_goods.length == 1){
 			verifyGoodsData.value = detail.value.order_goods[0]
-			
+
 			let data = detail.value.order_goods[0];
 			bool = data.is_verify == 1 && data.goods_type == 'virtual' && data.delivery_status == 'delivery_finish' && detail.value.status == 3 ? true : false;
 		}
@@ -554,12 +575,12 @@
 	const verifyInfo = ref([])
 	const getVerifyCodeFn = (data:any) => {
 		verifyInfo.value = [];
-		
+
 		getVerifyCode('shopVirtualGoods', data).then((res: any) => {
 			verifyInfo.value = res.data;
 		})
 	}
-	/************ 虚拟商品核销-end ***************/ 
+	/************ 虚拟商品核销-end ***************/
 </script>
 <style lang="scss" scoped>
 	.text-item {

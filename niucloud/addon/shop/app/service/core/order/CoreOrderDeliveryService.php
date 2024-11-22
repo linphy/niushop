@@ -20,6 +20,7 @@ use addon\shop\app\model\order\Order;
 use addon\shop\app\model\order\OrderDelivery;
 use addon\shop\app\model\order\OrderGoods;
 use addon\shop\app\model\shop_address\ShopAddress;
+use addon\shop\app\service\core\delivery\CoreElectronicSheetService;
 use app\dict\pay\PayDict;
 use app\model\member\Member;
 use app\model\pay\Pay;
@@ -206,7 +207,10 @@ class CoreOrderDeliveryService extends BaseCoreService
         $order_goods_data = $data[ 'order_goods_data' ];
         $param = $data[ 'param' ];
         $delivery_type = $param[ 'delivery_type' ];
-        $order_goods_ids = $param[ 'order_goods_ids' ];//订单项id
+        $order_goods_ids = $param[ 'order_goods_ids' ]; // 订单项id
+        $delivery_way = $param[ 'delivery_way' ]; // 发货方式，manual_write：手动填写，electronic_sheet：电子面单
+        $electronic_sheet_id = $param[ 'electronic_sheet_id' ]; // 电子面单模板
+
         $insert_data = array(
             'order_id' => $order_data[ 'order_id' ],
             'delivery_type' => $order_data[ 'delivery_type' ],
@@ -215,6 +219,30 @@ class CoreOrderDeliveryService extends BaseCoreService
             'express_number' => $param[ 'express_number' ],
             'remark' => $param[ 'remark' ],
         );
+
+        // 手动填写
+        if ($delivery_way == 'manual_write') {
+            if (!empty($param[ 'express_number' ])) {
+                $express_number_count = ( new OrderDelivery() )->where([
+                    [ 'order_id', '=', $order_data[ 'order_id' ] ],
+                    [ 'express_number', '=', $param[ 'express_number' ] ]
+                ])->count();
+                if ($express_number_count > 0) throw new CommonException('SHOP_ORDER_DELIVERY_EXPRESS_NUMBER_EXITS');//物流单号不能重复
+            }
+        } elseif ($delivery_way == 'electronic_sheet') {
+            // 电子面单
+            $electronic_sheet_result = ( new CoreElectronicSheetService() )->printElectronicSheetByDelivery([
+                'order_id' => $order_data[ 'order_id' ],
+                'electronic_sheet_id' => $electronic_sheet_id,
+                'order_goods_data' => $order_goods_data->toArray()
+            ]);
+            if ($electronic_sheet_result[ 'success' ]) {
+                $insert_data[ 'express_number' ] = $electronic_sheet_result[ 'order_info' ][ 'LogisticCode' ]; // 获取电子面单返回的快递单号
+            } else {
+                throw new CommonException($electronic_sheet_result[ 'reason' ]);
+            }
+        }
+
         $delivery_id = $this->package($insert_data);
         $order_goods_data->update([
             'delivery_status' => OrderDeliveryDict::DELIVERY_FINISH,
@@ -372,8 +400,7 @@ class CoreOrderDeliveryService extends BaseCoreService
             //不用的订单项针对的发货方式不同
             $order_goods_where = [
                 [ 'order_id', '=', $order_id ],
-                [ 'status', '=', OrderGoodsDict::NORMAL ],
-                [ 'delivery_status', '=', OrderDeliveryDict::WAIT_DELIVERY ]
+                [ 'status', '=', OrderGoodsDict::NORMAL ]
             ];
 
             $order_goods_data = ( new OrderGoods() )->where($order_goods_where)->select();
@@ -476,9 +503,9 @@ class CoreOrderDeliveryService extends BaseCoreService
                             $query->field('company_id, company_name, express_no');
                         }
                     ])->field($field)->findOrEmpty()->toArray();
-                    $tracking_no = $info[ 'express_number' ];
 
                     if (!empty($info) && $info[ 'express_company_id' ] && !empty($delivery_list)) {
+                        $tracking_no = $info[ 'express_number' ];
                         $index = array_search($info[ 'company' ][ 'company_name' ], array_column($delivery_list, 'delivery_name'));
                         if ($index !== false && isset($delivery_list[ $index ])) {
                             $express_company = $delivery_list[ $index ][ 'delivery_id' ];

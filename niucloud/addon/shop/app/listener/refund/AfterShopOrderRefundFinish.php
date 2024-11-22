@@ -8,6 +8,7 @@ use addon\shop\app\dict\order\OrderRefundDict;
 use addon\shop\app\dict\order\OrderRefundLogDict;
 use addon\shop\app\model\order\Order;
 use addon\shop\app\service\core\CoreStatService;
+use addon\shop\app\service\core\goods\CoreGoodsStatService;
 use addon\shop\app\service\core\order\CoreOrderCloseService;
 use addon\shop\app\service\core\order\CoreOrderDeliveryService;
 use addon\shop\app\service\core\refund\CoreRefundLogService;
@@ -30,7 +31,6 @@ class AfterShopOrderRefundFinish
                     ['order_id' => $refund_data['order_id']]
                 );
             }
-
             //校验一下是否全部退款
             if($order['status'] != OrderDict::CLOSE) {
                 (new CoreOrderCloseService())->checkAllClose(['order_id' => $refund_data['order_id']]);
@@ -38,6 +38,8 @@ class AfterShopOrderRefundFinish
         }
         //商城统计
         CoreStatService::addStat(['refund_money' => $refund_data['money']]);
+
+        ( new CoreGoodsStatService() )->saveGoodsRefundNumAndMoneyByOrderId($refund_data); // 商品退款数量 金额统计数据
 
         //日志
         $main_type = $data['main_type'] ?? OrderRefundLogDict::SYSTEM;

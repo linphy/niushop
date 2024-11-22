@@ -20,7 +20,7 @@
                             <el-option v-for="(item, index) in payTypeData" :key="index" :label="item.name" :value="item.key"></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item :label="t('fromType')" prop='from_type'>
+                    <el-form-item :label="t('fromType')" prop='order_from'>
                         <el-select v-model="orderTable.searchParam.order_from" clearable class="input-item">
                             <el-option v-for="(item, index) in orderFromData" :key="index" :label="item" :value="index"></el-option>
                         </el-select>

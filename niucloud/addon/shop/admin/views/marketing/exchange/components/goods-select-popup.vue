@@ -54,8 +54,8 @@
 			</el-table>
 			<div class="mt-[16px] flex justify-end">
 				<el-pagination v-model:current-page="tableData.page" v-model:page-size="tableData.limit"
-				               layout="total, sizes, prev, pager, next, jumper" :total="tableData.total"
-				               @size-change="loadExchangeGoodsList()" @current-change="loadExchangeGoodsList" />
+	               layout="total, sizes, prev, pager, next, jumper" :total="tableData.total"
+	               @size-change="loadExchangeGoodsList()" @current-change="loadExchangeGoodsList" />
 			</div>
 		</div>
 		<template #footer>

@@ -74,8 +74,7 @@
                 </div>
                 <invoice-detail ref="invoiceDetailDialog" @complete="loadInvoiceList()" />
                 <invoice-dialog ref="invoiceListDialog" @complete="loadInvoiceList()" />
-                <export-sure ref="exportSureDialog" :show="flag" type="shop_invoice"
-                    :searchParam="invoiceManagementTableData.searchParam" @close="handleClose" />
+                <export-sure ref="exportSureDialog" :show="flag" type="shop_invoice" :searchParam="invoiceManagementTableData.searchParam" @close="handleClose" />
             </div>
         </el-card>
 

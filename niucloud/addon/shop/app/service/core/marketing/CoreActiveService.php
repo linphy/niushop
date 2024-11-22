@@ -14,6 +14,7 @@ namespace addon\shop\app\service\core\marketing;
 use addon\shop\app\dict\active\ActiveDict;
 use addon\shop\app\job\marketing\ActiveEndAfter;
 use addon\shop\app\job\marketing\ActiveStartAfter;
+use addon\shop\app\job\marketing\NewcomerSaveAfter;
 use addon\shop\app\model\active\Active;
 use addon\shop\app\model\active\ActiveGoods;
 use core\base\BaseCoreService;
@@ -42,7 +43,7 @@ class CoreActiveService extends BaseCoreService
         $active_goods_data = $data['active_goods'] ?? [];
         if(empty($active_goods_data)) throw new AdminException('ACTIVE_GOODS_NOT_EMPTY');
 
-        if(!empty($data['end_time']) &&  $data['end_time'] < time()) throw new AdminException('END_TIME_NOT_LESS_CURRENT_TIME');
+        if(!empty($data['end_time']) && $data['end_time'] < time()) throw new AdminException('END_TIME_NOT_LESS_CURRENT_TIME');
 
         Db::startTrans();
         try {
@@ -58,8 +59,8 @@ class CoreActiveService extends BaseCoreService
                 'relate_member' => $data['relate_member'] ?? '',
                 'create_time' => time(),
                 'update_time' => 0,
-                'start_time' => $data['start_time'],
-                'end_time' => $data['end_time'],
+                'start_time' => $data['start_time'] ?? 0,
+                'end_time' => $data['end_time'] ?? 0,
                 'active_status' => $data['active_status'],
             ];
 
@@ -69,6 +70,7 @@ class CoreActiveService extends BaseCoreService
                 $active_goods[] = [
                     'active_id' => $res->active_id,
                     'goods_id' => $v['goods_id'],
+                    'sku_id' => !empty($v['sku_id']) ? $v['sku_id'] : 0,
                     'active_goods_value' => $v['active_goods_value'] ?? [],
                     'active_goods_status' => $create_data['active_status'],
                     'active_goods_price' => $v['active_goods_price'] ?? 0.00,
@@ -85,8 +87,8 @@ class CoreActiveService extends BaseCoreService
 
             Db::commit();
 
-            if($create_data['start_time'] <= time()) $this->start($res->active_id);
-            if( !empty($data['end_time']) &&  $create_data['end_time'] <= time()) $this->end($res->active_id);
+            if(!empty($data['start_time']) && $create_data['start_time'] <= time()) $this->start($res->active_id);
+            if(!empty($data['end_time']) && $create_data['end_time'] <= time()) $this->end($res->active_id);
             return $res->active_id;
         } catch (\Exception $e) {
             Db::rollback();
@@ -104,12 +106,12 @@ class CoreActiveService extends BaseCoreService
     {
         $info = $this->model->where([ ['active_id', '=', $active_id] ])->findOrEmpty();
         if ($info->isEmpty()) throw new AdminException('ACTIVE_NOT_FOUND');
-        if ($info->active_status == ActiveDict::CLOSE || $info->active_status == ActiveDict::END) throw new AdminException('ACTIVE_NOT_EDIT');
+        if ($info->active_class != ActiveDict::NEWCOMER_DISCOUNT && ($info->active_status == ActiveDict::CLOSE || $info->active_status == ActiveDict::END)) throw new AdminException('ACTIVE_NOT_EDIT');
 
         //结束时间不能小于当前时间
-        if($data['end_time'] < time()) throw new AdminException('END_TIME_NOT_LESS_CURRENT_TIME');
+        if(!empty($data['end_time']) && $data['end_time'] < time()) throw new AdminException('END_TIME_NOT_LESS_CURRENT_TIME');
         $active_goods_data = $data['active_goods'] ?? [];
-        if(empty($active_goods_data)) throw new AdminException('ACTIVE_GOODS_NOT_EMPTY');
+        if($data['active_class'] != ActiveDict::NEWCOMER_DISCOUNT && empty($active_goods_data)) throw new AdminException('ACTIVE_GOODS_NOT_EMPTY');
         $active_goods_model = new ActiveGoods();
         Db::startTrans();
         try {
@@ -128,8 +130,8 @@ class CoreActiveService extends BaseCoreService
                 'active_value' => $data['active_value'] ?? '',
                 'relate_member' => $data['relate_member'] ?? '',
                 'update_time' => time(),
-                'start_time' => $data['start_time'],
-                'end_time' => $data['end_time'],
+                'start_time' => $data['start_time'] ?? 0,
+                'end_time' => $data['end_time'] ?? 0,
                 'active_status' => $data['active_status'],
             ];
 
@@ -140,6 +142,7 @@ class CoreActiveService extends BaseCoreService
                 $active_goods[] = [
                     'active_id' => $active_id,
                     'goods_id' => $v['goods_id'],
+                    'sku_id' => !empty($v['sku_id']) ? $v['sku_id'] : 0,
                     'active_goods_value' => $v['active_goods_value'] ?? [],
                     'active_goods_status' => $save_data['active_status'],
                     'active_goods_price' => $v['active_goods_price'] ?? 0.00,
@@ -160,8 +163,11 @@ class CoreActiveService extends BaseCoreService
             $active_goods_model->saveAll($active_goods);
 
             Db::commit();
-            if($save_data['start_time'] <= time())$this->start($active_id);
-            if($save_data['end_time'] <= time())$this->end($active_id);
+            if(!empty($save_data['start_time']) && $save_data['start_time'] <= time())$this->start($active_id);
+            if(!empty($save_data['end_time']) && $save_data['end_time'] <= time())$this->end($active_id);
+            if($data['active_class'] == ActiveDict::NEWCOMER_DISCOUNT && $data['active_status'] == ActiveDict::ACTIVE) {
+                NewcomerSaveAfter::dispatch([]);
+            }
             return true;
         } catch (\Exception $e) {
             Db::rollback();

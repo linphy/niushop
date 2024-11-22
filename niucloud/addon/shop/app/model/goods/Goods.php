@@ -219,9 +219,22 @@ class Goods extends BaseModel
         if (isset($data[ 'label_ids' ]) && !empty($data[ 'label_ids' ])) {
             $goods_label_model = new Label();
             return $goods_label_model->where([
-                [ 'label_id', 'in', $data[ 'label_ids' ] ]
-            ])->field('label_id, label_name, memo')
-                ->select()->toArray();
+                [ 'label_id', 'in', $data[ 'label_ids' ] ],
+                [ 'status', '=', 1 ]
+            ])->field('label_id, label_name, style_type,color_json,icon')->order('sort desc,label_id desc')->select()->toArray();
+        }
+
+    }
+
+    public function getGoodsBrandAttr($value, $data)
+    {
+        if (isset($data[ 'brand_id' ]) && !empty($data[ 'brand_id' ])) {
+            $goods_brand_model = new Brand();
+            $info = $goods_brand_model->where([
+                [ 'brand_id', '=', $data[ 'brand_id' ] ],
+            ])->field('brand_id,brand_name,logo')
+                ->findOrEmpty()->toArray();
+            return $info;
         }
 
     }

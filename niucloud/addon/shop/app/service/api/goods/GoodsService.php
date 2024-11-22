@@ -11,14 +11,20 @@
 
 namespace addon\shop\app\service\api\goods;
 
+use addon\shop\app\dict\active\ActiveDict;
+use addon\shop\app\dict\goods\GoodsDict;
 use addon\shop\app\model\coupon\CouponGoods;
-use addon\shop\app\model\goods\Brand;
 use addon\shop\app\model\goods\Goods;
 use addon\shop\app\model\goods\GoodsCollect;
 use addon\shop\app\model\goods\Label;
 use addon\shop\app\model\goods\Service;
 use addon\shop\app\model\goods\GoodsSku;
 use addon\shop\app\service\api\marketing\DiscountService;
+use addon\shop\app\service\api\marketing\NewcomerService;
+use addon\shop\app\service\core\goods\CoreGoodsAccessNumService;
+use addon\shop\app\service\core\goods\CoreGoodsStatService;
+use addon\shop\app\service\core\goods\CoreGoodsLimitBuyService;
+use addon\shop\app\service\core\order\CoreOrderConfigService;
 use app\model\member\Member;
 use core\base\BaseApiService;
 
@@ -40,10 +46,11 @@ class GoodsService extends BaseApiService
      */
     public function getPage(array $where = [])
     {
-        $field = 'goods_id,goods_name,sub_title,goods_category,goods_type,goods_cover,unit,status,sale_num + goods.virtual_sale_num as sale_num,member_discount,is_discount,virtual_receive_type';
+        $field = 'goods_id,goods_name,goods_type,goods_cover,unit,sale_num + goods.virtual_sale_num as sale_num,is_limit,limit_type,max_buy,min_buy,member_discount,virtual_receive_type,label_ids,brand_id,stock';
 
         $sku_where = [
             [ 'goodsSku.is_default', '=', 1 ],
+            [ 'goods.is_gift', '=', GoodsDict::NOT_IS_GIFT ],
             [ 'status', '=', 1 ]
         ];
 
@@ -92,8 +99,10 @@ class GoodsService extends BaseApiService
         $search_model = $this->model
             ->withSearch([ "brand_id", "goods_category", "label_ids", 'service_ids' ], $where)
             ->field($field)
-            ->withJoin([ 'goodsSku' ])
-            ->where($sku_where)->order($order)->append([ 'goods_type_name', 'goods_cover_thumb_small', 'goods_cover_thumb_mid' ]);
+            ->withJoin([
+                'goodsSku' => [ 'sku_id', 'sku_name', 'sku_image', 'sku_no', 'goods_id', 'sku_spec_format', 'price', 'market_price', 'sale_price', 'stock', 'weight', 'volume', 'member_price' ]
+            ])
+            ->where($sku_where)->order($order)->append([ 'goods_cover_thumb_small', 'goods_cover_thumb_mid', 'goods_label_name', 'goods_brand' ]);
         $list = $this->pageQuery($search_model);
         if (!empty($this->member_id)) {
             $member_info = $this->getMemberInfo();
@@ -101,6 +110,9 @@ class GoodsService extends BaseApiService
                 if (!empty($v[ 'goodsSku' ])) {
                     $v[ 'goodsSku' ][ 'member_price' ] = $this->getMemberPrice($member_info, $v[ 'member_discount' ], $v[ 'goodsSku' ][ 'member_price' ], $v[ 'goodsSku' ][ 'price' ]);
                 }
+                // 限购查询当前会员已购数量
+                $has_buy = ( new CoreGoodsLimitBuyService() )->getGoodsHasBuyNumber($this->member_id, $v[ 'goods_id' ]);
+                $v[ 'has_buy' ] = $has_buy;
             }
         }
         return $list;
@@ -133,8 +145,8 @@ class GoodsService extends BaseApiService
             ->field($field)
             ->with([
                 'goods' => function($query) {
-                    $query->withField('goods_id, goods_name, goods_type, sub_title, goods_cover, goods_category, goods_image,goods_desc,brand_id,label_ids,service_ids, unit, stock, sale_num + virtual_sale_num as sale_num, status,delivery_type,attr_id,attr_format,member_discount,is_discount,poster_id,virtual_receive_type')
-                        ->append([ 'goods_type_name', 'goods_cover_thumb_small', 'goods_cover_thumb_mid', 'goods_cover_thumb_big', 'delivery_type_list', 'goods_image_thumb_small', 'goods_image_thumb_mid', 'goods_image_thumb_big' ]);
+                    $query->withField('goods_id, goods_name, goods_type, sub_title, goods_cover, goods_category, goods_image,goods_video,goods_desc,brand_id,label_ids,service_ids, unit, stock, sale_num + virtual_sale_num as sale_num, is_limit,limit_type,max_buy,min_buy,status,delivery_type,attr_id,attr_format,member_discount,is_discount,poster_id,virtual_receive_type')
+                        ->append([ 'goods_type_name', 'goods_cover_thumb_small', 'goods_cover_thumb_mid', 'goods_cover_thumb_big', 'delivery_type_list', 'goods_image_thumb_small', 'goods_image_thumb_mid', 'goods_image_thumb_big', 'goods_brand' ]);
                 },
                 // 商品规格列表
                 'skuList' => function($query) {
@@ -149,6 +161,13 @@ class GoodsService extends BaseApiService
             ->findOrEmpty()->toArray();
 
         if (!empty($info) && !empty($info[ 'goods' ])) {
+
+            $info[ 'type' ] = $data[ 'type' ] ?? '';
+            $info[ 'type_name' ] = '';
+            if (!empty($info[ 'type' ])) {
+                $info[ 'type_name' ] = ActiveDict::getClass($info[ 'type' ]); // 查询来源活动类型
+            }
+
             if (!empty($info[ 'goods' ][ 'service_ids' ])) {
                 // 商品服务
                 $goods_service_model = new Service();
@@ -161,27 +180,25 @@ class GoodsService extends BaseApiService
                 // 商品标签
                 $goods_label_model = new Label();
                 $info[ 'label_info' ] = $goods_label_model->where([
-                    [ 'label_id', 'in', $info[ 'goods' ][ 'label_ids' ] ]
-                ])->field('label_id, label_name, memo')
-                    ->order('sort desc,create_time desc')->select()->toArray();
-            }
-            if (!empty($info[ 'goods' ][ 'brand_id' ])) {
-                // 商品品牌
-                $goods_brand_model = new Brand();
-                $info[ 'brand_info' ] = $goods_brand_model->where([
-                    [ 'brand_id', '=', $info[ 'goods' ][ 'brand_id' ] ]
-                ])->field('brand_id, brand_name, logo, desc')
-                    ->order('sort desc,create_time desc')
-                    ->findOrEmpty()->toArray();
+                    [ 'label_id', 'in', $info[ 'goods' ][ 'label_ids' ] ],
+                    [ 'status', '=', 1 ]
+                ])->field('label_id, label_name, memo,style_type,color_json,icon')
+                    ->order('sort desc,label_id desc')->select()->toArray();
             }
 
-            // 参与限时折扣，查询活动信息
-            if ($info[ 'goods' ][ 'is_discount' ] == 1) {
-                $discount_service = new DiscountService();
-                $info[ 'discount_info' ] = $discount_service->getInfoByGoods($info[ 'goods_id' ]);
-                if (!empty($info[ 'discount_info' ])) {
-                    $info[ 'discount_info' ][ 'active' ][ 'start_time' ] = strtotime($info[ 'discount_info' ][ 'active' ][ 'start_time' ]);
-                    $info[ 'discount_info' ][ 'active' ][ 'end_time' ] = strtotime($info[ 'discount_info' ][ 'active' ][ 'end_time' ]);
+            if (!empty($info[ 'type' ]) && $info[ 'type' ] == ActiveDict::DISCOUNT) {
+
+                // 参与限时折扣，查询活动信息
+                if ($info[ 'goods' ][ 'is_discount' ] == 1) {
+                    $discount_service = new DiscountService();
+                    $info[ 'discount_info' ] = $discount_service->getInfoByGoods($info[ 'goods_id' ]);
+                    if (!empty($info[ 'discount_info' ])) {
+                        $info[ 'discount_info' ][ 'active' ][ 'start_time' ] = strtotime($info[ 'discount_info' ][ 'active' ][ 'start_time' ]);
+                        $info[ 'discount_info' ][ 'active' ][ 'end_time' ] = strtotime($info[ 'discount_info' ][ 'active' ][ 'end_time' ]);
+                    }
+                } else {
+                    $info[ 'type' ] = '';
+                    $info[ 'type_name' ] = '';
                 }
             }
 
@@ -200,14 +217,47 @@ class GoodsService extends BaseApiService
 
                 $this->getMemberPriceByList($member_info, $info[ 'goods' ][ 'member_discount' ], $info[ 'skuList' ]);
 
+                if (!empty($info[ 'type' ]) && $info[ 'type' ] == ActiveDict::NEWCOMER_DISCOUNT) {
+
+                    // 查询新人价
+                    $newcomer_service = new NewcomerService();
+                    if ($newcomer_service->checkIfNewcomer()) {
+                        $newcomer_info = $newcomer_service->getNewcomerInfo($info[ 'goods_id' ], $info[ 'sku_id' ]);
+                        if (!empty($newcomer_info)) {
+                            $info[ 'newcomer_price' ] = $newcomer_info[ 'newcomer_price' ];
+                            $info[ 'newcomer_desc' ] = $newcomer_info[ 'newcomer_desc' ];
+                            $info[ 'is_newcomer' ] = 1;
+                        }
+                        $newcomer_service->getNewcomerPriceByList($info[ 'skuList' ]);
+                    } else {
+                        $info[ 'is_newcomer' ] = 0;
+                        $info[ 'type' ] = '';
+                        $info[ 'type_name' ] = '';
+                    }
+                }
+
+                // 限购查询当前会员已购数量
+                $has_buy = ( new CoreGoodsLimitBuyService() )->getGoodsHasBuyNumber($this->member_id, $goods_id);
+                $info[ 'goods' ][ 'has_buy' ] = $has_buy;
             } else {
+                $info[ 'goods' ][ 'has_buy' ] = 0;
                 $info[ 'goods' ][ 'is_collect' ] = 0;
                 $info[ 'member_price' ] = $info[ 'price' ];
                 foreach ($info[ 'skuList' ] as &$v) {
                     $v[ 'member_price' ] = $info[ 'price' ];
                 }
             }
+
+            //查询评价设置是否显示
+            $core_order_config_service = new CoreOrderConfigService();
+            $evaluate_config = $core_order_config_service->getEvaluateConfig();
+            $info[ 'evaluate_is_show' ] = $evaluate_config[ 'evaluate_is_show' ];
+
         }
+
+        // 商品统计-浏览次数
+        CoreGoodsStatService::addStat(['goods_id' => $goods_id, 'access_num' => 1]);
+        (new CoreGoodsAccessNumService())->inc(['goods_id' => $goods_id, 'access_num' => 1]);
         return $info;
     }
 
@@ -248,7 +298,9 @@ class GoodsService extends BaseApiService
             $info[ 'member_price' ] = $this->getMemberPrice($member_info, $info[ 'goods' ][ 'member_discount' ], $info[ 'member_price' ], $info[ 'price' ]);
 
             $this->getMemberPriceByList($member_info, $info[ 'goods' ][ 'member_discount' ], $info[ 'skuList' ]);
-
+            // 限购查询当前会员已购数量
+            $has_buy = ( new CoreGoodsLimitBuyService() )->getGoodsHasBuyNumber($this->member_id, $info[ 'goods_id' ]);
+            $info[ 'has_buy' ] = $has_buy;
         }
 
         return $info;
@@ -261,10 +313,11 @@ class GoodsService extends BaseApiService
      */
     public function getGoodsComponents(array $where = [])
     {
-        $field = 'goods_id,goods_name,sub_title,goods_category,goods_type,goods_cover,unit,status,sale_num + goods.virtual_sale_num as sale_num,member_discount,is_discount';
+        $field = 'goods_id,goods_name,goods_type,goods_cover,unit,sale_num + goods.virtual_sale_num as sale_num,member_discount,label_ids,brand_id';
 
         $sku_where = [
             [ 'goodsSku.is_default', '=', 1 ],
+            [ 'goods.is_gift', '=', GoodsDict::NOT_IS_GIFT ],
             [ 'status', '=', 1 ]
         ];
 
@@ -282,8 +335,10 @@ class GoodsService extends BaseApiService
         $list = $this->model
             ->withSearch([ "goods_category", "label_ids", 'service_ids' ], $where)
             ->field($field)
-            ->withJoin([ 'goodsSku' ])
-            ->where($sku_where)->order($order)->append([ 'goods_type_name', 'goods_cover_thumb_small', 'goods_cover_thumb_mid' ])
+            ->withJoin([
+                'goodsSku' => [ 'sku_id', 'sku_name', 'sku_image', 'sku_no', 'goods_id', 'sku_spec_format', 'price', 'market_price', 'sale_price', 'stock', 'weight', 'volume', 'member_price' ]
+            ])
+            ->where($sku_where)->order($order)->append([ 'goods_cover_thumb_small', 'goods_cover_thumb_mid', 'goods_label_name', 'goods_brand' ])
             ->limit($where[ 'num' ])
             ->select()->toArray();
         if (!empty($this->member_id)) {

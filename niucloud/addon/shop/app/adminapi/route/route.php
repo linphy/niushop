@@ -227,6 +227,30 @@ Route::group('shop', function() {
     // 修改商品标签排序号
     Route::put('goods/label/sort', 'addon\shop\app\adminapi\controller\goods\Label@modifySort');
 
+    // 修改商品标签排序号
+    Route::put('goods/label/status', 'addon\shop\app\adminapi\controller\goods\Label@modifyStatus');
+
+    //商品标签分组分页列表
+    Route::get('goods/label/group', 'addon\shop\app\adminapi\controller\goods\LabelGroup@pages');
+
+    //商品标签分组列表
+    Route::get('goods/label/group/list', 'addon\shop\app\adminapi\controller\goods\LabelGroup@lists');
+
+    //商品标签分组详情
+    Route::get('goods/label/group/:id', 'addon\shop\app\adminapi\controller\goods\LabelGroup@info');
+
+    //添加商品标签分组
+    Route::post('goods/label/group', 'addon\shop\app\adminapi\controller\goods\LabelGroup@add');
+
+    //编辑商品标签分组
+    Route::put('goods/label/group/:id', 'addon\shop\app\adminapi\controller\goods\LabelGroup@edit');
+
+    //删除商品标签分组
+    Route::delete('goods/label/group/:id', 'addon\shop\app\adminapi\controller\goods\LabelGroup@del');
+
+    // 修改商品标签分组排序号
+    Route::put('goods/label/group/sort', 'addon\shop\app\adminapi\controller\goods\LabelGroup@modifySort');
+
     //商品品牌分页列表
     Route::get('goods/brand', 'addon\shop\app\adminapi\controller\goods\Brand@pages');
 
@@ -390,6 +414,12 @@ Route::group('shop', function() {
     //订单维权审核
     Route::put('order/refund/delivery/:order_refund_no', 'addon\shop\app\adminapi\controller\refund\Refund@auditRefundGoods');
 
+    //订单维权 可退款金额
+    Route::get('order/refund/refund_money', 'addon\shop\app\adminapi\controller\refund\Refund@getOrderRefundMoney');
+
+    //订单维权 商家主动退款
+    Route::post('order/refund/active', 'addon\shop\app\adminapi\controller\refund\Refund@shopActiveRefund');
+
     /************************************************** 订单发货批量操作相关接口 *****************************************************/
 
     //订单批量操作 列表
@@ -438,8 +468,11 @@ Route::group('shop', function() {
     //删除优惠券
     Route::delete('goods/coupon/:id', 'addon\shop\app\adminapi\controller\marketing\Coupon@del');
 
-    // 查询选中的优惠券
+    //查询选中的优惠券
     Route::get('goods/coupon/selected', 'addon\shop\app\adminapi\controller\marketing\Coupon@getSelectedLists');
+
+    //优惠券状态列表
+    Route::get('goods/coupon/status', 'addon\shop\app\adminapi\controller\marketing\Coupon@getCouponStatus');
 
     //商家地址库列表
     Route::get('shop_address', 'addon\shop\app\adminapi\controller\shop_address\ShopAddress@lists');
@@ -567,6 +600,33 @@ Route::group('shop', function() {
 
     //修改排序号
     Route::put('active/exchange/sort/:id', 'addon\shop\app\adminapi\controller\marketing\Exchange@modifySort');
+
+    /************************************************** 新人专享 *****************************************************/
+    //新人专享配置
+    Route::get('active/newcomer/config', 'addon\shop\app\adminapi\controller\marketing\Newcomer@getConfig');
+
+    //新人专享设置
+    Route::put('active/newcomer/config', 'addon\shop\app\adminapi\controller\marketing\Newcomer@setConfig');
+
+    //新人专享商品选择列表
+    Route::get('active/newcomer/goods/select', 'addon\shop\app\adminapi\controller\marketing\Newcomer@select');
+
+    //新人专享商品选择已选商品列表
+    Route::get('active/newcomer/goods/selectgoodssku', 'addon\shop\app\adminapi\controller\marketing\Newcomer@selectGoodsSku');
+
+    /************************************************** 商品统计 *****************************************************/
+
+    //获取商品统计基本信息
+    Route::get('goods/statistics/basic', 'addon\shop\app\adminapi\controller\goods\Statistics@getBasic');
+
+    //获取商品统计图表信息
+    Route::get('goods/statistics/trend', 'addon\shop\app\adminapi\controller\goods\Statistics@getTrend');
+
+    //获取商品排行榜信息
+    Route::get('goods/statistics/rank', 'addon\shop\app\adminapi\controller\goods\Statistics@getRank');
+
+    //获取统计类型
+    Route::get('goods/statistics/type', 'addon\shop\app\adminapi\controller\goods\Statistics@getType');
 
 })->middleware([
     AdminCheckToken::class,

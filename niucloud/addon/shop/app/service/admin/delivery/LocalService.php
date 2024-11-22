@@ -42,7 +42,17 @@ class LocalService extends BaseAdminService
             'weight_unit' => $data[ 'weight_unit' ],
             'weight_price' => $data[ 'weight_price' ],
             'delivery_type' => $data[ 'delivery_type' ],
-            'area' => $data[ 'area' ]
+            'area' => $data[ 'area' ],
+
+            'time_is_open' => $data[ 'time_is_open' ],
+            'time_type' => $data[ 'time_type' ],
+            'time_week' => $data[ 'time_week' ],
+            'time_interval' => $data[ 'time_interval' ],
+            'advance_day' => $data[ 'advance_day' ],
+            'most_day' => $data[ 'most_day' ],
+            'start_time' => $data[ 'start_time' ],
+            'end_time' => $data[ 'end_time' ],
+            'delivery_time' => $data[ 'delivery_time' ]
         ]);
         return $create_res->local_id;
     }

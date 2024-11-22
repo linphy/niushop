@@ -51,7 +51,6 @@ class ExchangeService extends BaseApiService
         return $list;
     }
 
-
     /**
      * 获取积分商城详情
      * @param int $id
@@ -63,7 +62,13 @@ class ExchangeService extends BaseApiService
         $field = 'total_exchange_num,id,type,names,title,image,status,product_detail,point,price,limit_num,content,sort,total_point_num,total_price_num,total_order_num,total_member_num,update_time,create_time';
         $info = $this->model->where([ [ 'id', '=', $id ] ])->append([ 'type_name', 'goods_cover_thumb_big', 'goods_cover_thumb_small', 'goods_cover_thumb_mid', 'goods_image_thumb_small', 'goods_image_thumb_mid', 'goods_image_thumb_big' ])->field($field)->findOrEmpty()->toArray();
         if (!empty($info)) {
-            $goods_info = ( new  GoodsService() )->getDetail([ 'goods_id' => $info[ 'product_detail' ][ 0 ][ 'goods_id' ], 'sku_id' => $info[ 'product_detail' ][ 0 ][ 'sku_id' ] ]);
+            $goods_id = 0;
+            foreach ($info[ 'product_detail' ] as $k => $v) {
+                if (!empty($v[ 'goods_id' ])) {
+                    $goods_id = $v[ 'goods_id' ];
+                }
+            }
+            $goods_info = ( new  GoodsService() )->getDetail([ 'goods_id' => $goods_id, 'sku_id' => $info[ 'product_detail' ][ 0 ][ 'sku_id' ] ]);
 
             $goods_info[ 'goods' ][ 'goods_desc' ] = $info[ 'content' ];
             $goods_info[ 'sale_num' ] = $info[ 'total_exchange_num' ];
@@ -76,7 +81,7 @@ class ExchangeService extends BaseApiService
             $product_detail_array = array_column($product_detail_array, null, 'sku_id');
             $reset_sku_id = reset($product_detail_array)[ 'sku_id' ];
             $goods_info[ 'price' ] = $product_detail_array[ $reset_sku_id ][ 'price' ];
-            $goods_info[ 'market_price' ] = $product_detail_array[ $reset_sku_id ][ 'price' ];
+//            $goods_info[ 'market_price' ] = $product_detail_array[ $reset_sku_id ][ 'price' ];
             $goods_info[ 'sale_price' ] = $product_detail_array[ $reset_sku_id ][ 'price' ];
             $goods_info[ 'stock' ] = $product_detail_array[ $reset_sku_id ][ 'stock' ];
             $goods_info[ 'point' ] = $product_detail_array[ $reset_sku_id ][ 'point' ];
@@ -89,7 +94,7 @@ class ExchangeService extends BaseApiService
                     $item[ 'is_default' ] = $reset_sku_id == $item[ 'sku_id' ] ? 1 : 0;
                     if (isset($product_detail_array[ $item[ 'sku_id' ] ])) {
                         $item[ 'price' ] = $product_detail_array[ $item[ 'sku_id' ] ][ 'price' ];
-                        $item[ 'market_price' ] = $product_detail_array[ $item[ 'sku_id' ] ][ 'price' ];
+//                        $item[ 'market_price' ] = $product_detail_array[ $item[ 'sku_id' ] ][ 'price' ];
                         $item[ 'sale_price' ] = $product_detail_array[ $item[ 'sku_id' ] ][ 'price' ];
                         $item[ 'stock' ] = $product_detail_array[ $item[ 'sku_id' ] ][ 'stock' ];
                         $item[ 'point' ] = $product_detail_array[ $item[ 'sku_id' ] ][ 'point' ];

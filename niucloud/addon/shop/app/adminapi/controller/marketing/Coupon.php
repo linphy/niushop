@@ -11,6 +11,7 @@
 
 namespace addon\shop\app\adminapi\controller\marketing;
 
+use addon\shop\app\dict\coupon\CouponDict;
 use addon\shop\app\service\admin\marketing\CouponService;
 use core\base\BaseAdminController;
 
@@ -38,6 +39,7 @@ class Coupon extends BaseAdminController
         $data = $this->request->params([
             [ "title", "" ],
             [ "status", "" ],
+            [ "verify_coupon_ids", "" ]
         ]);
         return success(( new CouponService() )->getPage($data));
     }
@@ -159,6 +161,14 @@ class Coupon extends BaseAdminController
     {
         ( new CouponService() )->couponInvalid($id);
         return success('SUCCESS');
+    }
+
+    /**
+     * 获取优惠券状态
+     */
+    public function getCouponStatus()
+    {
+        return success(data:CouponDict::getStatus());
     }
 
 }

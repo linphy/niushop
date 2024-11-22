@@ -86,6 +86,15 @@ return [
 					}
 				},
 				{
+					"path": "shop/pages/newcomer/list",
+					"style": {
+						// #ifndef H5
+						"navigationStyle": "custom",
+						// #endif
+						"navigationBarTitleText": "%shop.pages.newcomer.list%"
+					}
+				},
+				{
 					"path": "shop/pages/goods/detail",
 					"style": {
 						"navigationBarTitleText": "%shop.pages.goods.detail%",

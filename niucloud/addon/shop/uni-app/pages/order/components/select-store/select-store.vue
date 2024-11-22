@@ -24,7 +24,7 @@
 				<view class="h-[50vh] flex items-center flex-col justify-center" v-if="loading">
 					<u-loading-icon :vertical="true"></u-loading-icon>
 				</view>
-				<view class="h-[50vh] flex items-center flex-col justify-center" v-if="!loading && !storeList.length">
+				<view class="h-[95%] flex items-center flex-col justify-center" v-if="!loading && !storeList.length">
 					<u-empty text="没有可选择的自提点" :icon="img('static/resource/images/empty.png')"/>
 				</view>
 			</scroll-view>

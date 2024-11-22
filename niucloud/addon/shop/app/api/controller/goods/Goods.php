@@ -52,6 +52,7 @@ class Goods extends BaseApiController
         $data = $this->request->params([
             [ 'goods_id', 0 ],
             [ 'sku_id', 0 ],
+            [ 'type', '' ], // 来源营销活动类型，discount：限时折扣，newcomer_discount：新人价
         ]);
         return success(( new GoodsService() )->getDetail($data));
     }

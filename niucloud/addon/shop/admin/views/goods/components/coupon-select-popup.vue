@@ -124,7 +124,8 @@ const couponTable = reactive({
     data: [],
     searchParam: {
         title: '',
-        status: 1
+        status: 1,
+        verify_coupon_ids:'',
     }
 })
 
@@ -181,17 +182,6 @@ const loadCouponList = (page: number = 1, callback: any = null) => {
     couponTable.page = page
 
     const searchData: any = cloneDeep(couponTable.searchParam);
-
-    if (searchData.select_type == 'selected') {
-        const ids = <any>[]
-        for (let k in selectCoupon) {
-            ids.push(parseInt(k.replace('coupon_', '')))
-        }
-        searchData.ids = ids
-    } else {
-        searchData.ids = '';
-    }
-
     getCouponList({
         page: couponTable.page,
         limit: couponTable.limit,
@@ -201,7 +191,7 @@ const loadCouponList = (page: number = 1, callback: any = null) => {
         couponTable.data = res.data.data
         couponTable.total = res.data.total
 
-        if (callback) callback()
+        if (callback) callback(res.data.verify_coupon_ids)
 
         setCouponSelected();
     }).catch(() => {
@@ -231,10 +221,13 @@ const resetForm = (formEl: FormInstance | undefined) => {
 }
 
 const show = () => {
-    // 检测优惠券id集合是否存在，移除不存在的优惠券id，纠正数据准确性
-    loadCouponList(1, () => {
+    // 检测商品id集合是否存在，移除不存在的商品id，纠正数据准确性
+    couponTable.searchParam.verify_coupon_ids = couponIds.value;
+    loadCouponList(1, (verify_coupon_ids:any) => {
         // 第一次打开弹出框时，纠正数据，并且赋值已选优惠券
         if (couponIds.value) {
+            couponIds.value.splice(0, couponIds.value.length, ...verify_coupon_ids)
+            
             couponIds.value.forEach((item: any) => {
                 if (!selectCoupon['coupon_' + item]) {
                     selectCoupon['coupon_' + item] = {};

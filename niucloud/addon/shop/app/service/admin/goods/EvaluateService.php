@@ -12,8 +12,11 @@
 namespace addon\shop\app\service\admin\goods;
 
 use addon\shop\app\dict\goods\EvaluateDict;
+use addon\shop\app\job\goods\GoodsEvaluateStat;
 use addon\shop\app\model\goods\Evaluate;
+use addon\shop\app\model\goods\Goods;
 use addon\shop\app\service\core\goods\CoreGoodsEvaluateService;
+use addon\shop\app\service\core\goods\CoreGoodsStatService;
 use core\base\BaseAdminService;
 use think\db\Query;
 
@@ -98,6 +101,9 @@ class EvaluateService extends BaseAdminService
     {
         $model = $this->model->where([ [ 'evaluate_id', '=', $evaluate_id ] ])->find();
         $res = $model->delete();
+
+        CoreGoodsStatService::addStat(['goods_id' => $model->goods_id, 'evaluate_num' => -1]);
+        (new Goods())->where([['goods_id', '=', $model->goods_id]])->dec('evaluate_num', 1) ->update();
         return $res;
     }
 
@@ -109,6 +115,10 @@ class EvaluateService extends BaseAdminService
     public function auditAdopt($evaluate_id)
     {
         $this->model->where([ [ 'evaluate_id', '=', $evaluate_id ] ])->update([ 'is_audit' => EvaluateDict::AUDIT_ADOPT ]);
+
+        $goods_id = $this->model->where( 'evaluate_id', '=', $evaluate_id )->value('goods_id');
+        CoreGoodsStatService::addStat(['goods_id' => $goods_id, 'evaluate_num' => 1]);
+        (new Goods())->where([['goods_id', '=', $goods_id]])->inc('evaluate_num', 1) ->update();
         return true;
     }
 
@@ -160,6 +170,38 @@ class EvaluateService extends BaseAdminService
             'update_time' => 0
         ];
         $this->model->where([ [ 'evaluate_id', '=', $evaluate_id ] ])->update($data);
+        return true;
+    }
+
+    /**
+     * 审核批量修改
+     * @return bool
+     */
+    public function auditEditBatch()
+    {
+        // 查询待审核的id
+        $evaluate_ids = $this->model->where([ [ 'is_audit', '=', EvaluateDict::AUDIT ] ])->column('evaluate_id');
+        if (!empty($evaluate_ids)) {
+            GoodsEvaluateStat::dispatch(['evaluate_ids' => $evaluate_ids]);
+        }
+
+        $this->model->where([ [ 'is_audit', '=', EvaluateDict::AUDIT ] ])->update([ 'is_audit' => EvaluateDict::AUDIT_NO ]);
+        return true;
+    }
+
+    /**
+     * 批量设置评论审核状态后，更新评价统计数据
+     * @param $evaluate_ids
+     */
+    public function updateGoodsEvaluateNumBach($evaluate_ids)
+    {
+//        var_dump($evaluate_ids);die();
+        $list = $this->model->where([ [ 'evaluate_id', 'in', $evaluate_ids ] ])->chunk(50, function ($evaluate) {
+            foreach ($evaluate as $item) {
+                CoreGoodsStatService::addStat(['goods_id' => $item['goods_id'], 'evaluate_num' => 1]);
+                (new Goods())->where([['goods_id', '=', $item['goods_id']]])->inc('evaluate_num', 1) ->update();
+            }
+        });
         return true;
     }
 }

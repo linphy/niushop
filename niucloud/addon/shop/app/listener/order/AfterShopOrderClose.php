@@ -3,6 +3,7 @@ declare (strict_types=1);
 
 namespace addon\shop\app\listener\order;
 
+use addon\shop\app\dict\active\ActiveDict;
 use addon\shop\app\dict\order\OrderDict;
 use addon\shop\app\model\order\OrderDiscounts;
 use addon\shop\app\model\order\OrderGoods;
@@ -83,6 +84,11 @@ class AfterShopOrderClose
                 'content' => ''
             ]);
             //todo 消息发送
+
+            //新人专享活动退还参与资格
+            if ($order_data['activity_type'] == ActiveDict::NEWCOMER_DISCOUNT) {
+                event("NewcomerActiveJoin", ['member_id' => $order_data[ 'member_id' ], 'is_join' => 0, 'order_id' => $order_data[ 'order_id' ]]);
+            }
         } catch ( \Exception $e ) {
             Log::write('订单AfterShopOrderClose失败' . $e->getMessage() . $e->getFile() . $e->getLine());
         }

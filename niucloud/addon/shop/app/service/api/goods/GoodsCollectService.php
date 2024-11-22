@@ -12,6 +12,8 @@
 namespace addon\shop\app\service\api\goods;
 
 use addon\shop\app\model\goods\GoodsCollect;
+use addon\shop\app\service\core\goods\CoreGoodsCollectNumService;
+use addon\shop\app\service\core\goods\CoreGoodsStatService;
 use core\base\BaseApiService;
 use core\exception\CommonException;
 
@@ -53,6 +55,10 @@ class GoodsCollectService extends BaseApiService
             // 添加
             $data[ 'create_time' ] = time();
             $res = $this->model->create($data);
+
+            // 商品收藏统计
+            CoreGoodsStatService::addStat(['goods_id' => $data[ 'goods_id' ], 'collect_num' => 1]);
+            (new CoreGoodsCollectNumService())->inc(['goods_id' => $data[ 'goods_id' ], 'collect_num' => 1]);
             return $res->id;
         }
     }
@@ -63,6 +69,10 @@ class GoodsCollectService extends BaseApiService
     public function cancelGoodsCollect($data)
     {
         $res = $this->model->where([ [ 'goods_id', '=', $data[ 'goods_id' ] ], [ 'member_id', '=', $this->member_id ] ])->delete();
+
+        // 商品收藏统计
+        CoreGoodsStatService::addStat(['goods_id' => $data[ 'goods_id' ], 'collect_num' => -1]);
+        (new CoreGoodsCollectNumService())->inc(['goods_id' => $data[ 'goods_id' ], 'collect_num' => -1]);
         return $res;
     }
 }

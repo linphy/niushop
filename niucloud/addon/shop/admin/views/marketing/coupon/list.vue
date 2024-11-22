@@ -16,7 +16,11 @@
                     <el-form-item :label="t('title')" prop="title">
                         <el-input v-model.trim="tableData.searchParam.title" :placeholder="t('titlePlaceholder')" />
                     </el-form-item>
-
+                    <el-form-item :label="t('statusName')" prop='status'>
+						<el-select v-model="tableData.searchParam.status" clearable class="input-item">
+							<el-option v-for="(item, index) in statusList" :key="index" :label="item" :value="index"></el-option>
+						</el-select>
+					</el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="loadCouponList()">{{ t('search') }}</el-button>
                         <el-button @click="resetForm(searchFormRef)">{{ t('reset') }}</el-button>
@@ -88,7 +92,7 @@
                     <el-table-column :label="t('operation')" fixed="right" align="right" min-width="160">
                        <template #default="{ row }">
                         <el-button type="primary" link @click="spreadEvent(row)">{{ t('spreadGoods') }}</el-button>
-                            <el-button type="primary" link @click="editEvent(row)" v-if="row.status == 1">{{ t('edit') }}</el-button>
+                            <el-button type="primary" link @click="editEvent(row)" v-if="row.status == 0 || row.status == 1">{{ t('edit') }}</el-button>
                             <el-button type="primary" link @click="deleteEvent(row)" v-if="row.status != 1">{{ t('delete') }}</el-button>
                             <el-button type="primary" link @click="closeEvent(row)" v-if="row.status == 1">{{ t('close') }}</el-button>
                             <el-button type="primary" link @click="collectionEvent(row)">{{ t('receive') }}</el-button>
@@ -110,7 +114,7 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getCouponList, deleteCoupon, closeCoupon } from '@/addon/shop/api/marketing'
+import { getCouponList, deleteCoupon, closeCoupon,getCouponStatusList } from '@/addon/shop/api/marketing'
 import { ElMessageBox, FormInstance } from 'element-plus'
 import { t } from '@/lang'
 import couponSpreadPopup from '@/addon/shop/views/marketing/coupon/components/coupon-spread-popup.vue'
@@ -118,7 +122,7 @@ import couponSpreadPopup from '@/addon/shop/views/marketing/coupon/components/co
 const router = useRouter()
 const route = useRoute()
 const pageName = route.meta.title
-
+const statusList = ref(null)
 // 表单内容
 const tableData = reactive({
     page: 1,
@@ -127,12 +131,19 @@ const tableData = reactive({
     loading: true,
     data: [],
     searchParam: {
-        title: ''
+        title: '',
+        status:'',
     }
 })
 
 const searchFormRef = ref<FormInstance>()
 
+const getCouponStatusListFn = () =>{
+    getCouponStatusList().then(res=>{
+        statusList.value = res.data
+    })
+}
+getCouponStatusListFn()
 const loadCouponList = (page: number = 1) => {
     tableData.loading = true
     tableData.page = page

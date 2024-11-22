@@ -109,7 +109,7 @@ class Coupon extends BaseModel
      */
     public function searchStatusAttr($query, $value, $data)
     {
-        if ($value) {
+        if ($value != '') {
             $query->where("status",'=',$value);
         }
     }

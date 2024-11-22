@@ -64,8 +64,14 @@ class ExchangeService extends BaseAdminService
         $info = $this->model->where([ [ 'id', '=', $id ] ])->append([ 'type_name' ])->field($field)->findOrEmpty()->toArray();
         switch ($info[ 'type' ]) {
             case ExchangeDict::GOODS:
-                $info[ 'goods_list' ] = ( new GoodsSku() )->where([ [ 'goods_id', '=', $info[ 'product_detail' ][ 0 ][ 'goods_id' ] ] ])->field('sku_spec_format,sku_id,sku_name,sku_image,sku_no,price as goods_price,stock as goods_stock')->select()->toArray();
-                $info[ 'goods_info' ] = ( new Goods() )->where([ [ 'goods_id', '=', $info[ 'product_detail' ][ 0 ][ 'goods_id' ] ] ])->field('goods_id,goods_name,goods_image,goods_cover')->findOrEmpty()->toArray();
+                $goods_id = 0;
+                foreach ($info[ 'product_detail' ] as $k => $v) {
+                    if (!empty($v[ 'goods_id' ])) {
+                        $goods_id = $v[ 'goods_id' ];
+                    }
+                }
+                $info[ 'goods_list' ] = ( new GoodsSku() )->where([ [ 'goods_id', '=', $goods_id ] ])->field('sku_spec_format,sku_id,sku_name,sku_image,sku_no,price as goods_price,stock as goods_stock')->select()->toArray();
+                $info[ 'goods_info' ] = ( new Goods() )->where([ [ 'goods_id', '=', $goods_id ] ])->field('goods_id,goods_name,goods_image,goods_cover')->findOrEmpty()->toArray();
                 $info[ 'goods_info' ][ 'spec_type' ] = empty($info[ 'goods_list' ][ 0 ][ 'sku_spec_format' ]) ? 'single' : 'multi';
                 $info[ 'goods_info' ][ 'goods_price' ] = $info[ 'goods_list' ][ 0 ][ 'goods_price' ];
                 foreach ($info[ 'goods_list' ] as &$item) {
@@ -266,8 +272,14 @@ class ExchangeService extends BaseAdminService
         if ($info->isEmpty()) throw new AdminException('EXCHANGE_DETA_NOT_FOUND');
         Db::startTrans();
         try {
+            $goods_id = 0;
+            foreach ($info[ 'product_detail' ] as $k => $v) {
+                if (!empty($v[ 'goods_id' ])) {
+                    $goods_id = $v[ 'goods_id' ];
+                }
+            }
             $active_info = ( new ActiveGoods() )->where([
-                [ 'goods_id', 'in', $info[ 'product_detail' ][ 0 ][ 'goods_id' ] ],
+                [ 'goods_id', 'in', $goods_id ],
                 [ 'active_class', '=', ActiveDict::EXCHANGE ],
             ])->field('active_id')->findOrEmpty()->toArray();
             if (!empty($active_info)) ( new CoreActiveService() )->del($active_info[ 'active_id' ], 1);

@@ -11,7 +11,9 @@
 
 namespace addon\shop\app\service\core\goods;
 
+use addon\shop\app\dict\goods\EvaluateDict;
 use addon\shop\app\model\goods\Evaluate;
+use addon\shop\app\model\goods\Goods;
 use addon\shop\app\model\order\Order;
 use core\base\BaseCoreService;
 
@@ -50,6 +52,14 @@ class CoreGoodsEvaluateService extends BaseCoreService
         ];
         $res = $this->model->create($data);
         if($data[ 'order_id' ] > 0) (new Order())->where([['order_id', '=', $data[ 'order_id' ]]])->update(['is_evaluate' => 1]);
+
+        // 无需审核的增加评论统计数
+        if ($data['is_audit'] == EvaluateDict::AUDIT_NO) {
+            CoreGoodsStatService::addStat(['goods_id' => $data[ 'goods_id' ], 'evaluate_num' => 1]);
+            (new Goods())->where([['goods_id', '=', $data['goods_id']]])->inc('evaluate_num', 1) ->update();
+        }
+
         return $res->evaluate_id;
     }
+
 }

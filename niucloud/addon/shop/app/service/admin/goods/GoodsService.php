@@ -54,7 +54,7 @@ class GoodsService extends BaseAdminService
 
         if (!empty($params[ 'goods_id' ])) {
             // 查询商品信息，用于编辑
-            $field = 'goods_id,goods_name,sub_title,goods_type,goods_cover,goods_image,goods_desc,brand_id,goods_category,label_ids,service_ids,unit,stock,virtual_sale_num,status,sort,delivery_type,is_free_shipping,fee_type,delivery_money,delivery_template_id,supplier_id,attr_id,attr_format,member_discount,poster_id';
+            $field = 'goods_id,goods_name,sub_title,goods_type,goods_cover,goods_image,goods_video,goods_desc,brand_id,goods_category,label_ids,service_ids,unit,stock,virtual_sale_num,is_limit,limit_type,max_buy,min_buy,status,sort,delivery_type,is_free_shipping,fee_type,delivery_money,delivery_template_id,supplier_id,attr_id,attr_format,member_discount,poster_id';
             $goods_info = $this->model->field($field)->where([ [ 'goods_id', '=', $params[ 'goods_id' ] ] ])->findOrEmpty()->toArray();
             if (!empty($goods_info)) {
 
@@ -186,7 +186,7 @@ class GoodsService extends BaseAdminService
      */
     public function getInfo(int $id)
     {
-        $field = 'goods_id,goods_name,sub_title,goods_type,goods_cover,goods_image,goods_desc,brand_id,goods_category,label_ids,service_ids,unit,stock,sale_num,virtual_sale_num,status,sort,delivery_type,is_free_shipping,fee_type,delivery_money,delivery_template_id,supplier_id,create_time,update_time,member_discount,poster_id';
+        $field = 'goods_id,goods_name,sub_title,goods_type,goods_cover,goods_image,goods_video,goods_desc,brand_id,goods_category,label_ids,service_ids,unit,stock,sale_num,virtual_sale_num,is_limit,limit_type,max_buy,min_buy,status,sort,delivery_type,is_free_shipping,fee_type,delivery_money,delivery_template_id,supplier_id,create_time,update_time,member_discount,poster_id';
         $info = $this->model->field($field)->where([ [ 'goods_id', '=', $id ] ])->findOrEmpty()->toArray();
         return $info;
     }
@@ -212,6 +212,7 @@ class GoodsService extends BaseAdminService
                 'goods_type' => $data[ 'goods_type' ],
                 'goods_cover' => $data[ 'goods_cover' ],
                 'goods_image' => $data[ 'goods_image' ],
+                'goods_video' => $data[ 'goods_video' ],
                 'goods_category' => array_map(function($item) { return (string) $item; }, $data[ 'goods_category' ]),
                 'goods_desc' => $data[ 'goods_desc' ],
                 'brand_id' => $data[ 'brand_id' ],
@@ -220,6 +221,10 @@ class GoodsService extends BaseAdminService
                 'unit' => $data[ 'unit' ],
                 'stock' => $data[ 'stock' ],
                 'virtual_sale_num' => $data[ 'virtual_sale_num' ],
+                'is_limit' => $data[ 'is_limit' ],
+                'limit_type' => $data[ 'limit_type' ],
+                'max_buy' => $data[ 'max_buy' ],
+                'min_buy' => $data[ 'min_buy' ],
                 'status' => $data[ 'status' ],
                 'sort' => $data[ 'sort' ],
                 'attr_id' => $data[ 'attr_id' ],
@@ -351,6 +356,7 @@ class GoodsService extends BaseAdminService
                 'goods_type' => $data[ 'goods_type' ],
                 'goods_cover' => $data[ 'goods_cover' ],
                 'goods_image' => $data[ 'goods_image' ],
+                'goods_video' => $data[ 'goods_video' ],
                 'goods_category' => array_map(function($item) { return (string) $item; }, $data[ 'goods_category' ]),
                 'goods_desc' => $data[ 'goods_desc' ],
                 'brand_id' => $data[ 'brand_id' ],
@@ -359,6 +365,10 @@ class GoodsService extends BaseAdminService
                 'unit' => $data[ 'unit' ],
                 'stock' => $data[ 'stock' ],
                 'virtual_sale_num' => $data[ 'virtual_sale_num' ],
+                'is_limit' => $data[ 'is_limit' ],
+                'limit_type' => $data[ 'limit_type' ],
+                'max_buy' => $data[ 'max_buy' ],
+                'min_buy' => $data[ 'min_buy' ],
                 'status' => $data[ 'status' ],
                 'sort' => $data[ 'sort' ],
                 'attr_id' => $data[ 'attr_id' ],
@@ -704,7 +714,7 @@ class GoodsService extends BaseAdminService
             $goods_spec_model = new GoodsSpec();
 
             // 查询商品信息
-            $field = 'goods_name,sub_title,goods_type,goods_cover,goods_image,goods_desc,brand_id,goods_category,label_ids,service_ids,unit,stock,virtual_sale_num,status,sort,delivery_type,is_free_shipping,fee_type,delivery_money,delivery_template_id,supplier_id,attr_id,attr_format,virtual_auto_delivery,virtual_receive_type,virtual_verify_type,virtual_indate,poster_id';
+            $field = 'goods_name,sub_title,goods_type,goods_cover,goods_image,goods_video,goods_desc,brand_id,goods_category,label_ids,service_ids,unit,stock,virtual_sale_num,is_limit,limit_type,max_buy,min_buy,status,sort,delivery_type,is_free_shipping,fee_type,delivery_money,delivery_template_id,supplier_id,attr_id,attr_format,virtual_auto_delivery,virtual_receive_type,virtual_verify_type,virtual_indate,poster_id';
 
             $goods_data = $this->model->field($field)->where([ [ 'goods_id', '=', $goods_id ] ])->findOrEmpty()->toArray();
             if (empty($goods_data)) {
@@ -794,8 +804,11 @@ class GoodsService extends BaseAdminService
 
         $sku_where = [
             [ 'goodsSku.is_default', '=', 1 ],
-            [ 'status', '=', 1 ]
         ];
+
+        if (isset($where['is_gift']) && $where['is_gift'] == GoodsDict::NOT_IS_GIFT) {
+            $sku_where[] = [ 'goods.is_gift', '=',  GoodsDict::NOT_IS_GIFT ];
+        }
 
         if (!empty($where[ 'keyword' ])) {
             $sku_where[] = [ 'goods_name|sub_title', 'like', '%' . $where[ 'keyword' ] . '%' ];
@@ -816,8 +829,9 @@ class GoodsService extends BaseAdminService
             $where[ 'goods_ids' ] = $goods_ids;
         }
 
-        if (empty($where[ 'goods_ids' ])) {
+        if ($where[ 'select_type' ] == 'all') {
             $sku_where[] = [ 'goods.stock', '>', 0 ];
+            $sku_where[] = [ 'status', '=', 1 ];
         }
         if ($where[ 'select_type' ] == 'selected') {
             $sku_where[] = [ 'goods.goods_id', 'in', $where[ 'goods_ids' ] ];
@@ -828,7 +842,8 @@ class GoodsService extends BaseAdminService
         // 检测商品id集合是否存在，移除不存在的商品id，纠正数据准确性
         if (!empty($where[ 'verify_goods_ids' ])) {
             $verify_goods_ids = $this->model->where([
-                [ 'goods_id', 'in', $where[ 'verify_goods_ids' ] ]
+                [ 'goods_id', 'in', $where[ 'verify_goods_ids' ] ],
+                [ 'status', '=', 1 ]
             ])->field('goods_id')->select()->toArray();
 
             if (!empty($verify_goods_ids)) {
@@ -881,7 +896,8 @@ class GoodsService extends BaseAdminService
         // 检测商品id集合是否存在，移除不存在的商品id，纠正数据准确性
         if (!empty($where[ 'verify_goods_ids' ])) {
             $verify_goods_ids = $this->model->where([
-                [ 'goods_id', 'in', $where[ 'verify_goods_ids' ] ]
+                [ 'goods_id', 'in', $where[ 'verify_goods_ids' ] ],
+                [ 'status', '=', 1 ]
             ])->field('goods_id')->select()->toArray();
 
             if (!empty($verify_goods_ids)) {
@@ -890,11 +906,15 @@ class GoodsService extends BaseAdminService
 
             $select_goods_list = $this->model
                 ->field($field)
+                ->withJoin([
+                    'goodsSku' => [ 'sku_id', 'sku_name', 'goods_id', 'price', 'stock', 'sku_spec_format' ],
+                ])
                 ->with([
                     'skuList'
                 ])
                 ->where([
-                    [ 'goods_id', 'in', $verify_goods_ids ]
+                    [ 'goodsSku.is_default', '=', 1 ],
+                    [ 'goods.goods_id', 'in', $verify_goods_ids ]
                 ])
                 ->order($order)->append([ 'goods_type_name', 'goods_cover_thumb_small', 'goods_cover_thumb_mid' ])
                 ->select()->toArray();
@@ -921,11 +941,15 @@ class GoodsService extends BaseAdminService
 
             $select_goods_list = $this->model
                 ->field($field)
+                ->withJoin([
+                    'goodsSku' => [ 'sku_id', 'sku_name', 'goods_id', 'price', 'stock', 'sku_spec_format' ],
+                ])
                 ->with([
                     'skuList'
                 ])
                 ->where([
-                    [ 'goods_id', 'in', $goods_ids ]
+                    [ 'goodsSku.is_default', '=', 1 ],
+                    [ 'goods.goods_id', 'in', $goods_ids ]
                 ])
                 ->order($order)->append([ 'goods_type_name', 'goods_cover_thumb_small', 'goods_cover_thumb_mid' ])
                 ->select()->toArray();

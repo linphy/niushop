@@ -288,7 +288,7 @@ class CoreOrderCreateService extends BaseCoreService
             $sku_key = array_search($v[ 'sku_id' ], array_column($exchange_goods_info[ 'product_detail' ], 'sku_id'));
             //todo 限制兑换 业务
             $sku_info = $exchange_goods_info[ 'product_detail' ][ $sku_key ];
-            if ($sku_info[ 'limit_num' ] < $order_goods_data_column[ $v[ 'sku_id' ] ]) throw new CommonException('SHOP_ORDER_EXCHANGE_EXCEEDING_LIMIT');//限够判断
+            if ($sku_info[ 'limit_num' ] < $order_goods_data_column[ $v[ 'sku_id' ] ]) throw new CommonException('SHOP_ORDER_EXCHANGE_EXCEEDING_LIMIT');// 限购判断
             if ($v[ 'stock' ] < $order_goods_data_column[ $v[ 'sku_id' ] ]) throw new CommonException('SHOP_ORDER_GOODS_INSUFFICIENT');
             if ($sku_info[ 'stock' ] < $order_goods_data_column[ $v[ 'sku_id' ] ]) throw new CommonException('SHOP_ORDER_EXCHANGE_INSUFFICIENT_EXCHANGE_QUANTITY');//兑换数判断
         }

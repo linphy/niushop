@@ -102,6 +102,13 @@ return [
                 'is_share' => 1,
                 'action' => ''
             ],
+            [
+                'name' => 'SHOP_NEWCOMER_LIST',
+                'title' => get_lang('dict_diy.shop_link_newcomer_list'),
+                'url' => '/addon/shop/pages/newcomer/list',
+                'is_share' => 1,
+                'action' => ''
+            ],
         ]
     ],
 ];

@@ -36,7 +36,8 @@ return [
         ],
         //活动信息
         'ShopGoodsMarketCalculate' => [
-            'addon\shop\app\listener\marketing\ShopDiscountCalculate'
+            'addon\shop\app\listener\marketing\ShopDiscountCalculate',   //限时折扣
+            'addon\shop\app\listener\marketing\ShopNewcomerCalculate'   //新人专享
         ],
         /***************************************************** 退款 start *****************************************************/
         'AfterShopOrderRefundApply' => [ 'addon\shop\app\listener\refund\AfterShopOrderRefundApply' ],
@@ -47,6 +48,7 @@ return [
         'AfterShopOrderRefundEdit' => [ 'addon\shop\app\listener\refund\AfterShopOrderRefundEdit' ],
         'AfterShopOrderRefundEditDelivery' => [ 'addon\shop\app\listener\refund\AfterShopOrderRefundEditDelivery' ],
         'AfterShopOrderRefundFinish' => [ 'addon\shop\app\listener\refund\AfterShopOrderRefundFinish' ],
+        'AfterShopOrderRefundActiveCreate' => [ 'addon\shop\app\listener\refund\AfterShopOrderRefundActiveCreate' ],
         /***************************************************** 退款 end *****************************************************/
 
         'ShopPromotion' => [ 'addon\shop\app\listener\app\ShopPromotionListener' ],
@@ -67,6 +69,7 @@ return [
         ],
         //优惠券
         'CouponReceiveType' => [ 'addon\shop\app\listener\coupon\CouponReceiveListener' ],
+        'CouponCheck' => [ 'addon\shop\app\listener\coupon\CouponCheckListener' ],
 
 
         //获取海报数据
@@ -120,6 +123,11 @@ return [
         'PrinterContent' => [
             'addon\shop\app\listener\printer\PrinterContentListener'
         ],
+
+        //新人专享
+        'NewcomerActiveJoin' => [ 'addon\shop\app\listener\marketing\NewcomerActiveJoinListener' ],
+        //会员登录后事件
+        'MemberLoginAfter' => [ 'addon\shop\app\listener\MemberLoginAfterListener' ],
     ],
     'subscribe' => [
     ],

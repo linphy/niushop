@@ -9,10 +9,11 @@
 						<el-radio label="style-1">{{ t('headStyle1') }}</el-radio>
 						<el-radio label="style-2">{{ t('headStyle2') }}</el-radio>
 						<el-radio label="style-3">{{ t('headStyle3') }}</el-radio>
+						<el-radio label="style-4">{{ t('headStyle4') }}</el-radio>
 					</el-radio-group>
 				</el-form-item>
 				<el-form-item :label="t('manyGoodsListAroundRadius')" v-show="diyStore.editComponent.headStyle == 'style-3'">
-					<el-slider v-model="diyStore.editComponent.aroundRadius" show-input size="small" class="ml-[10px] graphic-nav-slider" :max="50" />
+					<el-slider v-model="diyStore.editComponent.aroundRadius" show-input size="small" class="ml-[10px] diy-nav-slider" :max="50" />
 				</el-form-item>
 			</el-form>
 		</div>
@@ -27,7 +28,7 @@
 					</el-radio-group>
 				</el-form-item>
 				<el-form-item :label="t('goodsNum')">
-					<el-slider show-input class="graphic-nav-slider" v-model="diyStore.editComponent.num" :min="1" max="20" size="small" />
+					<el-slider show-input class="diy-nav-slider" v-model="diyStore.editComponent.num" :min="1" max="20" size="small" />
 				</el-form-item>
 			</el-form>
 		</div>
@@ -54,7 +55,6 @@
 						</template>
 					</el-input>
 				</el-form-item>
-
 				<div v-show="diyStore.editComponent.source == 'custom'">
 
 					<p class="text-sm text-gray-400 mb-[10px]">{{ t('dragMouseAdjustOrder') }}</p>
@@ -168,6 +168,54 @@
 			</el-dialog>
 
 		</div>
+
+        <div class="edit-attr-item-wrap mt-[20px]">
+			<h3 class="mb-[10px]">{{ t("goodsBuyBtn") }}</h3>
+			<el-form label-width="90px" class="px-[10px]">
+                <el-form-item :label="t('goodsBtnIsShow')">
+                    <el-switch v-model="diyStore.editComponent.btnStyle.control" />
+                </el-form-item>
+                <el-form-item :label="t('goodsCartIncident')" v-if="diyStore.editComponent.btnStyle.control">
+                    <el-radio-group v-model="diyStore.editComponent.btnStyle.cartEvent">
+						<el-radio label="detail">{{ t('goodsDetail') }}</el-radio>
+					</el-radio-group>
+                </el-form-item>
+                <el-form-item :label="t('goodsBtnStyle')" class="!items-center" v-if="diyStore.editComponent.btnStyle.control">
+                    <div class="flex">
+                        <template v-for="(item,index) in btnStyleList">
+                            <div v-if=" item.isShow == true" class="cursor-pointer flex items-center justify-center border-[1px] border-solid border-transparent rounded-[6px] py-[5px] px-[8px] mr-[10px]" :class="{'!border-[var(--el-color-primary)]': diyStore.editComponent.btnStyle.style == item.value}">
+                                <div v-if="item.type == 'icon'" :class="['nc-iconfont !text-[25px] text-[var(--el-color-primary)]', item.title]" @click="changeBtnStyle(item)"></div>
+                                <div v-if="item.type == 'button'" class="leading-[1] text-[12px] px-[10px] py-[8px] text-[#fff] rounded-[20px] bg-[var(--el-color-primary)]" @click="changeBtnStyle(item)">
+                                    {{item.title}}
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </el-form-item>
+                <el-form-item :label="t('goodsBtnText')" v-if="diyStore.editComponent.btnStyle.control && diyStore.editComponent.btnStyle.style == 'button'">
+                    <el-input v-model.trim="diyStore.editComponent.btnStyle.text" :placeholder="t('goodsBtnTextPlaceholder')" clearable maxlength="4" show-word-limit/>
+                </el-form-item>
+			</el-form>
+		</div>
+
+
+        <div class="edit-attr-item-wrap">
+			<h3 class="mb-[10px]">{{ t("goodsShowContent") }}</h3>
+			<el-form label-width="90px" class="px-[10px]">
+                <el-form-item :label="t('goodsSelectPopupGoodsName')" v-if="diyStore.editComponent.goodsNameStyle.isShow">
+                    <el-switch v-model="diyStore.editComponent.goodsNameStyle.control" />
+                </el-form-item>
+                <el-form-item :label="t('goodsPriceColor')" v-if="diyStore.editComponent.priceStyle.isShow">
+                    <el-switch v-model="diyStore.editComponent.priceStyle.control" />
+                </el-form-item>
+                <el-form-item :label="t('goodsSaleNum')" v-if="diyStore.editComponent.saleStyle.isShow">
+                    <el-switch v-model="diyStore.editComponent.saleStyle.control" />
+                </el-form-item>
+                <el-form-item :label="t('goodsLabel')" v-if="diyStore.editComponent.labelStyle.isShow">
+                    <el-switch v-model="diyStore.editComponent.labelStyle.control" />
+                </el-form-item>
+			</el-form>
+		</div>
 	</div>
 
 	<!-- 样式 -->
@@ -188,16 +236,30 @@
 					</el-radio-group>
 				</el-form-item>
 				<el-form-item :label="t('goodsPriceColor')">
-					<el-color-picker v-model="diyStore.editComponent.priceStyle.mainColor" show-alpha :predefine="diyStore.predefineColors" />
+					<el-color-picker v-model="diyStore.editComponent.priceStyle.color" show-alpha :predefine="diyStore.predefineColors" />
 				</el-form-item>
 				<el-form-item :label="t('goodsSaleColor')">
 					<el-color-picker v-model="diyStore.editComponent.saleStyle.color" show-alpha :predefine="diyStore.predefineColors" />
 				</el-form-item>
 				<el-form-item :label="t('topRounded')">
-					<el-slider v-model="diyStore.editComponent.topElementRounded" show-input size="small" class="ml-[10px] graphic-nav-slider" :max="50" />
+					<el-slider v-model="diyStore.editComponent.topElementRounded" show-input size="small" class="ml-[10px] diy-nav-slider" :max="50" />
 				</el-form-item>
 				<el-form-item :label="t('bottomRounded')">
-					<el-slider v-model="diyStore.editComponent.bottomElementRounded" show-input size="small" class="ml-[10px] graphic-nav-slider" :max="50" />
+					<el-slider v-model="diyStore.editComponent.bottomElementRounded" show-input size="small" class="ml-[10px] diy-nav-slider" :max="50" />
+				</el-form-item>
+			</el-form>
+		</div>
+
+        <div class="edit-attr-item-wrap"  v-if="diyStore.editComponent.btnStyle.control">
+			<h3 class="mb-[10px]">{{ t("goodsBuyBtn") }}</h3>
+			<el-form label-width="80px" class="px-[10px]">
+                <el-form-item :label="t('goodsTextColor')">
+					<el-color-picker v-model="diyStore.editComponent.btnStyle.textColor" show-alpha :predefine="diyStore.predefineColors" />
+				</el-form-item>
+                <el-form-item :label="t('listFrameColor')">
+					<el-color-picker v-model="diyStore.editComponent.btnStyle.startBgColor" show-alpha :predefine="diyStore.predefineColors" />
+                    <icon name="iconfont iconmap-connect" size="20px" class="block !text-gray-400 mx-[5px]"/>
+					<el-color-picker v-model="diyStore.editComponent.btnStyle.endBgColor" show-alpha :predefine="diyStore.predefineColors"/>
 				</el-form-item>
 			</el-form>
 		</div>
@@ -298,6 +360,33 @@ const firstCategoryShowDialogOpen = () => {
             firstCategoryTableRef.value!.setCurrentRow(currFirstCategory)
         }, 200)
     }
+}
+
+
+const btnStyleList = reactive([
+    {
+        isShow: true,
+        type: 'button',
+        title: diyStore.editComponent.btnStyle.text,
+        value: 'button'
+    },
+    {
+        isShow: true,
+        type: 'icon',
+        title: 'nc-icon-jiahaoV6xx',
+        value: 'nc-icon-jiahaoV6xx'
+    },
+    {
+        isShow: true,
+        type: 'icon',
+        title: 'nc-icon-gouwuche1',
+        value: 'nc-icon-gouwuche1'
+    }
+])
+diyStore.editComponent.btnStyle.style = 'nc-icon-jiahaoV6xx';
+
+const changeBtnStyle = (item:any) => {
+    diyStore.editComponent.btnStyle.style = item.value
 }
 
 const clearCategory = ()=> {

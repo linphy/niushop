@@ -113,6 +113,17 @@ Route::group('shop', function() {
     //积分商城订单创建
     Route::post('exchange_order/create', 'addon\shop\app\api\controller\exchange\OrderCreate@create');
 
+    /***************************************************** 新人专享 ****************************************************/
+
+    // 新人专享商品列表
+    Route::get('newcomer/goods', 'addon\shop\app\api\controller\marketing\Newcomer@pages');
+
+    // 新人专享组件商品列表
+    Route::get('newcomer/goods/components', 'addon\shop\app\api\controller\marketing\Newcomer@componentsList');
+
+    // 新人专享活动配置
+    Route::get('newcomer/config', 'addon\shop\app\api\controller\marketing\Newcomer@config');
+
 })->middleware(ApiChannel::class)
     ->middleware(ApiCheckToken::class)//false表示不验证登录
     ->middleware(ApiLog::class);
@@ -204,6 +215,15 @@ Route::group('shop', function() {
 
     //商品取消收藏
     Route::delete('goods/collect/:goods_id', 'addon\shop\app\api\controller\goods\GoodsCollect@cancelGoodsCollect');
+
+    //商品足迹
+    Route::get('goods/browse','addon\shop\app\api\controller\goods\GoodsBrowse@getMemberGoodsBrowseList');
+
+    //商品足迹添加
+    Route::post('goods/browse','addon\shop\app\api\controller\goods\GoodsBrowse@addGoodsBrowse');
+
+    //商品足迹删除
+    Route::delete('goods/browse','addon\shop\app\api\controller\goods\GoodsBrowse@deleteGoodsBrowse');
 
     //订单维权 列表
     Route::get('order/refund', 'addon\shop\app\api\controller\refund\Refund@lists');

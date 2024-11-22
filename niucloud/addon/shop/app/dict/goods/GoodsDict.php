@@ -19,6 +19,13 @@ class GoodsDict
     // 虚拟商品
     const VIRTUAL = 'virtual';
 
+    const SINGLE_TIME = 1;//单次限购
+    const SINGLE_PERSON = 2;//单人限购
+
+    //商品是否赠品(0:否 1:是)
+    const IS_GIFT = 1;
+    const NOT_IS_GIFT = 0;
+
     /**
      * 商品类型
      * @param $type

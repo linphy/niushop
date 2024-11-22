@@ -167,6 +167,15 @@ CREATE TABLE `{{prefix}}shop_delivery_local_delivery` (
   `delivery_type` varchar(2000) NOT NULL DEFAULT '' COMMENT '配送类型',
   `area` longtext NOT NULL COMMENT '配送区域',
   `center` varchar(255) NOT NULL DEFAULT '' COMMENT '发货地址中心点',
+  `time_is_open` TINYINT(4) NOT NULL DEFAULT 0 COMMENT '配送时间设置 0 关闭 1 开启',
+  `time_type` TINYINT(4) NOT NULL DEFAULT 0 COMMENT '时间选取类型 0 每天  1 自定义',
+  `time_week` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '营业时间  周一 周二.......',
+  `time_interval` INT(11) NOT NULL DEFAULT 30 COMMENT '时段设置单位分钟',
+  `advance_day` INT(11) NOT NULL DEFAULT 0 COMMENT '时间选择需提前多少天',
+  `most_day` INT(11) NOT NULL DEFAULT 7 COMMENT '最多可预约多少天',
+  `start_time` INT(11) NOT NULL DEFAULT 0 COMMENT '当日的起始时间',
+  `end_time` INT(11) NOT NULL DEFAULT 0 COMMENT '当日的营业结束时间',
+  `delivery_time` VARCHAR(2000) NOT NULL DEFAULT '' COMMENT '配送时间段',
   PRIMARY KEY (`local_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
 
@@ -219,6 +228,7 @@ CREATE TABLE `{{prefix}}shop_goods` (
   `sub_title` varchar(255) NOT NULL DEFAULT '' COMMENT '副标题',
   `goods_cover` varchar(2000) NOT NULL DEFAULT '' COMMENT '商品封面',
   `goods_image` text COMMENT '商品图片',
+  `goods_video` VARCHAR(555) DEFAULT '' COMMENT '商品视频',
   `goods_category` varchar(255) NOT NULL DEFAULT '' COMMENT '商品分类',
   `goods_desc` text COMMENT '商品介绍',
   `brand_id` int(11) NOT NULL DEFAULT '0' COMMENT '商品品牌id',
@@ -245,6 +255,19 @@ CREATE TABLE `{{prefix}}shop_goods` (
   `is_discount` int(11) NOT NULL DEFAULT '0' COMMENT '是否参与限时折扣',
   `member_discount` varchar(255) NOT NULL DEFAULT '' COMMENT '会员等级折扣，不参与：空，会员折扣：discount，指定会员价：fixed_price',
   `poster_id` int(11) NOT NULL DEFAULT '0' COMMENT '海报id',
+  `is_limit` TINYINT(4) NOT NULL DEFAULT 0 COMMENT '商品是否限购(0:否 1:是)',
+  `limit_type` TINYINT(4) NOT NULL DEFAULT 1 COMMENT '限购类型，1：单次限购，2：单人限购',
+  `max_buy` INT(11) NOT NULL DEFAULT 0 COMMENT '限购数',
+  `min_buy` INT(11) NOT NULL DEFAULT 0 COMMENT '起购数',
+  `is_gift` TINYINT(4) DEFAULT 0 COMMENT '商品是否赠品(0:否 1:是)',
+  `access_num` INT(11) NOT NULL DEFAULT 0 COMMENT '访问次数（浏览量）',
+  `cart_num` INT(11) NOT NULL DEFAULT 0 COMMENT '加入购物车数量',
+  `pay_num` INT(11) NOT NULL DEFAULT 0 COMMENT '支付件数',
+  `pay_money` DECIMAL(10, 2) NOT NULL DEFAULT 0.00 COMMENT '支付总金额',
+  `collect_num` INT(11) NOT NULL DEFAULT 0 COMMENT '收藏数量',
+  `evaluate_num` INT(11) NOT NULL DEFAULT 0 COMMENT '评论数量',
+  `refund_num` INT(11) NOT NULL DEFAULT 0 COMMENT '退款件数',
+  `refund_money` DECIMAL(10, 2) NOT NULL DEFAULT 0.00 COMMENT '退款总额',
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '修改时间',
   `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
@@ -345,12 +368,28 @@ DROP TABLE IF EXISTS `{{prefix}}shop_goods_label`;
 CREATE TABLE `{{prefix}}shop_goods_label` (
   `label_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '标签ID',
   `label_name` varchar(255) NOT NULL DEFAULT '' COMMENT '标签名称',
+  `group_id` INT(11) NOT NULL DEFAULT 0 COMMENT '标签分组id',
+  `style_type` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '效果设置，diy：自定义，icon：图片',
+  `color_json` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '自定义颜色（文字、背景、边框），json格式',
+  `icon` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '图标',
+  `status` INT(11) NOT NULL DEFAULT 0 COMMENT '状态，1：启用，0；关闭',
   `memo` varchar(255) NOT NULL DEFAULT '' COMMENT '标签说明',
   `sort` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
   PRIMARY KEY (`label_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci COMMENT='商品标签表';
+
+
+DROP TABLE IF EXISTS `{{prefix}}shop_goods_label_group`;
+CREATE TABLE `{{prefix}}shop_goods_label_group` (
+  `group_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '分组ID',
+  `group_name` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '分组名称',
+  `sort` INT(11) NOT NULL DEFAULT 0 COMMENT '排序',
+  `create_time` INT(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `update_time` INT(11) NOT NULL DEFAULT 0 COMMENT '更新时间',
+  PRIMARY KEY (`group_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci COMMENT='商品标签分组表';
 
 
 DROP TABLE IF EXISTS `{{prefix}}shop_goods_service`;
@@ -400,6 +439,26 @@ CREATE TABLE `{{prefix}}shop_goods_spec` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci COMMENT='商品规格项/值表';
 
 
+DROP TABLE IF EXISTS `{{prefix}}shop_goods_stat`;
+CREATE TABLE `{{prefix}}shop_goods_stat` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `date` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '日期',
+  `date_time` INT(11) NOT NULL DEFAULT 0 COMMENT '时间戳',
+  `goods_id` INT(11) NOT NULL DEFAULT 0 COMMENT '商品id',
+  `cart_num` INT(11) NOT NULL DEFAULT 0 COMMENT '加入购物车数量',
+  `sale_num` INT(11) NOT NULL DEFAULT 0 COMMENT '商品销量（下单数）',
+  `pay_num` INT(11) NOT NULL DEFAULT 0 COMMENT '支付件数',
+  `pay_money` DECIMAL(10, 2) NOT NULL DEFAULT 0.00 COMMENT '支付总金额',
+  `refund_num` INT(11) NOT NULL DEFAULT 0 COMMENT '退款件数',
+  `refund_money` DECIMAL(10, 2) NOT NULL DEFAULT 0.00 COMMENT '退款总额',
+  `access_num` INT(11) NOT NULL DEFAULT 0 COMMENT '访问次数（浏览量）',
+  `collect_num` INT(11) NOT NULL DEFAULT 0 COMMENT '收藏数量',
+  `evaluate_num` INT(11) NOT NULL DEFAULT 0 COMMENT '评论数量',
+  `goods_visit_member_count` INT(11) NOT NULL DEFAULT 0 COMMENT '商品访客数',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci COMMENT='商品数据统计';
+
+
 DROP TABLE IF EXISTS `{{prefix}}shop_invoice`;
 CREATE TABLE `{{prefix}}shop_invoice` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '发票id',
@@ -427,6 +486,21 @@ CREATE TABLE `{{prefix}}shop_invoice` (
   `status` int(11) NOT NULL DEFAULT '0' COMMENT '是否生效',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci COMMENT='发票表';
+
+
+DROP TABLE IF EXISTS `{{prefix}}shop_newcomer_member_records`;
+CREATE TABLE `{{prefix}}shop_newcomer_member_records` (
+  `record_id` INT(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `member_id` INT(11) NOT NULL DEFAULT 0 COMMENT '会员id',
+  `validity_time` INT(11) NOT NULL DEFAULT 0 COMMENT '有效期',
+  `create_time` INT(11) NOT NULL DEFAULT 0 COMMENT '参与时间',
+  `update_time` INT(11) NOT NULL DEFAULT 0 COMMENT '更新时间',
+  `is_join` TINYINT(4) NOT NULL DEFAULT 0 COMMENT '是否参与',
+  `order_id` INT(11) NOT NULL DEFAULT 0 COMMENT '参与订单id',
+  `goods_ids` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '参与商品id集合',
+  `sku_ids` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '参与商品规格id集合',
+  PRIMARY KEY (`record_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci COMMENT='新人专享会员参与记录表';
 
 
 DROP TABLE IF EXISTS `{{prefix}}shop_order`;
@@ -574,6 +648,8 @@ CREATE TABLE `{{prefix}}shop_order_goods` (
   `verify_count` int(11) NOT NULL DEFAULT '0' COMMENT '已核销次数',
   `verify_expire_time` int(11) NOT NULL DEFAULT '0' COMMENT '过期时间 0 为永久',
   `is_verify` int(11) NOT NULL DEFAULT '0' COMMENT '是否需要核销',
+  `shop_active_refund` TINYINT(4) NOT NULL DEFAULT 0 COMMENT '商家主动退款（0否  1是）',
+  `shop_active_refund_money` DECIMAL(10, 2) NOT NULL DEFAULT 0.00 COMMENT '商家主动退款金额',
   PRIMARY KEY (`order_goods_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci COMMENT='订单项表';
 
@@ -750,6 +826,7 @@ CREATE TABLE `{{prefix}}shop_active_goods` (
   `active_goods_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '活动商品id',
   `active_id` int(11) NOT NULL DEFAULT '0' COMMENT '活动id',
   `goods_id` int(11) NOT NULL DEFAULT '0' COMMENT '商品id',
+  `sku_id` INT(11) DEFAULT 0 COMMENT '商品规格id',
   `active_goods_type` varchar(255) NOT NULL DEFAULT '' COMMENT '商品活动类型（单品，独立商品，店铺整体商品）',
   `active_class` varchar(255) NOT NULL DEFAULT '' COMMENT '商品活动类别',
   `active_goods_label` varchar(1000) NOT NULL DEFAULT '' COMMENT '活动商品标签（针对活动有标签）',
@@ -765,3 +842,16 @@ CREATE TABLE `{{prefix}}shop_active_goods` (
   `active_goods_success_num` int(11) NOT NULL DEFAULT '0' COMMENT '活动成功参与会员数',
   PRIMARY KEY (`active_goods_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci COMMENT='店铺营销活动';
+
+
+DROP TABLE IF EXISTS `{{prefix}}shop_goods_browse`;
+CREATE TABLE `{{prefix}}shop_goods_browse` (
+  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `member_id` INT(11) NOT NULL DEFAULT 0 COMMENT '浏览人',
+  `sku_id` INT(11) NOT NULL DEFAULT 0 COMMENT 'sku_id',
+  `goods_id` INT(11) NOT NULL DEFAULT 0 COMMENT '商品id',
+  `browse_time` INT(11) NOT NULL DEFAULT 0 COMMENT '浏览时间',
+  `goods_cover` VARCHAR(2000) NOT NULL DEFAULT '' COMMENT '商品图片',
+  `goods_name` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '商品名称',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci COMMENT='商品浏览历史';

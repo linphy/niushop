@@ -17,6 +17,7 @@ use addon\shop\app\dict\order\OrderDict;
 use addon\shop\app\dict\order\OrderLogDict;
 use addon\shop\app\dict\order\OrderRefundDict;
 use addon\shop\app\model\delivery\Store;
+use addon\shop\app\model\goods\Goods;
 use addon\shop\app\model\order\Order;
 use addon\shop\app\model\order\OrderDelivery;
 use addon\shop\app\model\order\OrderRefund;
@@ -59,7 +60,7 @@ class OrderService extends BaseApiService
             ->with(
                 [
                     'order_goods' => function($query) {
-                        $query->field('extend,order_goods_id, order_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money, is_enable_refund, delivery_id')
+                        $query->field('extend,order_goods_id, order_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money, is_enable_refund, delivery_id,is_enable_refund, status')
                             ->with([
                                 'order_delivery' => function($query) {
                                     $query->field('id, express_company_id, express_number')->with('company');
@@ -76,15 +77,26 @@ class OrderService extends BaseApiService
         $list = $this->pageQuery($search_model, function($item, $key) use ($order_status_list) {
             $item[ 'order_status_data' ] = $order_status_list[ $item[ 'status' ] ] ?? [];
         });
-        $config = (new CoreOrderConfigService())->getConfig();
-        $close_length = $config['close_order_info']['close_length'];
+        $config = ( new CoreOrderConfigService() )->getConfig();
+        $close_length = $config[ 'close_order_info' ][ 'close_length' ];
         foreach ($list[ 'data' ] as $k => $v) {
-            $list[ 'data' ][ $k ]['now_time'] = time();
-            $list[ 'data' ][ $k ]['expire_time'] = strtotime($v['create_time']) + 60 * $close_length;
+            $list[ 'data' ][ $k ][ 'now_time' ] = time();
+            $list[ 'data' ][ $k ][ 'expire_time' ] = strtotime($v[ 'create_time' ]) + 60 * $close_length;
             if ($v[ 'out_trade_no' ]) {
                 $list[ 'data' ][ $k ][ 'pay' ] = ( new Pay() )->where([ [ 'out_trade_no', '=', $v[ 'out_trade_no' ] ] ])
                     ->field('type, pay_time')->append([ 'type_name' ])
                     ->findOrEmpty()->toArray();
+            }
+            if ($v[ 'order_goods' ]) {
+                foreach ($v[ 'order_goods' ] as $kk => $vv) {
+                    $goods_info = ( new Goods() )->field('unit')->where([ [ 'goods_id', '=', $vv[ 'goods_id' ] ] ])->findOrEmpty()->toArray();
+                    if (!empty($goods_info)) {
+                        $v[ 'order_goods' ][ $kk ][ 'unit' ] = $goods_info[ 'unit' ];
+                    } else {
+                        $v[ 'order_goods' ][ $kk ][ 'unit' ] = '件';
+                    }
+                }
+                $list[ 'data' ][ $k ][ 'order_goods' ] = $v[ 'order_goods' ];
             }
         }
 
@@ -154,6 +166,17 @@ class OrderService extends BaseApiService
                     ->select()->toArray();
             }
 
+            if ($info[ 'order_goods' ]) {
+                foreach ($info[ 'order_goods' ] as $k => $v) {
+                    $goods_info = ( new Goods() )->field('unit')->where([ [ 'goods_id', '=', $v[ 'goods_id' ] ] ])->findOrEmpty()->toArray();
+                    if (!empty($goods_info)) {
+                        $info[ 'order_goods' ][ $k ][ 'unit' ] = $goods_info[ 'unit' ];
+                    } else {
+                        $info[ 'order_goods' ][ $k ][ 'unit' ] = '件';
+                    }
+                }
+            }
+
             // 查询小程序是否已开通发货信息管理服务
             try {
                 $info[ 'mch_id' ] = '';
@@ -180,11 +203,11 @@ class OrderService extends BaseApiService
                 $info[ 'is_trade_managed' ] = false;
             }
 
-            $config = (new CoreOrderConfigService())->getConfig();
-            $close_length = $config['close_order_info']['close_length'];
+            $config = ( new CoreOrderConfigService() )->getConfig();
+            $close_length = $config[ 'close_order_info' ][ 'close_length' ];
 
-            $info['now_time'] = time();
-            $info['expire_time'] = strtotime($info['create_time']) + 60 * $close_length;
+            $info[ 'now_time' ] = time();
+            $info[ 'expire_time' ] = strtotime($info[ 'create_time' ]) + 60 * $close_length;
 
         }
         return $info;
@@ -219,7 +242,7 @@ class OrderService extends BaseApiService
         $data[ 'main_type' ] = OrderLogDict::MEMBER;
         $data[ 'main_id' ] = $this->member_id;
         //查询订单
-        $where = array (
+        $where = array(
             [ 'order_id', '=', $order_id ],
         );
         $order = $this->model->where($where)->findOrEmpty()->toArray();
@@ -257,40 +280,39 @@ class OrderService extends BaseApiService
     public function num()
     {
 
-        $data['wait_pay'] = $this->model->where([
-            [ 'member_id', '=', $this->member_id ],
-            [ 'status', '=', OrderDict::WAIT_PAY ],
-        ])->count() ?? 0;
+        $data[ 'wait_pay' ] = $this->model->where([
+                [ 'member_id', '=', $this->member_id ],
+                [ 'status', '=', OrderDict::WAIT_PAY ],
+            ])->count() ?? 0;
 
-        $data['wait_shipping'] = $this->model->where([
-            [ 'member_id', '=', $this->member_id ],
-            [ 'status', '=', OrderDict::WAIT_DELIVERY ],
-        ])->count() ?? 0;
+        $data[ 'wait_shipping' ] = $this->model->where([
+                [ 'member_id', '=', $this->member_id ],
+                [ 'status', '=', OrderDict::WAIT_DELIVERY ],
+            ])->count() ?? 0;
 
-        $data['wait_take'] = $this->model->where([
-            [ 'member_id', '=', $this->member_id ],
-            [ 'status', '=', OrderDict::WAIT_TAKE ],
-        ])->count() ?? 0;
+        $data[ 'wait_take' ] = $this->model->where([
+                [ 'member_id', '=', $this->member_id ],
+                [ 'status', '=', OrderDict::WAIT_TAKE ],
+            ])->count() ?? 0;
 
-        $data['evaluate'] = $this->model->where([
-            [ 'member_id', '=', $this->member_id ],
-            [ 'status', '=', OrderDict::FINISH ],
-            [ 'is_evaluate', '=', 0 ],
-        ])->count() ?? 0;
+        $data[ 'evaluate' ] = $this->model->where([
+                [ 'member_id', '=', $this->member_id ],
+                [ 'status', '=', OrderDict::FINISH ],
+                [ 'is_evaluate', '=', 0 ],
+            ])->count() ?? 0;
 
-        $data['refund'] = (new OrderRefund())->where([
-            [ 'member_id', '=', $this->member_id ],
-            [ 'status', 'in', [
+        $data[ 'refund' ] = ( new OrderRefund() )->where([
+                [ 'member_id', '=', $this->member_id ],
+                [ 'status', 'in', [
                     OrderRefundDict::BUYER_APPLY_WAIT_STORE,
                     OrderRefundDict::STORE_AGREE_REFUND_GOODS_APPLY_WAIT_BUYER,
                     OrderRefundDict::STORE_REFUSE_REFUND_GOODS_APPLY_WAIT_BUYER,
                     OrderRefundDict::BUYER_REFUND_GOODS_WAIT_STORE,
                     OrderRefundDict::STORE_REFUSE_TAKE_REFUND_GOODS_WAIT_BUYER,
                     OrderRefundDict::STORE_AGREE_REFUND_WAIT_TRANSFER,
-                    OrderRefundDict::STORE_REFUND_TRANSFERING,
-                ]
-            ],
-        ])->count() ?? 0;
+                    OrderRefundDict::STORE_REFUND_TRANSFERING
+                ] ]
+            ])->count() ?? 0;
 
         return $data;
     }

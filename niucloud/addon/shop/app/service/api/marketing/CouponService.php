@@ -149,6 +149,7 @@ class CouponService extends BaseApiService
         }
         $list = $this->pageQuery($search_model);
         $coupon_member = new CouponMember();
+        $member_info = ( new Member() )->where([ [ 'member_id', '=', $this->member_id ] ])->field('member_id')->findOrEmpty()->toArray();
         foreach ($list[ 'data' ] as $k => &$v) {
             if ($v[ 'remain_count' ] != '-1') {
                 $v[ 'sum_count' ] = $v[ 'remain_count' ] + $v[ 'receive_count' ];
@@ -156,9 +157,7 @@ class CouponService extends BaseApiService
                 $v[ 'sum_count' ] = '-1';
             }
 
-            $member_info = ( new Member() )->where([ [ 'member_id', '=', $this->member_id ] ])->field('member_id')->findOrEmpty()->toArray();
             if ($member_info) {
-
                 $coupon_member_count = $coupon_member->where([ [ 'member_id', '=', $this->member_id ], [ 'coupon_id', '=', $v[ 'id' ] ] ])->count();
                 if ($coupon_member_count) {
                     $v[ 'is_receive' ] = 1;

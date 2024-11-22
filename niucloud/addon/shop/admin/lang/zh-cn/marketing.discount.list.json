@@ -41,5 +41,10 @@
     "consumptionMoney": "消费总额",
     "participationNum": "参与次数",
     "orderTime": "最后下单时间",
-    "memberInfo": "会员信息"
+    "memberInfo": "会员信息",
+    "activeName": "活动名称",
+    "participationMemberCount": "参与会员数",
+    "payOrderCount": "支付订单数",
+    "startDate": "开始时间",
+    "endDate": "结束时间"
 }

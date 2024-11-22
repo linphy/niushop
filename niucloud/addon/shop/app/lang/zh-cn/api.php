@@ -27,6 +27,7 @@ return [
 
     'SHOP_COUPON_IS_USED_OR_EXIST' => '优惠券不存在或已使用',
     'SHOP_COUPON_VALID_END_TIME_NOT_ALLOW_LT_START_TIME' => '优惠券的有效期结束时间不能小于当前时间',
+    'SHOP_COUPON_IN_USE_NOT_ALLOW_EDIT' => '优惠券正在参与营销活动，禁止修改',
     'SHOP_GOODS_NOT_HAS_DEFAULT_SPEC' => '商品缺少默认规格',
     'SHOP_GOODS_DELISTED' => '此商品已下架',
     'SHOP_GOODS_EVALUATE_SUCCESS' => '评价成功',
@@ -67,6 +68,7 @@ return [
     'SHOP_ORDER_COUPON_SUPPORT_GOODS' => '没有适用的商品',
     'SHOP_ORDER_COUPON_NOT_CONDITION' => '未达到最低可使用金额',
     'SHOP_ORDER_DELIVERY_SUCCESS' => '发货成功',
+    'SHOP_ORDER_DELIVERY_EXPRESS_NUMBER_EXITS' => '物流单号不能重复',
     'NOT_CONFIGURED_LOCAL_DELIVERY' => '商家未配置同城配送',
 
     'SHOP_ELECTRONIC_SHEET_API_EMPTY' => '未配置电子面单接口',
@@ -86,8 +88,10 @@ return [
     /********************************************* 订单退款 start ****************************************************/
     'SHOP_ORDER_REFUND_IS_INVALID' => '退款已失效',
     'SHOP_ORDER_REFUND_IS_INVALID_OR_FINISH' => '退款已完成或已关闭',
+    'SHOP_ORDER_REFUND_WAIT_PAY_OR_CLOSE' => '退款未支付或已关闭',
     'SHOP_ORDER_REFUND_IS_REFUND_FINISH' => '订单已退款或存在未完成的退款',
     'SHOP_ORDER_REFUND_MONEY_GT_ORDER_MONEY' => '退款金额不能大于可退款总额',
+    'SHOP_ORDER_REFUND_MONEY_LESS_THAN_ZERO' => '退款金额不能小于0',
     'SHOP_ORDER_REFUND_STATUS_NOT_SUPPORT_ACTION' => '当前的操作与退款状态不符',
     'SHOP_ORDER_IS_NOT_ENABLE_REFUND' => '订单不允许退款',
     'SHOP_ORDER_REFUND_SELECT_ADDRESS' => '请选择退货地址',
@@ -138,4 +142,16 @@ return [
 
     /*********************************************   积分商城end ****************************************************/
 
+    /*********************************************  新人专享start ****************************************************/
+    'ACTIVE_GOODS_NEWCOMER_PRICE_NOT_EMPTY' => '新人价不能为空',
+    /*********************************************   新人专享end ****************************************************/
+
+    /*********************************************  商品排行榜start ****************************************************/
+    'SHOP_RANK_NOT_EXIST' => '商品榜单不存在',
+    /*********************************************   商品排行榜end ****************************************************/
+    /*********************************************  满减送start ****************************************************/
+    'MANJIANSONG_GOODS_NOT_REPEAR' => '同一商品在一个时间段内只能参加一个满减送活动',
+    'MANJIANSONG_CLOSED' => '满减送活动已关闭',
+    'MANJIANSONG_NOT_FOUND' => '满减送活动未找到',
+    /*********************************************   新人专享end ****************************************************/
 ];

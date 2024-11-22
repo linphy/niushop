@@ -28,6 +28,14 @@ export function addCoupon(params: Record<string, any>) {
 }
 
 /**
+ * 获取优惠券状态列表
+ * @returns
+ */
+export function getCouponStatusList() {
+    return request.get(`shop/goods/coupon/status`)
+}
+
+/**
  * 获取优惠券列表
  * @param params
  * @returns
@@ -286,4 +294,45 @@ export function deleteActiveExchange(id: number) {
  */
 export function getActiveExchangeStatus() {
     return request.get(`shop/active/exchange/status`)
+}
+
+/************ 新人专享 ****************/
+
+/**
+ * 获取新人专享设置
+ * @returns
+ */
+export function getActiveNewcomerConfig() {
+    return request.get(`shop/active/newcomer/config`);
+}
+
+/**
+ * 编辑新人专享设置
+ * @param params
+ * @returns
+ */
+export function editActiveNewcomerConfig(params: Record<string, any>) {
+    return request.put(`shop/active/newcomer/config`, params, {
+        showErrorMessage: true,
+        showSuccessMessage: true
+    })
+}
+
+/**
+ *  获取新人专享列表【首页组件-分页】
+ * @param params
+ * @returns
+ */
+export function getNewcomerGoodsList(params: Record<string, any>) {
+    return request.get('shop/active/newcomer/goods/select', { params })
+}
+
+
+/**
+ *  新人专享 - 已选商品列表
+ * @param params
+ * @returns
+ */
+export function getNewcomerSelectGoodsList(params: Record<string, any>) {
+    return request.get('shop/active/newcomer/goods/selectgoodssku', { params })
 }

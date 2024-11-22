@@ -89,4 +89,5 @@ return [
         'class' => 'addon\shop\app\job\marketing\ActiveEnd',
         'function' => ''
     ],
+
 ];

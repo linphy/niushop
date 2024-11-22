@@ -48,7 +48,6 @@ class OrderCreate extends BaseApiController
         return success('SUCCESS', (new OrderCreateService())->create($data));
     }
 
-    
     /**
      * 获取自提点
      * @return Response

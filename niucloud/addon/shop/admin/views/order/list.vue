@@ -24,7 +24,7 @@
 							<el-option v-for="(item, index) in payTypeData" :key="index" :label="item.name" :value="item.key"></el-option>
 						</el-select>
 					</el-form-item>
-					<el-form-item :label="t('fromType')" prop='from_type'>
+					<el-form-item :label="t('fromType')" prop='order_from'>
 						<el-select v-model="orderTable.searchParam.order_from" clearable class="input-item">
 							<el-option v-for="(item, index) in orderFromData" :key="index" :label="item" :value="index"></el-option>
 						</el-select>
@@ -91,7 +91,7 @@
 								</div>
 
 								<el-table :data="item.order_goods" size="large" :show-header="false" :span-method="arraySpanMethod" ref="multipleTable" @select="handleSelectChange">
-									<el-table-column type="selection" width="40" :selectable="selectable" />
+									<el-table-column type="selection" width="40"/>
 									<el-table-column align="left" min-width="200">
 										<template #default="{ row }">
 											<div class="flex cursor-pointer">
@@ -124,8 +124,8 @@
 									</el-table-column>
 									<el-table-column min-width="120">
 										<template #default="{ row }">
-											<div class="flex flex-col">
-												<span v-if="row.status != 1">{{ row.status_name }}</span>
+											<div class="flex flex-col cursor-pointer">
+                                                <span>{{ row.status_name }}</span>
 											</div>
 										</template>
 									</el-table-column>
@@ -165,6 +165,7 @@
 											</template>
 											<el-button type="primary" link @click="delivery(item)" v-if="item.status == 2">{{ t('sendOutGoods') }}</el-button>
 											<el-button type="primary" link @click="finish(item)" v-if="item.status == 3">{{ t('confirmTakeDelivery') }}</el-button>
+											<el-button type="primary"  v-if="item.is_refund_show && item.status != 1 && item.status != -1 && item.is_enable_refund == 1" link @click="refundEvent(item)">{{ t('voluntaryRefund') }}</el-button>
 										</template>
 									</el-table-column>
 								</el-table>
@@ -192,6 +193,7 @@
 		<export-sure ref="exportSureDialog" :show="flag" :type="export_type" :searchParam="orderTable.searchParam" @close="handleClose" />
         <order-edit-address ref="orderEditAddressDialog" @complete="loadOrderList"/>
 		<electronic-sheet-print ref="electronicSheetPrintDialog" @complete="electronicSheetPrintComplete" />
+        <shop-active-refund ref="shopActiveRefundDialog" @complete="loadOrderList" />
 	</div>
 </template>
 
@@ -205,6 +207,7 @@ import OrderNotes from '@/addon/shop/views/order/components/order-notes.vue'
 import OrderExportSelect from '@/addon/shop/views/order/components/order-export-select.vue'
 import orderEditAddress from '@/addon/shop/views/order/components/order-edit-address.vue'
 import AdjustMoney from '@/addon/shop/views/order/components/adjust-money.vue'
+import ShopActiveRefund from '@/addon/shop/views/order/components/shop-active-refund.vue'
 import electronicSheetPrint from '@/addon/shop/views/order/components/electronic-sheet-print.vue'
 import { img } from '@/utils/common'
 import { ElMessage,ElMessageBox, FormInstance } from 'element-plus'
@@ -337,6 +340,16 @@ const loadOrderList = (page: number = 1) => {
             return el
         });
 
+        // 处理主力退款按钮是否出现
+        orderTable.data.forEach((item,index,arr) => {
+            let refundOrderNum = 0;
+            item.order_goods.forEach((orderItem,orderIndex) => {
+                if(orderItem.status == 1){
+                    refundOrderNum++;
+                }
+            });
+            arr[index].is_refund_show = refundOrderNum > 0 ? true : false;
+        });
         orderTable.total = res.data.total
     }).catch(() => {
         orderTable.loading = false
@@ -496,13 +509,6 @@ const openElectronicSheetPrintDialog = (data: any) => {
     electronicSheetPrintDialog.value.showDialog = true
 }
 
-const selectable = (row:any, index:number) => {
-    // if((activeName.value == 2 || activeName.value == 3) && row.status != 1) {
-    //     return false;
-    // }
-    return true
-}
-
 // 批量打印电子面单
 const batchPrintElectronicSheet = () => {
 
@@ -570,6 +576,16 @@ const printTicketEvent = (data: any) => {
         repeat.value = false
     })
 }
+
+/**
+ * 商家主动退款
+ */
+ const shopActiveRefundDialog: Record<string, any> | null = ref(null)
+const refundEvent = (data: any) => {
+    shopActiveRefundDialog.value.setFormData(data)
+    shopActiveRefundDialog.value.showDialog = true
+}
+
 </script>
 
 <style lang="scss" scoped>

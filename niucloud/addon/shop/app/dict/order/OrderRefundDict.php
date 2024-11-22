@@ -37,6 +37,8 @@ class OrderRefundDict
     const FINISH = 8;
     //售后关闭
     const CLOSE = -1;
+    //部分退款
+    const PARTIAL_REFUND = -2;
 
     const ONLY_REFUND = 1;//仅退款
     const RETURN_AND_REFUND_GOODS = 2;//退货退款
@@ -56,6 +58,7 @@ class OrderRefundDict
     const ACTIVE_REFUND_ACTION = 'active_refund';//卖家同意退款
     const FINISH_ACTION = 'finish';//卖家拒绝退款
     const CLOSE_ACTION = 'close';//卖家同意退货
+    const SHOP_ACTIVE_REFUND_ACTION = 'shop_active_refund';//商家主动退款
 
     /**
      * 获取售后状态
@@ -143,6 +146,7 @@ class OrderRefundDict
             self::REFUSE_AUDIT_REFUND_GOODS_ACTION => get_lang('dict_shop_order_refund_action.refuse_audit_refund_goods'),
             self::FINISH_ACTION => get_lang('dict_shop_order_refund_action.finish'),
             self::ACTIVE_REFUND_ACTION => get_lang('dict_shop_order_refund_action.active_refund'),
+            self::SHOP_ACTIVE_REFUND_ACTION => get_lang('dict_shop_order_refund_action.shop_active_refund'),
         ];
         if (!$type) {
             return $data;

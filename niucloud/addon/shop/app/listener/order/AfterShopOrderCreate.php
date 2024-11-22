@@ -3,6 +3,7 @@ declare ( strict_types = 1 );
 
 namespace addon\shop\app\listener\order;
 
+use addon\shop\app\dict\active\ActiveDict;
 use addon\shop\app\dict\order\InvoiceDict;
 use addon\shop\app\dict\order\OrderDict;
 use addon\shop\app\dict\order\OrderLogDict;
@@ -12,6 +13,7 @@ use addon\shop\app\model\order\Order;
 use addon\shop\app\service\core\cart\CoreCartService;
 use addon\shop\app\service\core\CoreStatService;
 use addon\shop\app\service\core\goods\CoreGoodsSaleNumService;
+use addon\shop\app\service\core\goods\CoreGoodsStatService;
 use addon\shop\app\service\core\goods\CoreGoodsStockService;
 use addon\shop\app\service\core\order\CoreInvoiceService;
 use addon\shop\app\service\core\order\CoreOrderConfigService;
@@ -64,6 +66,9 @@ class AfterShopOrderCreate
                     'goods_id' => $v[ 'goods_id' ],
                     'sku_id' => $v[ 'sku_id' ]
                 ]);
+
+                // 商品销量统计 - 下单数
+                CoreGoodsStatService::addStat(['goods_id' => $v[ 'goods_id' ], 'sale_num' => $v[ 'num' ]]);
             }
 
             //写入发票
@@ -120,6 +125,20 @@ class AfterShopOrderCreate
             }
             //增加统计数据
             CoreStatService::addStat([ 'order_num' => 1 ]);
+
+            //新人专享活动扣除参与资格
+            $goods_ids = [];//参与商品id集合
+            $sku_ids = [];//参与商品规格id集合
+            foreach ($order_goods_data as $v) {
+                //判断商品是否享受新人专享活动
+                if (isset($v[ 'extend' ]) && !empty($v[ 'extend' ]) && isset($v[ 'extend' ][ 'is_newcomer' ]) && $v[ 'extend' ][ 'is_newcomer' ]) {
+                    $goods_ids[] = $v[ 'goods_id' ];
+                    $sku_ids[] = $v[ 'sku_id' ];
+                }
+            }
+            if ($order_data[ 'activity_type' ] == ActiveDict::NEWCOMER_DISCOUNT) {
+                event("NewcomerActiveJoin", [ 'member_id' => $order_data[ 'member_id' ], 'is_join' => 1, 'order_id' => $order_data[ 'order_id' ], 'goods_ids' => $goods_ids, 'sku_ids' => $sku_ids ]);
+            }
         } catch (\Exception $e) {
             Log::write('订单AfterShopOrderCreate失败' . $e->getMessage() . $e->getFile() . $e->getLine());
         }

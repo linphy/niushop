@@ -104,10 +104,7 @@
 	// 商品价格
 	const goodsPrice = computed(() => {
         let price = "0.00";
-        if (Object.keys(goodsDetail.value).length && Object.keys(goodsDetail.value.goods).length && goodsDetail.value.goods.is_discount && goodsDetail.value.sale_price != goodsDetail.value.price) {
-            // 折扣价
-            price = goodsDetail.value.sale_price ? goodsDetail.value.sale_price : goodsDetail.value.price;
-        } else if (Object.keys(goodsDetail.value).length && Object.keys(goodsDetail.value.goods).length && goodsDetail.value.goods.member_discount && getToken() && goodsDetail.value.member_price != goodsDetail.value.price) {
+        if (Object.keys(goodsDetail.value).length && Object.keys(goodsDetail.value.goods).length && goodsDetail.value.goods.member_discount && getToken() && goodsDetail.value.member_price != goodsDetail.value.price) {
             // 会员价
             price = goodsDetail.value.member_price ? goodsDetail.value.member_price : goodsDetail.value.price;
         } else {

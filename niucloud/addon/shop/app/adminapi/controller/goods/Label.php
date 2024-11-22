@@ -30,6 +30,7 @@ class Label extends BaseAdminController
     {
         $data = $this->request->params([
             [ "label_name", "" ],
+            [ 'group_id', 0 ],
             [ 'order', '' ],
             [ 'sort', '' ]
         ]);
@@ -66,9 +67,15 @@ class Label extends BaseAdminController
     {
         $data = $this->request->params([
             [ "label_name", "" ],
+            [ 'group_id', 0 ],
+            [ 'style_type', '' ],
+            [ 'color_json', '' ],
+            [ 'icon', '' ],
+            [ 'status', '' ],
             [ "memo", "" ],
             [ "sort", 0 ],
         ]);
+
         $this->validate($data, 'addon\shop\app\validate\goods\Label.add');
         $id = ( new LabelService() )->add($data);
         return success('ADD_SUCCESS', [ 'id' => $id ]);
@@ -83,8 +90,14 @@ class Label extends BaseAdminController
     {
         $data = $this->request->params([
             [ "label_name", "" ],
+            [ 'group_id', 0 ],
+            [ 'style_type', '' ],
+            [ 'color_json', '' ],
+            [ 'icon', '' ],
+            [ 'status', '' ],
             [ "memo", "" ],
             [ "sort", 0 ],
+
         ]);
         $this->validate($data, 'addon\shop\app\validate\goods\Label.edit');
         ( new LabelService() )->edit($id, $data);
@@ -113,6 +126,20 @@ class Label extends BaseAdminController
             [ 'sort', '' ],
         ]);
         ( new LabelService() )->modifySort($data);
+        return success('SUCCESS');
+    }
+
+    /**
+     * 修改状态
+     * @return \think\Response
+     */
+    public function modifyStatus()
+    {
+        $data = $this->request->params([
+            [ 'label_id', '' ],
+            [ 'status', '' ],
+        ]);
+        ( new LabelService() )->modifyStatus($data);
         return success('SUCCESS');
     }
 

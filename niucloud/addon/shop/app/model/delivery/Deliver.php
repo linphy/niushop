@@ -16,7 +16,7 @@ use core\base\BaseModel;
 
 /**
  * 配送员模型
- * Class Store
+ * Class Deliver
  * @package addon\shop\app\model\delivery
  */
 class Deliver extends BaseModel

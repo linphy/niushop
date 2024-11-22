@@ -41,7 +41,7 @@ class Exchange extends BaseModel
     ];
 
     // 设置json类型字段
-    protected $json = ['product_detail'];
+    protected $json = [ 'product_detail' ];
 
     // 设置JSON数据返回数组
     protected $jsonAssoc = true;
@@ -59,7 +59,6 @@ class Exchange extends BaseModel
         }
     }
 
-
     /**
      * 搜索器ids
      * @param $value
@@ -71,7 +70,6 @@ class Exchange extends BaseModel
             $query->where("id", 'in', $value);
         }
     }
-
 
     /**
      * 搜索器商品sku 查询订单使用
@@ -110,7 +108,6 @@ class Exchange extends BaseModel
         }
     }
 
-
     /**
      * 创建时间搜索器
      * @param Query $query
@@ -119,14 +116,14 @@ class Exchange extends BaseModel
      */
     public function searchCreateTimeAttr(Query $query, $value, $data)
     {
-        $start_time = empty($value[0]) ? 0 : strtotime($value[0]);
-        $end_time = empty($value[1]) ? 0 : strtotime($value[1]);
+        $start_time = empty($value[ 0 ]) ? 0 : strtotime($value[ 0 ]);
+        $end_time = empty($value[ 1 ]) ? 0 : strtotime($value[ 1 ]);
         if ($start_time > 0 && $end_time > 0) {
             $query->whereBetweenTime('create_time', $start_time, $end_time);
         } else if ($start_time > 0 && $end_time == 0) {
-            $query->where([['create_time', '>=', $start_time]]);
+            $query->where([ [ 'create_time', '>=', $start_time ] ]);
         } else if ($start_time == 0 && $end_time > 0) {
-            $query->where([['create_time', '<=', $end_time]]);
+            $query->where([ [ 'create_time', '<=', $end_time ] ]);
         }
     }
 
@@ -137,11 +134,10 @@ class Exchange extends BaseModel
      */
     public function searchStatusAttr($query, $value, $data)
     {
-        if ($value!='') {
+        if ($value != '') {
             $query->where("status", '=', $value);
         }
     }
-
 
     /**
      * 搜索器:ID in 查询
@@ -155,7 +151,6 @@ class Exchange extends BaseModel
         }
     }
 
-
     /**
      * 活动商品类型
      * @param $value
@@ -164,12 +159,11 @@ class Exchange extends BaseModel
      */
     public function getTypeNameAttr($value, $data)
     {
-        if (empty($data['type'])) {
+        if (empty($data[ 'type' ])) {
             return '';
         }
-        return ExchangeDict::getType()[$data['type']] ?? '';
+        return ExchangeDict::getType()[ $data[ 'type' ] ] ?? '';
     }
-
 
     /**
      * 活动状态
@@ -179,21 +173,20 @@ class Exchange extends BaseModel
      */
     public function getStatusNameAttr($value, $data)
     {
-        if (empty($data['status']) && $data['status'] != 0) {
+        if (empty($data[ 'status' ]) && $data[ 'status' ] != 0) {
             return '';
         }
-        return ExchangeDict::getStatus()[$data['status']] ?? '';
+        return ExchangeDict::getStatus()[ $data[ 'status' ] ] ?? '';
     }
-
 
     /**
      * 获取封面缩略图（小）
      */
     public function getGoodsCoverThumbSmallAttr($value, $data)
     {
-        $data['goods_cover'] = explode(',', $data['image'])[0];
-        if (isset($data['goods_cover']) && $data['goods_cover'] != '') {
-            return get_thumb_images($data['goods_cover'], FileDict::SMALL);
+        $data[ 'goods_cover' ] = explode(',', $data[ 'image' ])[ 0 ];
+        if (isset($data[ 'goods_cover' ]) && $data[ 'goods_cover' ] != '') {
+            return get_thumb_images($data[ 'goods_cover' ], FileDict::SMALL);
         }
         return [];
     }
@@ -203,9 +196,9 @@ class Exchange extends BaseModel
      */
     public function getGoodsCoverThumbMidAttr($value, $data)
     {
-        $data['goods_cover'] = explode(',', $data['image'])[0];
-        if (isset($data['goods_cover']) && $data['goods_cover'] != '') {
-            return get_thumb_images($data['goods_cover'], FileDict::MID);
+        $data[ 'goods_cover' ] = explode(',', $data[ 'image' ])[ 0 ];
+        if (isset($data[ 'goods_cover' ]) && $data[ 'goods_cover' ] != '') {
+            return get_thumb_images($data[ 'goods_cover' ], FileDict::MID);
         }
         return [];
     }
@@ -215,15 +208,14 @@ class Exchange extends BaseModel
      */
     public function getGoodsCoverThumbBigAttr($value, $data)
     {
-        $data['goods_cover'] = explode(',', $data['image'])[0];
-        if (isset($data['goods_cover']) && $data['goods_cover'] != '') {
-            return get_thumb_images($data['goods_cover'], FileDict::BIG);
+        $data[ 'goods_cover' ] = explode(',', $data[ 'image' ])[ 0 ];
+        if (isset($data[ 'goods_cover' ]) && $data[ 'goods_cover' ] != '') {
+            return get_thumb_images($data[ 'goods_cover' ], FileDict::BIG);
         }
         return [];
     }
 
-
-  /**
+    /**
      * 获取商品图片缩略图（小）
      */
     public function getGoodsImageThumbSmallAttr($value, $data)
@@ -279,10 +271,5 @@ class Exchange extends BaseModel
         }
         return [];
     }
-
-
-
-
-
 
 }

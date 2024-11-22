@@ -96,7 +96,8 @@
 									</el-table-column>
 									<el-table-column min-width="120">
 										<template #default>
-											<span class="text-[14px]">￥{{ item.apply_money }}</span>
+											<span class="text-[14px]" v-if="item.status == 8">￥{{ item.money }}</span>
+											<span class="text-[14px]" v-else>￥{{ item.apply_money }}</span>
 										</template>
 									</el-table-column>
 									<el-table-column min-width="120">
@@ -136,7 +137,6 @@
 				</div>
 			</div>
 		</el-card>
-		<delivery-action ref="deliveryActionDialog" @complete="loadOrderList"></delivery-action>
 		<order-notes ref="orderNotesDialog" @complete="loadOrderList"></order-notes>
 		<export-sure ref="exportSureDialog" :show="flag" type="shop_order_refund" :searchParam="orderTable.searchParam" @close="handleClose" />
 	</div>

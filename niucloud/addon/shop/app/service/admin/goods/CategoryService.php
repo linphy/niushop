@@ -160,8 +160,8 @@ class CategoryService extends BaseAdminService
      */
     public function del(int $id)
     {
-        $goods_count = ( new Goods() )->withSearch([ 'goods_category' ], [ 'goods_category' => $id ])->count();
-        if ($goods_count) {
+        $count = ( new Goods() )->withSearch([ 'goods_category' ], [ 'goods_category' => $id ])->count();
+        if ($count) {
             throw new AdminException('SHOP_GOODS_CATEGORY_EXIST_GOODS');
         }
 

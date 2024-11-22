@@ -24,7 +24,7 @@ class WapIndexListener
                 "title" => get_lang("dict_wap_index.shop"),
                 'desc' => get_lang("dict_wap_index.shop_desc"),
                 "url" => "/addon/shop/pages/index",
-                'icon'=>'addon/shop/icon.png'
+                'icon' => 'addon/shop/icon.png'
             ],
         ];
     }

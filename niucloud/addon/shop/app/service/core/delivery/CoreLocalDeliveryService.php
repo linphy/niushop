@@ -102,7 +102,7 @@ class CoreLocalDeliveryService extends BaseCoreService
         }
 
         if (bccomp($goods_money, $located_in_area[ 'start_price' ], 2) == -1) {
-            $order->error[] = get_lang('NOT_NEED_DELIVERY_START_PRICE');
+            $order->error[] = '差'.$located_in_area[ 'start_price' ]-$goods_money.'元起送';
             return;
         }
 

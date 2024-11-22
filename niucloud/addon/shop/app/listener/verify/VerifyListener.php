@@ -42,7 +42,6 @@ class VerifyListener
             if (in_array($order_goods_info[ 'status' ], [ OrderGoodsDict::REFUNDING, OrderGoodsDict::REFUND_FINISH ])) throw new CommonException('SHOP_THE_ITEM_IS_BEING_REFUNDED_OR_HAS_BEEN_REFUNDED');
             if ($order_goods_info[ 'verify_count' ] >= $order_goods_info[ 'num' ]) throw new CommonException('SHOP_ORDER_MAXIMUM_NUMBER_OF_WRITE_OFFS_HAS_BEEN_REACHED');
 
-
             //todo  判断订单项状态(已收货 已核销  核销已过期)
             $order_info = ( new Order() )->where([ [ 'order_id', '=', $order_goods_info[ 'order_id' ] ] ])->findOrEmpty();
             if ($order_info->isEmpty()) throw new CommonException('SHOP_ORDER_NOT_FOUND');

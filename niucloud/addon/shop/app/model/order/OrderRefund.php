@@ -55,7 +55,6 @@ class OrderRefund extends BaseModel
         return $this->hasOne(OrderGoods::class, 'order_goods_id', 'order_goods_id');
     }
 
-
     /**
      * 订单主表
      * @return BaseModel|HasOne

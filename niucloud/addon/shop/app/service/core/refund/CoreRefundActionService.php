@@ -179,4 +179,53 @@ class CoreRefundActionService extends BaseCoreService
         event('AfterShopOrderRefundClose', $data);
         return true;
     }
+
+    /**
+     * 商家主动退款
+     * @param $data
+     * @return true
+     */
+    public function shopActiveRefund($data)
+    {
+        $order_goods_ids = $data['order_goods_ids'];
+        $shop_active_refund_money = $data['shop_active_refund_money'];
+
+        $check_data = ( new CoreRefundService() )->refundCheck($order_goods_ids, $shop_active_refund_money);
+        $order_goods_list = $check_data['order_goods_list'];
+
+        foreach ($order_goods_list as $order_goods_info) {
+            $order_refund_no = create_no();
+            $insert_data = [
+                'order_id' => $order_goods_info['order_id'],
+                'order_goods_id' => $order_goods_info['order_goods_id'],
+                'order_refund_no' => $order_refund_no,
+                'refund_type' => OrderRefundDict::ONLY_REFUND,
+                'reason' => '',
+                'member_id' => $order_goods_info['member_id'],
+                'apply_money' => $order_goods_info['item_refund_money'],
+                'money' => $order_goods_info['item_refund_money'],
+                'status' => OrderRefundDict::STORE_AGREE_REFUND_WAIT_TRANSFER,
+                'remark' => $data['shop_active_refund_remark'],
+                'voucher' => [],
+                'source' => OrderRefundDict::ACTIVE_REFUND,
+                'is_refund_delivery' => $order_goods_info['is_refund_delivery'],
+            ];
+            $order_refund_info = $this->model->create($insert_data);
+
+            //将订单项的退款单号覆盖
+            $order_goods_info->save([
+                'order_refund_no' => $order_refund_no,
+                'shop_active_refund' => 1,
+                'shop_active_refund_money' => $order_goods_info['item_refund_money'],
+                'status' => OrderGoodsDict::REFUNDING
+            ]);
+
+            $data[ 'refund_data' ] = $order_refund_info->toArray();
+            $data[ 'order_goods_data' ] = $order_goods_info->toArray();
+            event('AfterShopOrderRefundActiveCreate', $data);
+        }
+        return true;
+    }
+
+
 }

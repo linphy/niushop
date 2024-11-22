@@ -113,7 +113,6 @@
                 </div>
             </div>
 
-
             <div class="mt-[16px] flex">
                 <div class="flex items-center flex-1">
                     <div class="layui-table-bottom-left-container mr-[10px]" v-show="selectGoodsNum">
@@ -145,7 +144,7 @@ import { cloneDeep } from 'lodash-es'
 import { img,deepClone } from '@/utils/common'
 import { ElMessage } from 'element-plus'
 import { getGoodsSelectPageList,getGoodsSkuNoPageList, getCategoryTree, getGoodsType } from '@/addon/shop/api/goods'
-import { number } from 'echarts'
+
 const prop = defineProps({
     modelValue: {
         type: String,
@@ -173,7 +172,6 @@ const emit = defineEmits(['update:modelValue','goodsSelect'])
 
 // 通过prop.mode来决定 数据前缀是sku_还是goods_
 let replacePrefix = prop.mode == "sku" ? 'sku_' : 'goods_';
-
 
 const isStairIndeterminate = ref(false);
 const staircheckAll = ref(false);
@@ -275,7 +273,6 @@ const goodsListTableRef = ref()
 // 选中数据
 const multipleSelection: any = ref([])
 
-
 // 箭头选择事件
 const secondLevelArrowChange = (data)=>{
     data.isShow = !data.isShow;
@@ -329,7 +326,6 @@ const secondLevelHandleCheckAllChange = (isSelect,row)=>{
         item.threeLevelCheckAll = isSelect;
     });
     detectionAllSelect();
-    
     if(prop.mode == 'spu'){
         if (isSelect) {
             selectGoodsId.push(row.goods_id)
@@ -361,7 +357,6 @@ const secondLevelHandleCheckAllChange = (isSelect,row)=>{
     // setTimeout(() => {
     //     goodsListTableRef.value.toggleRowExpansion(...Object.values(spreadTableData),true)
     // }, 0);
-
     // 当所选数量超出限制数量【prop.max】时，添加一个就会删除开头的第一个或多个，最终保证所选的数量小于等于prop.max
     if(prop.max && prop.max > 0 && Object.keys(selectGoods).length > 0 && Object.keys(selectGoods).length > prop.max){
         let len = Object.keys(selectGoods).length;
@@ -378,7 +373,6 @@ const secondLevelHandleCheckAllChange = (isSelect,row)=>{
         setGoodsSelected();
     }
 }
-
 
 // 三级复选框
 const subChildHandleCheckAllChange  = (selected: any,parentData: any,data: any)=>{
@@ -416,7 +410,6 @@ const subChildHandleCheckAllChange  = (selected: any,parentData: any,data: any)=
         delete selectGoods[replacePrefix + currSku.sku_id]
     }
 }
-
 
 // 检测是否选中
 const detectionAllSelect = ()=> {
@@ -557,9 +550,11 @@ const show = () => {
     getGoodsSkuNoPageListFn();
     
     loadGoodsList(1, (verify_ids: any) => {
+        
         // 第一次打开弹出框时，纠正数据，并且赋值已选商品
         if (goodsIds.value && goodsIds.value.length) {
             goodsIds.value.splice(0, goodsIds.value.length, ...verify_ids)
+            selectGoodsId.splice(0, selectGoodsId.length, ...verify_ids)
             if(Object.keys(selectGoods).length){
                 for(let key in selectGoods){
                     let num = Number(key.split(replacePrefix)[1]);
@@ -697,6 +692,5 @@ defineExpose({
 }
 .arrow-show{
     transform: rotate(90deg);
-    translate: all .3s;
 }
 </style>

@@ -79,6 +79,7 @@ class Goods extends BaseAdminController
             [ "sub_title", "" ],
             [ "goods_type", "" ],
             [ "goods_image", "" ],
+            [ "goods_video", "" ],
             [ "goods_category", '' ],
             [ "brand_id", 0 ],
             [ "label_ids", "" ],
@@ -103,6 +104,10 @@ class Goods extends BaseAdminController
             [ "sku_no", '' ],
             [ "unit", "件" ],
             [ "virtual_sale_num", 0 ],
+            [ "is_limit", 0 ],
+            [ "limit_type", 1 ],
+            [ "max_buy", 0 ],
+            [ "min_buy", 0 ],
 
             // 多规格数据
             [ 'goods_spec_format', '' ],
@@ -139,6 +144,7 @@ class Goods extends BaseAdminController
             [ "sub_title", "" ],
             [ "goods_type", "" ],
             [ "goods_image", "" ],
+            [ "goods_video", "" ],
             [ "goods_category", '' ],
             [ "brand_id", 0 ],
             [ "label_ids", "" ],
@@ -163,6 +169,10 @@ class Goods extends BaseAdminController
             [ "sku_no", '' ],
             [ "unit", "件" ],
             [ "virtual_sale_num", 0 ],
+            [ "is_limit", 0 ],
+            [ "limit_type", 1 ],
+            [ "max_buy", 0 ],
+            [ "min_buy", 0 ],
 
             // 多规格数据
             [ 'goods_spec_format', '' ],
@@ -291,7 +301,8 @@ class Goods extends BaseAdminController
             [ 'goods_ids', [] ], // 已选商品id集合
             [ 'sku_ids', [] ], // 已选商品规格id集合
             [ 'verify_goods_ids', [] ], // 检测商品id集合是否存在，移除不存在的商品id，纠正数据准确性
-            [ 'verify_sku_ids', [] ] // 检测商品规格id集合是否存在，移除不存在的商品规格id，纠正数据准确性
+            [ 'verify_sku_ids', [] ], // 检测商品规格id集合是否存在，移除不存在的商品规格id，纠正数据准确性
+            [ 'is_gift', 0 ] // 商品是否赠品(0:否 1:是)
         ]);
 
         return success(( new GoodsService() )->getSelectPage($data));

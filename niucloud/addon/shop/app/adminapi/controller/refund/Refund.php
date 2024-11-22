@@ -74,4 +74,32 @@ class Refund extends BaseAdminController
         return success();
     }
 
+    /**
+     * 商家主动退款
+     * @return Response
+     */
+    public function shopActiveRefund()
+    {
+        $data = $this->request->params([
+            [ 'order_goods_ids', [] ],
+            [ 'shop_active_refund_money', 0 ],
+            [ 'shop_active_refund_remark', '' ],
+        ]);
+        ( new RefundActionService() )->shopActiveRefund($data);
+        return success();
+    }
+
+    /**
+     * 获取订单项可退款金额
+     * @return Response
+     */
+    public function getOrderRefundMoney()
+    {
+        $data = $this->request->params([
+            [ 'order_goods_ids', [] ]
+        ]);
+        return success(data: ( new RefundActionService() )->getOrderRefundMoney($data));
+    }
+
+
 }

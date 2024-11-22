@@ -11,6 +11,8 @@
 
 namespace addon\shop\app\service\admin\refund;
 
+use addon\shop\app\dict\delivery\DeliveryDict;
+use addon\shop\app\model\delivery\Store;
 use addon\shop\app\model\order\OrderRefund;
 use core\base\BaseAdminService;
 
@@ -53,7 +55,7 @@ class RefundService extends BaseAdminService
 
     /**
      * 详情
-     * @param int $order_id
+     * @param int $refund_id
      * @return array
      */
     public function getDetail(int $refund_id)
@@ -78,8 +80,16 @@ class RefundService extends BaseAdminService
                     'refund_log' => function($query) {
                         $query->field('order_refund_no, content, main_type, create_time ,main_id, type')->order("create_time desc, id desc")->append([ 'main_name', 'type_name', 'main_type_name' ]);
                     }
-                ])->append(['status_name', 'refund_type_name'])->findOrEmpty()->toArray();
+                ])->append([ 'status_name', 'refund_type_name' ])->findOrEmpty()->toArray();
 
+        if (!empty($info)) {
+
+            if ($info[ 'order_main' ][ 'delivery_type' ] == DeliveryDict::STORE) {
+                $info[ 'store' ] = ( new Store() )->where([ [ 'store_id', '=', $info[ 'order_main' ][ 'take_store_id' ] ] ])
+                    ->field('store_id, store_name, full_address, store_mobile, trade_time')
+                    ->findOrEmpty()->toArray();
+            }
+        }
         return $info;
     }
 

@@ -23,9 +23,9 @@ class OrderBatchDeliveryJob extends BaseJob
     {
         try {
             //查询当前未执行的任务
-            $id = $data['id'];
-            $type = $data['type'];
-            (new CoreOrderBatchDeliveryService())->execute($id);
+            $id = $data[ 'id' ];
+            $type = $data[ 'type' ];
+            ( new CoreOrderBatchDeliveryService() )->execute($id);
             return true;
         } catch (\Exception $e) {
             return false;

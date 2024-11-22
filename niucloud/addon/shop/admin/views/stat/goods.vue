@@ -174,7 +174,6 @@ const initIncomeChart = () => {
     // 生成8条折线图的随机数据
     const lineData = Array.from({ length: 8 }, () => generateRandomData(days));
 
-
     // 配置项
     const option = {
     tooltip: {

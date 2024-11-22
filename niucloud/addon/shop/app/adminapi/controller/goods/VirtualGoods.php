@@ -45,6 +45,7 @@ class VirtualGoods extends BaseAdminController
             [ "sub_title", "" ],
             [ "goods_type", "" ],
             [ "goods_image", "" ],
+            [ "goods_video", "" ],
             [ "goods_category", '' ],
             [ "brand_id", 0 ],
             [ "label_ids", "" ],
@@ -67,6 +68,10 @@ class VirtualGoods extends BaseAdminController
             [ "sku_no", '' ],
             [ "unit", "件" ],
             [ "virtual_sale_num", 0 ],
+            [ "is_limit", 0 ],
+            [ "limit_type", 1 ],
+            [ "max_buy", 0 ],
+            [ "min_buy", 0 ],
 
             // 多规格数据
             [ 'goods_spec_format', '' ],
@@ -102,6 +107,7 @@ class VirtualGoods extends BaseAdminController
             [ "sub_title", "" ],
             [ "goods_type", "" ],
             [ "goods_image", "" ],
+            [ "goods_video", "" ],
             [ "goods_category", '' ],
             [ "brand_id", 0 ],
             [ "label_ids", "" ],
@@ -124,6 +130,10 @@ class VirtualGoods extends BaseAdminController
             [ "sku_no", '' ],
             [ "unit", "件" ],
             [ "virtual_sale_num", 0 ],
+            [ "is_limit", 0 ],
+            [ "limit_type", 1 ],
+            [ "max_buy", 0 ],
+            [ "min_buy", 0 ],
 
             // 多规格数据
             [ 'goods_spec_format', '' ],

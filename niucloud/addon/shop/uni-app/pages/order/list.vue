@@ -21,42 +21,48 @@
 								</view>
 								<view class="text-[#303133] text-[26rpx] leading-[34rpx]" :class="{'text-primary': item.status  == 1,'!text-[var(--text-color-light9)]' :item.status  == 5 || item.status  == -1}">{{ item.status_name.name }}</view>
 							</view>
-							<view class="flex box-border mt-[20rpx]" v-for="(subitem, index) in item.order_goods" :key="index">
-								<u--image width="150rpx" height="150rpx" :radius="'var(--goods-rounded-big)'" :src="img(subitem.goods_image_thumb_small ? subitem.goods_image_thumb_small : '')" mode="aspectFill">
-									<template #error>
-										<image class="w-[150rpx] h-[150rpx] rounded-[var(--goods-rounded-big)] overflow-hidden" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
-									</template>
-								</u--image>
-								<view class="ml-[20rpx] flex flex-1 flex-col box-border">
-									<view class="flex justify-between items-baseline">
-										<view class="max-w-[322rpx] text-[28rpx] leading-[40rpx] font-400 truncate text-[#303133]">{{ subitem.goods_name }}</view>
-										<block v-if="item.activity_type == 'exchange'">
-											<view class="text-right ml-[10rpx] leading-[42rpx]" v-if="parseFloat(subitem.price)">
-												<text class="text-[22rpx] font-400 price-font">￥</text>
-												<text class="text-[36rpx] font-500 price-font">{{parseFloat(subitem.price).toFixed(2).split('.')[0] }}</text>
-												<text class="text-[22rpx] font-500 price-font">.{{parseFloat(subitem.price).toFixed(2).split('.')[1] }}</text>
-											</view>
-										</block>
-										<block v-else>
-											<view class="text-right leading-[42rpx] ml-[10rpx]">
-												<text class="text-[22rpx] price-font">￥</text>
-												<text class="text-[36rpx] font-500 price-font">{{parseFloat(subitem.price).toFixed(2).split('.')[0] }}</text>
-												<text class="text-[22rpx] font-500 price-font">.{{parseFloat(subitem.price).toFixed(2).split('.')[1] }}</text>
-											</view>
-										</block>
-									</view>
-									<view class="flex justify-between items-baseline text-[#303133] mt-[14rpx]">
-										<view>
-											<view class="text-[24rpx] text-[var(--text-color-light6)] font-400 truncate leading-[34rpx] max-w-[369rpx] mb-[10rpx]" v-if="subitem.sku_name">{{ subitem.sku_name }}</view>
-											<view class="text-[24rpx] font-400 leading-[34rpx] text-[var(--text-color-light6)]" v-if="item.delivery_type != 'virtual'">
-												{{t('deliveryType') }} ： {{item.delivery_type_name}}
-											</view>
-											<view class="text-[24rpx] font-400 leading-[34rpx] text-[var(--text-color-light6)]" v-else>{{t('createTime') }} ：{{item.create_time}}</view>
+							<block v-for="(subItem, index) in item.order_goods" :key="index">
+								<view class="flex box-border mt-[20rpx]">
+									<u--image width="150rpx" height="150rpx" :radius="'var(--goods-rounded-big)'" :src="img(subItem.goods_image_thumb_small ? subItem.goods_image_thumb_small : '')" mode="aspectFill">
+										<template #error>
+											<image class="w-[150rpx] h-[150rpx] rounded-[var(--goods-rounded-big)] overflow-hidden" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
+										</template>
+									</u--image>
+									<view class="ml-[20rpx] flex flex-1 flex-col box-border">
+										<view class="flex justify-between items-baseline">
+											<view class="max-w-[322rpx] text-[28rpx] leading-[40rpx] font-400 truncate text-[#303133]">{{ subItem.goods_name }}</view>
+											<block v-if="item.activity_type == 'exchange'">
+												<view class="text-right ml-[10rpx] leading-[42rpx]" v-if="parseFloat(subItem.price)">
+													<text class="text-[22rpx] font-400 price-font">￥</text>
+													<text class="text-[36rpx] font-500 price-font">{{parseFloat(subItem.price).toFixed(2).split('.')[0] }}</text>
+													<text class="text-[22rpx] font-500 price-font">.{{parseFloat(subItem.price).toFixed(2).split('.')[1] }}</text>
+												</view>
+											</block>
+											<block v-else>
+												<view class="text-right leading-[42rpx] ml-[10rpx]">
+													<text class="text-[22rpx] price-font">￥</text>
+													<text class="text-[36rpx] font-500 price-font">{{parseFloat(subItem.price).toFixed(2).split('.')[0] }}</text>
+													<text class="text-[22rpx] font-500 price-font">.{{parseFloat(subItem.price).toFixed(2).split('.')[1] }}</text>
+												</view>
+											</block>
 										</view>
-										<text class="text-right text-[26rpx] font-400 w-[90rpx] leading-[36rpx]">x{{ subitem.num }}</text>
+										<view class="flex justify-between items-baseline text-[#303133] mt-[14rpx]">
+											<view>
+												<view class="text-[24rpx] text-[var(--text-color-light6)] font-400 truncate leading-[34rpx] max-w-[369rpx] mb-[10rpx]" v-if="subItem.sku_name">{{ subItem.sku_name }}</view>
+												<view class="text-[24rpx] font-400 leading-[34rpx] text-[var(--text-color-light6)]" v-if="item.delivery_type != 'virtual'">
+													{{t('deliveryType') }} ： {{item.delivery_type_name}}
+												</view>
+												<view class="text-[24rpx] font-400 leading-[34rpx] text-[var(--text-color-light6)]" v-else>{{t('createTime') }} ：{{item.create_time}}</view>
+											</view>
+											<text class="text-right text-[26rpx] font-400 w-[90rpx] leading-[36rpx]">x{{ subItem.num }}</text>
+										</view>
 									</view>
 								</view>
-							</view>
+								<view class="flex items-center box-border mt-[8rpx]" v-if="subItem.extend && subItem.extend.is_newcomer && subItem.num > 1">
+									<image class="h-[24rpx] w-[56rpx]" :src="img('addon/shop/newcomer.png')" mode="heightFix" />
+									<view class="text-[24rpx] text-[#FFB000] leading-[34rpx] ml-[8rpx]">第1{{subItem.unit}}，￥{{parseFloat(subItem.extend.newcomer_price).toFixed(2)}}/{{subItem.unit}}；第{{subItem.num>2?'2~'+subItem.num:'2'}}{{subItem.unit}}，￥{{parseFloat(subItem.price).toFixed(2)}}/{{subItem.unit}}</view>
+								</view>
+							</block>
 						</view>
 						<view class="flex justify-end items-center mt-[20rpx]">
 							<view class="flex items-baseline">
@@ -80,11 +86,11 @@
 								</view>
 							</view>
 						</view>
-						<view class="flex justify-end text-[28rpx] mt-[20rpx] items-center" v-if="(item.status == 1) || (item.status == 3) || (item.status == 5 && evaluateConfig.is_evaluate == 1)">
+						<view class="flex justify-end text-[28rpx] mt-[20rpx] items-center" v-if="(item.status == 1) || (item.status == 3) || (item.status == 5 && item.is_show_evaluate && evaluateConfig.is_evaluate == 1)">
 							<view class="text-[24rpx] font-500 leading-[52rpx] h-[56rpx] min-w-[150rpx] text-center border-[2rpx] border-solid border-[var(--text-color-light9)] rounded-full text-[var(--text-color-light6)] box-border" v-if="item.status == 1" @click.stop="orderBtnFn(item, 'close')">{{ t('orderClose') }}</view>
 							<view class="text-[24rpx] font-500 flex-center h-[56rpx] min-w-[150rpx] text-center border-[0] text-[#fff] primary-btn-bg rounded-full ml-[20rpx] box-border" v-if="item.status == 1" @click.stop="orderBtnFn(item, 'pay')">{{ t('topay') }}</view>
 							<view class="text-[24rpx] font-500 flex-center h-[56rpx] min-w-[150rpx] text-center border-[0] text-[#fff] primary-btn-bg rounded-full ml-[20rpx] box-border" v-if="item.status == 3" @click.stop="orderBtnFn(item, 'finish')">{{ t('orderFinish') }}</view>
-							<view class="text-[24rpx] font-500 leading-[52rpx] h-[56rpx] min-w-[150rpx] text-center border-[2rpx] border-solid border-[var(--text-color-light9)] rounded-full ml-[20rpx]  text-[var(--text-color-light6)] box-border" v-if="item.status == 5 && evaluateConfig.is_evaluate == 1" @click.stop="orderBtnFn(item, 'evaluate')">{{ item.is_evaluate == 1 ? t('selectedEvaluate') : t('evaluate') }}</view>
+							<view class="text-[24rpx] font-500 leading-[52rpx] h-[56rpx] min-w-[150rpx] text-center border-[2rpx] border-solid border-[var(--text-color-light9)] rounded-full ml-[20rpx]  text-[var(--text-color-light6)] box-border" v-if="item.status == 5 && item.is_show_evaluate && evaluateConfig.is_evaluate == 1" @click.stop="orderBtnFn(item, 'evaluate')">{{ item.is_evaluate == 1 ? t('selectedEvaluate') : t('evaluate') }}</view>
 						</view>
 					</view>
 				</template>
@@ -108,7 +114,7 @@ import { getEvaluateConfig } from '@/addon/shop/api/shop';
 import MescrollBody from '@/components/mescroll/mescroll-body/mescroll-body.vue';
 import MescrollEmpty from '@/components/mescroll/mescroll-empty/mescroll-empty.vue';
 import useMescroll from '@/components/mescroll/hooks/useMescroll.js';
-import { onLoad, onPageScroll, onReachBottom } from '@dcloudio/uni-app';
+import { onLoad, onPageScroll, onReachBottom, onShow } from '@dcloudio/uni-app';
 import useConfigStore from "@/stores/config";
 
 const { mescrollInit, downCallback, getMescroll } = useMescroll(onPageScroll, onReachBottom);
@@ -135,6 +141,15 @@ onLoad((option: any) => {
 	// #endif
 });
 
+onShow(() => {
+	nextTick(()=>{
+		// 评价完成之后，会返回到订单列表，需要请求最新数据
+		if(getMescroll()){
+			getMescroll().resetUpScroll();
+		}
+	})
+})
+	
 const evaluateEvent = () => {
 	getEvaluateConfig().then((data: any) => {
 		evaluateConfig.value = data.data
@@ -155,9 +170,23 @@ const getShopOrderFn = (mescroll: any) => {
 		if (mescroll.num == 1) {
 			list.value = []; //如果是第一页需手动制空列表
 		}
+
+		newArr.forEach((item:any)=> {
+			item.is_show_evaluate = true;
+			let evaluateCount = 0;
+			for (let i = 0; i < item.order_goods.length; i++) {
+				if (item.order_goods[i].status != 1 || item.order_goods[i].is_enable_refund == 1) {
+					evaluateCount++;
+				}
+			}
+			if (evaluateCount == item.order_goods.length) {
+				item.is_show_evaluate = false;
+			}
+		})
+
 		list.value = list.value.concat(newArr);
 		mescroll.endSuccess(newArr.length);
-		
+
         mch_id.value = res.data.mch_id;
         isTradeManaged.value = res.data.is_trade_managed;
 		loading.value = true;

@@ -12,7 +12,7 @@
                     <div class="relative" shadow="never" v-if="formData">
                         <el-row>
                             <el-col :span="8">
-                                <el-form-item :label="t('name')">
+                                <el-form-item :label="t('activeName')">
                                     <div class="input-width">
                                         <span>{{formData.active_name}}</span>
                                     </div>
@@ -40,14 +40,14 @@
                                 </el-form-item>
                             </el-col>
                             <el-col :span="8">
-                                <el-form-item :label="t('memberCount')">
+                                <el-form-item :label="t('participationMemberCount')">
                                     <div class="input-width">
                                         <span>{{formData.active_member_num}}</span>
                                     </div>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="8">
-                                <el-form-item :label="t('orderCount')">
+                                <el-form-item :label="t('payOrderCount')">
                                     <div class="input-width">
                                         <span>{{formData.active_order_num}}</span>
                                     </div>
@@ -122,7 +122,7 @@
                     <el-table-column prop="active_goods_success_num" :label="t('activeSuccessNum')" min-width="100" />
                 </el-table>
                 <div class="mt-[16px] flex justify-end">
-                    <el-pagination v-model:current-page="goodsParams.page" v-model:page-size="goodsParams.limit"
+                    <el-pagination v-model:current-page="goodsParams.page" v-model:page-size="goodsParams.limit" :page-sizes="[6,10,20,30,50,100]" 
                         layout="total, sizes, prev, pager, next, jumper" :total="goodsParams.total"
                         @size-change="getActiveDiscountGoodsPageListFn()" @current-change="getActiveDiscountGoodsPageListFn" />
                 </div>
@@ -161,7 +161,12 @@
                     <template #empty>
                         <span>{{ !orderParams.loading ? t('emptyData') : '' }}</span>
                     </template>
-                    <el-table-column prop="order_no" :label="t('orderNo')" min-width="100" />
+                    <el-table-column prop="order_no" :label="t('orderNo')" min-width="100">
+                        <template #default="{ row }">
+                          <span class="cursor-pointer text-primary" @click="toGoodsCategoryEvent(row.order_id)">{{ row.order_no }}</span>
+                        </template>
+                    </el-table-column>
+
                     <el-table-column prop="order_money" :label="t('orderMoney')" min-width="100" />
                     <el-table-column :label="t('buyInfo')" min-width="120">
                         <template #default="{row}">
@@ -185,7 +190,7 @@
                     <el-table-column prop="create_time" :label="t('createTime')" min-width="100" />
                 </el-table>
                 <div class="mt-[16px] flex justify-end">
-                    <el-pagination v-model:current-page="orderParams.page" v-model:page-size="orderParams.limit"
+                    <el-pagination v-model:current-page="orderParams.page" v-model:page-size="orderParams.limit"  :page-sizes="[4,10,20,30,50,100]" 
                         layout="total, sizes, prev, pager, next, jumper" :total="orderParams.total"
                         @size-change="getActiveDiscountOrderPageListFn()" @current-change="getActiveDiscountOrderPageListFn" />
                 </div>
@@ -230,13 +235,12 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, computed } from 'vue'
+import { reactive, ref } from 'vue'
 import { t } from '@/lang'
 import {getActiveDiscountInfo, getActiveDiscountGoodsPageList, getActiveDiscountOrderPageList, getActiveDiscountMemberPageList} from "@/addon/shop/api/marketing";
-import { FormInstance, ElMessage } from 'element-plus'
+import { FormInstance } from 'element-plus'
 import { useRouter, useRoute } from 'vue-router'
-import { img, filterNumber } from '@/utils/common'
-import useAppStore from '@/stores/modules/app'
+import { img } from '@/utils/common'
 
 const route = useRoute()
 const router = useRouter()
@@ -384,6 +388,16 @@ const setFormData = async (row: any = null) => {
     getActiveDiscountGoodsPageListFn()
     getActiveDiscountInfoFn(Number(id))
 }
+
+const toGoodsCategoryEvent = (order_id:any) => {
+  // 你可以在这里根据 orderNo 来动态传递参数
+  const url = router.resolve({
+    path: "/shop/order/detail",
+    query: { order_id: order_id }, // 传递 orderNo 到商品分类页面
+  });
+  window.open(url.href);
+};
+
 
 defineExpose({
     showDialog,

@@ -29,9 +29,12 @@ class ActiveDict
     const END = 'end';//活动已结束
     const CLOSE = 'close';//活动已关闭
 
-    //活动类别
-    const DISCOUNT = 'discount';//限时折扣
-    const EXCHANGE = 'exchange';//积分兑换
+    //活动类别（active_class）
+    const DISCOUNT = 'discount';// 限时折扣
+    const EXCHANGE = 'exchange';// 积分商城
+    const MANJIANSONG = 'manjiansong'; // 满减送
+    const NEWCOMER_DISCOUNT = 'newcomer_discount'; // 新人专享
+    const GIFTCARD = 'giftcard'; // 礼品卡
 
 
     /**
@@ -60,6 +63,9 @@ class ActiveDict
     {
         $list = [
             self::DISCOUNT => get_lang('dict_shop_active_class.discount'),
+            self::EXCHANGE => get_lang('dict_shop_active_class.exchange'),
+            self::MANJIANSONG => get_lang('dict_shop_active_class.manjiansong'),
+            self::NEWCOMER_DISCOUNT => get_lang('dict_shop_active_class.newcomer_discount'),
         ];
         if ($type == '') return $list;
         return $list[ $type ] ?? '';

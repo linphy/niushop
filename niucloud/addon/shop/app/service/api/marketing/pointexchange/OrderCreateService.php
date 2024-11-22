@@ -31,11 +31,11 @@ class OrderCreateService extends BaseApiService
         $this->model = new Order();
     }
 
-
     /**
      * 计算
      * @param array $data
-     * @return void
+     * @return array
+     * @throws \Exception
      */
     public function calculate(array $data)
     {
@@ -57,7 +57,6 @@ class OrderCreateService extends BaseApiService
         $data['main_id'] = $this->member_id;
         return (new CoreOrderCreateService())->create($data);
     }
-
 
     /**
      * @return void

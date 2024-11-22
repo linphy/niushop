@@ -106,8 +106,10 @@ class Order extends BaseAdminController
             [ 'order_id', 0 ],
             [ 'order_goods_ids', [] ],
             [ 'delivery_type', '' ],
+            [ 'delivery_way', '' ], // 发货方式，manual_write：手动填写，electronic_sheet：电子面单
             [ 'express_company_id', '' ],
             [ 'express_number', '' ],
+            [ 'electronic_sheet_id', 0 ], // 电子面单
             [ 'local_deliver_id', 0 ],//配送员
             [ 'remark', '' ],//配送员
         ]);

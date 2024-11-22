@@ -107,7 +107,7 @@ class ShopPoster
             $return_data = [
                 'goods_name' => $goods_name,
 //                'services' => $services,
-                'goods_price' => '￥' . $sku[ 'price' ],
+                'goods_price' => '￥' . $sku[ 'sale_price' ],
                 'goods_market_price' => $market_price_text,
                 'goods_img' => $sku_img,
                 'url' => [

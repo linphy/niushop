@@ -103,9 +103,4 @@
   "memberPricePlaceholder": "请输入会员价",
   "discountHint": "会员折扣说明：按照默认会员等级折扣优惠",
   "fixedPriceHint": "会员价说明：指定优惠价格，商品未参与活动时，按照会员价优惠，若商品参与活动，则以活动价为准"
-  
-  
-  
-  
-  
 }

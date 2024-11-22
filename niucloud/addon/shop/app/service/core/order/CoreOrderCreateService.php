@@ -112,6 +112,7 @@ class CoreOrderCreateService extends BaseCoreService
                 'order_id' => &$this->order_id,
                 'discount_money' => $v[ 'discount_money' ] ?? 0,
                 'status' => OrderGoodsDict::NORMAL,
+                'extend' => $v[ 'extend' ] ?? '',
             ];
         }
         $create_order_data = array(
@@ -141,6 +142,8 @@ class CoreOrderCreateService extends BaseCoreService
         $this->setOrderCache($this->order_key);
         //计算运费
         $this->calculateDelivery();
+        //检测限购
+        $this->checkGoodsLimitBuy();
 
         //金额格式化
         $discount_money = $this->moneyFormat($this->basic[ 'discount_money' ] ?? 0);//优惠金额
@@ -212,7 +215,7 @@ class CoreOrderCreateService extends BaseCoreService
     public function getGoodsData()
     {
         $cart_ids = $this->param[ 'cart_ids' ] ?? [];
-        $this->extend_data = $this->param[ 'extend_data' ] ?? []; //活动数据：[ 'relate_id' => 1, 'activity_type' => 'giftcard' ]
+        $this->extend_data = $this->param[ 'extend_data' ] ?? []; //活动扩展数据：[ 'relate_id' => 1, 'activity_type' => 'giftcard' ]
         if (!empty($cart_ids)) {
             $this->cart_ids = $cart_ids;
             //查询购物车
@@ -258,20 +261,48 @@ class CoreOrderCreateService extends BaseCoreService
             //默认金额填充
             $sku_info[ 'discount_money' ] = 0;
             $item_goods_type = $sku_info[ 'goods' ][ 'goods_type' ];
+
+            // 商品限购处理
+            if (isset($this->limit_buy[ 'goods_' . $sku_info[ 'goods_id' ] ])) {
+                $this->limit_buy[ 'goods_' . $sku_info[ 'goods_id' ] ][ 'num' ] += $num;
+            } else {
+                $this->limit_buy[ 'goods_' . $sku_info[ 'goods_id' ] ] = [
+                    'goods_id' => $sku_info[ 'goods_id' ],
+                    'goods_name' => $sku_info[ 'goods' ][ 'goods_name' ],
+                    'stock' => $sku_info[ 'goods' ][ 'stock' ],
+                    'num' => $num,
+                    'is_limit' => $sku_info[ 'goods' ][ 'is_limit' ],
+                    'limit_type' => $sku_info[ 'goods' ][ 'limit_type' ],
+                    'max_buy' => $sku_info[ 'goods' ][ 'max_buy' ],
+                    'min_buy' => $sku_info[ 'goods' ][ 'min_buy' ]
+                ];
+            }
+
             if (!in_array($item_goods_type, $has_goods_types)) $has_goods_types[] = $item_goods_type;
+
             $sku_info[ 'num' ] = $num;
             $sku_info[ 'market_type' ] = $market_type;//活动类型
             $sku_info[ 'market_type_id' ] = $market_type_id;//活动id
+
             //活动操纵数据  market_data 活动信息
             $temp = [];
-            $temp_list = array_filter(event('ShopGoodsMarketCalculate', [ 'sku_info' => $sku_info, 'sku_data' => $sku_data, 'order_obj' => $this ]));
+            $temp_list = array_filter(event('ShopGoodsMarketCalculate', [
+                'sku_info' => $sku_info,
+                'sku_data' => $sku_data,
+                'order_obj' => $this
+            ]));
+
             foreach ($temp_list as $item) {
                 if (!empty($item)) $temp = $item;
             }
             if (!empty($temp)) {
                 $sku_info = $temp[ 'sku_info' ];
-                if (!empty($this->extend_data) && !empty($temp[ 'basic' ])) {
-                    if (isset($temp[ 'basic' ][ 'delivery_money' ])) {
+                if (!empty($this->extend_data)) {
+                    $this->extend_data[ 'relate_id' ] = $temp[ 'relate_id' ] ?? 0;
+                    $this->extend_data[ 'activity_type' ] = $temp[ 'activity_type' ] ?? '';
+
+                    // 目前礼品卡用到
+                    if (!empty($temp[ 'basic' ]) && isset($temp[ 'basic' ][ 'delivery_money' ])) {
                         $this->extend_data[ 'delivery_money' ] = $temp[ 'basic' ][ 'delivery_money' ];
                     }
                 }
@@ -289,6 +320,7 @@ class CoreOrderCreateService extends BaseCoreService
         $this->goods_data = $goods_list;
         $this->basic[ 'goods_money' ] = $goods_money;
         $this->basic[ 'body' ] = $body;
+
         return $order_data;
     }
 

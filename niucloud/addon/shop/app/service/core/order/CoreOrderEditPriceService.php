@@ -48,7 +48,7 @@ class CoreOrderEditPriceService extends BaseCoreService
         $order_id = $data[ 'order_id' ];
 
         //查询订单
-        $where = array(
+        $where = array (
             [ 'order_id', '=', $order_id ],
         );
         $order = $this->model->where($where)->findOrEmpty()->toArray();
@@ -61,7 +61,7 @@ class CoreOrderEditPriceService extends BaseCoreService
             [ 'status', '=', OrderGoodsDict::REFUNDING ]
         ])->count();
         if ($refunding_order_goods_count > 0) throw new CommonException('SHOP_ORDER_HAS_REFUNDING_NOT_ALLOW_FINISH');//是否存在退款中的订单项
-        $update_data = array(
+        $update_data = array (
             'status' => OrderDict::FINISH,
             'finish_time' => time(),
             'timeout' => 0
@@ -87,15 +87,15 @@ class CoreOrderEditPriceService extends BaseCoreService
         $order_id = $data[ 'order_id' ];
         $order_goods_ids = $data[ 'order_goods_ids' ] ?? [];
         //将待收货的订单项设置已收货
-        $order_goods_where = array(
+        $order_goods_where = array (
             [ 'order_id', '=', $order_id ],
             [ 'status', '=', OrderGoodsDict::NORMAL ],
 //            ['delivery_status', '=', OrderDeliveryDict::DELIVERY_FINISH]
         );
-        if (!empty($order_goods_ids)) {
-            $order_goods_where[] = [ 'order_goods_id', 'in', $order_goods_ids ];
+        if(!empty($order_goods_ids)){
+            $order_goods_where[] = ['order_goods_id', 'in', $order_goods_ids];
         }
-        $order_goods_data = array(
+        $order_goods_data = array (
             'delivery_status' => OrderDeliveryDict::TAKED
         );
         ( new OrderGoods() )->where($order_goods_where)->update($order_goods_data);
@@ -114,7 +114,7 @@ class CoreOrderEditPriceService extends BaseCoreService
         try {
 
             $pay_model = new Pay();
-            $where = array(
+            $where = array (
                 [ 'out_trade_no', '=', $params[ 'out_trade_no' ] ]
             );
             $pay_info = $pay_model->where($where)->field('id,type')->findOrEmpty()->toArray();
