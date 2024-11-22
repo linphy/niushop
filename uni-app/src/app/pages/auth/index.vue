@@ -115,7 +115,7 @@
 	// #endif
 	/********* 自定义头部 - start ***********/
 	const topTabarObj = topTabar()
-	let param = topTabarObj.setTopTabbarParam({title:''})
+	let param = topTabarObj.setTopTabbarParam({title:'',topStatusBar:{textColor: '#333'}})
 	/********* 自定义头部 - end ***********/
 	const headerHeight = computed(()=>{
 		return Object.keys(menuButtonInfo).length ? pxToRpx(Number(menuButtonInfo.height)) + pxToRpx(menuButtonInfo.top) + pxToRpx(8)+'rpx':'auto'

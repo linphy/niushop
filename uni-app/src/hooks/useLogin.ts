@@ -2,7 +2,6 @@ import { redirect, isWeixinBrowser, urlDeconstruction } from '@/utils/common'
 import {
     weappLogin,
     updateWeappOpenid,
-    wechatLogin,
     updateWechatOpenid,
     wechatUser,
     wechatUserLogin
@@ -10,6 +9,7 @@ import {
 import { getWechatAuthCode } from '@/app/api/system'
 import useMemberStore from '@/stores/member'
 import useConfigStore from '@/stores/config'
+import useSystemStore from '@/stores/system'
 
 export function useLogin() {
     /**
@@ -19,6 +19,7 @@ export function useLogin() {
         uni.setStorage({ key: 'loginBack', data })
         setTimeout(() => {
             const config = useConfigStore()
+            const systemStore = useSystemStore()
 
             // #ifdef MP-WEIXIN
             if (!uni.getStorageSync('autoLoginLock') && uni.getStorageSync('openid') && config.login.is_bind_mobile) {
@@ -39,7 +40,7 @@ export function useLogin() {
             // #ifdef MP-WEIXIN
             if (config.login.is_username && !config.login.is_mobile && !config.login.is_auth_register) {
                 redirect({ url: '/app/pages/auth/login', param: { type: 'username' }, mode: 'redirectTo' })
-            } else if (!config.login.is_username && !config.login.is_mobile && !config.login.is_auth_register) {
+            } else if (systemStore.initStatus == 'finish' && !config.login.is_username && !config.login.is_mobile && !config.login.is_auth_register) {
                 uni.showToast({ title: '商家未开启登录注册', icon: 'none' })
             } else {
                 redirect({ url: '/app/pages/auth/index', mode: 'redirectTo' })
@@ -51,7 +52,7 @@ export function useLogin() {
                 // 微信浏览器
                 if (config.login.is_username && !config.login.is_mobile && !config.login.is_auth_register) {
                     redirect({ url: '/app/pages/auth/login', param: { type: 'username' }, mode: 'redirectTo' })
-                } else if (!config.login.is_username && !config.login.is_mobile && !config.login.is_auth_register) {
+                } else if (systemStore.initStatus == 'finish' && !config.login.is_username && !config.login.is_mobile && !config.login.is_auth_register) {
                     uni.showToast({ title: '商家未开启登录注册', icon: 'none' })
                 } else {
                     redirect({ url: '/app/pages/auth/index', mode: 'redirectTo' })
@@ -60,7 +61,7 @@ export function useLogin() {
                 // 普通浏览器
                 if (config.login.is_username && !config.login.is_mobile) {
                     redirect({ url: '/app/pages/auth/login', param: { type: 'username' }, mode: 'redirectTo' })
-                } else if (!config.login.is_username && !config.login.is_mobile) {
+                } else if (systemStore.initStatus == 'finish' && !config.login.is_username && !config.login.is_mobile) {
                     uni.showToast({ title: '商家未开启登录注册', icon: 'none' })
                 } else {
                     redirect({ url: '/app/pages/auth/index', mode: 'redirectTo' })
@@ -131,6 +132,7 @@ export function useLogin() {
             }
         }).catch((err) => {
             uni.showToast({ title: err.msg, icon: 'none' })
+            if (params.successCallback) params.successCallback()
         })
         // #endif
 
@@ -170,8 +172,10 @@ export function useLogin() {
     }
     /**
      * 登录普通账号后修改openid
+     * @param code
+     * @param callback
      */
-    const updateOpenid = (code: string | null) => {
+    const updateOpenid = (code: string | null, callback: any = null) => {
         let obj: any = {
             code
         };
@@ -190,6 +194,7 @@ export function useLogin() {
             useMemberStore().getMemberInfo(() => {
                 const memberInfo = useMemberStore().info
                 memberInfo && memberInfo.wx_openid && uni.setStorageSync('openid', memberInfo.wx_openid)
+                if (callback) callback();
             })
         })
         // #endif

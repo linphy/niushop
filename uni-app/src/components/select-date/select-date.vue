@@ -13,15 +13,15 @@
                 </view>
             </view>
             <view class="gradation-picker">
-                <picker-view  indicator-class="!h-[80rpx] !bg-[var(--temp-bg)]" :value="dateList.curIndex" @change="bindChange" class="w-[750rpx] px-[60rpx] h-[396rpx] box-border">
+                <picker-view indicator-class="!h-[80rpx] !bg-[var(--temp-bg)]" :value="dateList.curIndex" @change="bindChange" class="w-[750rpx] px-[60rpx] h-[396rpx] box-border">
                     <picker-view-column>
-                        <view class="text-center leading-[80rpx]  text-[28rpx]" v-for="(item,index) in dateList.years" :key="index">{{item}}年</view>
+						<view class="text-center leading-[80rpx] text-[28rpx]" v-for="(item,index) in dateList.years" :key="index">{{item}}年</view>
                     </picker-view-column>
                     <picker-view-column>
                         <view class="text-center leading-[80rpx] text-[28rpx]" v-for="(item,index) in dateList.months" :key="index">{{item}}月</view>
                     </picker-view-column>
                     <picker-view-column>
-                        <view class="text-center leading-[80rpx]  text-[28rpx]" v-for="(item,index) in dateList.days" :key="index">{{item}}日</view>
+                        <view class="text-center leading-[80rpx] text-[28rpx]" v-for="(item,index) in dateList.days" :key="index">{{item}}日</view>
                     </picker-view-column>
                 </picker-view>
             </view>

@@ -1,10 +1,12 @@
 import { defineStore } from 'pinia'
 import { getConfig } from '@/app/api/auth'
+import { isWeixinBrowser } from "@/utils/common";
 
 interface loginConfig {
     is_username: number | boolean,
     is_mobile: number | boolean,
     is_auth_register: number | boolean,
+    is_force_access_user_info: number | boolean,
     is_bind_mobile: number | boolean,
     agreement_show: number | boolean,
     bg_url: string,
@@ -34,6 +36,7 @@ const useConfigStore = defineStore('config', {
                 is_username: 0,
                 is_mobile: 0,
                 is_auth_register: 0,
+                is_force_access_user_info: 0,
                 is_bind_mobile: 0,
                 agreement_show: 0,
                 bg_url: '',
@@ -48,10 +51,18 @@ const useConfigStore = defineStore('config', {
     },
     actions: {
         async getLoginConfig() {
-            await getConfig().then((res: any) => {
+
+            let url = '';
+            // #ifdef H5
+            if (isWeixinBrowser()) {
+                url = uni.getSystemInfoSync().platform == 'ios' ? uni.getStorageSync('initUrl') : location.href
+            }
+            // #endif
+            await getConfig({ url }).then((res: any) => {
                 this.login.is_username = res.data.is_username
                 this.login.is_mobile = res.data.is_mobile
                 this.login.is_auth_register = parseInt(res.data.is_auth_register)
+                this.login.is_force_access_user_info = parseInt(res.data.is_force_access_user_info)
                 this.login.is_bind_mobile = parseInt(res.data.is_bind_mobile)
                 this.login.agreement_show = parseInt(res.data.agreement_show)
                 this.login.bg_url = res.data.bg_url // 背景图

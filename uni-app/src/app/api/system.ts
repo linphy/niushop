@@ -45,7 +45,7 @@ export function sendSms(data: AnyObject) {
 /**
  * 获取微信jssdk config
  */
-export function getWechatSkdConfig(data: AnyObject) {
+export function getWechatSdkConfig(data: AnyObject) {
     return request.get('wechat/jssdkconfig', data, { showErrorMessage: false })
 }
 
@@ -142,6 +142,6 @@ export function getMsgJumpPath(params: Record<string, any>) {
 /**
  * 获取初始化数据信息
  */
-export function getInitInfo() {
-    return request.get('init')
+export function getInitInfo(params: Record<string, any>) {
+    return request.get('init', params)
 }

@@ -4,7 +4,7 @@
             <view v-if="info.is_use">
                 <view class="sigin-header">
                 <!-- #ifdef MP-WEIXIN -->
-                    <view class="side-tab" :style="{top: topStyle}"  @click="signPopup = true">
+                    <view v-if="info.rule_explain" class="side-tab" :style="{top: topStyle}"  @click="signPopup = true">
                          <text class="nc-iconfont nc-icon-a-meiriqiandaoV6xx-36  icon"></text>
                         <text class="desc">签到规则</text>
 					</view>
@@ -319,7 +319,7 @@ const getDayCounts = () => {
 }
 // 获取7天的日期签到
 const getWeekCounts = () =>{
-    let now = `${state.curYear}-${state.curMonth+1 > 10 ? state.curMonth+1 : '0'+(state.curMonth+1)}-${state.curDate > 10 ? state.curDate : '0'+state.curDate }`
+    let now = `${state.curYear}-${state.curMonth+1 > 9 ? state.curMonth+1 : '0'+(state.curMonth+1)}-${state.curDate > 9 ? state.curDate : '0'+state.curDate }`
     for (let i = state.curWeek - 1; i >= 0; i --) {
         const day = new Date(now).getDate() - i
         state.weekCount.push(day)

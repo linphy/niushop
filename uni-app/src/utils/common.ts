@@ -18,13 +18,14 @@ export const redirect = (redirect: any) => {
     if (!getToken() && getNeedLoginPages().indexOf(url) != -1) {
 
         const config = useConfigStore()
+        const systemStore = useSystemStore()
 
         // #ifdef MP-WEIXIN
         if (config.login.is_username && !config.login.is_mobile && !config.login.is_auth_register) {
             url = '/app/pages/auth/login'
             param = { type: 'username' }
             mode = 'redirectTo'
-        } else if (!config.login.is_username && !config.login.is_mobile && !config.login.is_auth_register) {
+        } else if (systemStore.initStatus == 'finish' && !config.login.is_username && !config.login.is_mobile && !config.login.is_auth_register) {
             uni.showToast({ title: '商家未开启登录注册', icon: 'none' })
             return;
         } else {
@@ -40,7 +41,7 @@ export const redirect = (redirect: any) => {
                 url = '/app/pages/auth/login'
                 param = { type: 'username' }
                 mode = 'redirectTo'
-            } else if (!config.login.is_username && !config.login.is_mobile && !config.login.is_auth_register) {
+            } else if (systemStore.initStatus == 'finish' && !config.login.is_username && !config.login.is_mobile && !config.login.is_auth_register) {
                 uni.showToast({ title: '商家未开启登录注册', icon: 'none' })
                 return;
             } else {
@@ -53,7 +54,7 @@ export const redirect = (redirect: any) => {
                 url = '/app/pages/auth/login'
                 param = { type: 'username' }
                 mode = 'redirectTo'
-            } else if (!config.login.is_username && !config.login.is_mobile) {
+            } else if (systemStore.initStatus == 'finish' && !config.login.is_username && !config.login.is_mobile) {
                 uni.showToast({ title: '商家未开启登录注册', icon: 'none' })
                 return;
             } else {
@@ -456,42 +457,6 @@ export function handleOnloadParams(option: any) {
     return params;
 }
 
-/**
- * 获取定位信息
- */
-export function getLocation(param: any = {}) {
-    uni.getLocation({
-        type: param.type || 'gcj02',
-        success: res => {
-            const systemStore = useSystemStore()
-            systemStore.setLocation(res);
-            typeof param.success == 'function' && param.success(res);
-        },
-        fail: res => {
-            typeof param.fail == 'function' && param.fail(res);
-        },
-        complete: res => {
-            typeof param.complete == 'function' && param.complete(res);
-        }
-    });
-}
-
-/**
- * 定位信息（缓存）
- */
-export function locationStorage() {
-    let data = uni.getStorageSync('location');
-    let mapConfig = uni.getStorageSync('mapConfig');
-    if (data) {
-        var date = new Date();
-        if (mapConfig.valid_time > 0) {
-            data.is_expired = (date.getTime() / 1000) > data.valid_time; // 是否过期
-        } else {
-            data.is_expired = false;
-        }
-    }
-    return data;
-}
 
 /**
  * @description 深度克隆

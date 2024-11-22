@@ -86,6 +86,12 @@
                     "key": ""
                 }
             }
+        },
+        "async" : {
+          "loading" : "",
+          "error" : "",
+          "delay" : 0,
+          "timeout" : 3000
         }
     },
     "fallbackLocale": "zh-Hans"
