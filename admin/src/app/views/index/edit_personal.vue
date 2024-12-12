@@ -18,7 +18,7 @@
         </el-card>
         <div class="fixed-footer-wrap">
             <div class="fixed-footer">
-                <el-button type="primary" :loading="loading" @click="save(formRef)">{{ t('save') }}</el-button>
+                <el-button type="primary" :loading="loading" @click="submitForm(formRef)">{{ t('save') }}</el-button>
             </div>
         </div>
     </div>
