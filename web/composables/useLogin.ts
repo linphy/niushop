@@ -1,4 +1,5 @@
 import type { LocationQueryRaw } from 'vue-router'
+import storage from '@/utils/storage'
 
 export function useLogin() {
     /**
@@ -17,13 +18,8 @@ export function useLogin() {
     /**
      * 执行登录后跳转
      */
-    const handleLoginBack = () => {
-        const data = storage.get('loginBack')
-        if (data) {
-            useRouter().push({ path: data.path, query: data.query })
-        } else {
-            useRouter().push({ path: '/' })
-        }
+    const handleLoginBack = (callbak:any) => {
+        if(callbak) callbak()
     }
 
     return {

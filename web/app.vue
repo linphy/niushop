@@ -8,6 +8,7 @@
 </template>
 
 <script lang="ts" setup>
+import { reactive, ref,computed,watch } from 'vue'
 import useConfigStore from '@/stores/config'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 import en from 'element-plus/dist/locale/en.mjs'
@@ -16,23 +17,16 @@ import useAppStore from '@/stores/app'
 import useMemberStore from '@/stores/member'
 // 引入全局样式
 import '@/assets/styles/index.scss'
+import { useRoute, useRouter } from 'vue-router'
 
-if (process.client) {
-	const match = location.href.match(/\/web\/(\d*)\//)
-	const cookie = useCookie('siteId')
-	match ? cookie.value = match[1] : cookie.value = null
-}
-
+const router = useRouter()
 // 初始化设置语言
 const systemStore = useSystemStore()
 const locale = computed(() => (systemStore.lang === 'zh-cn' ? zhCn : en))
 
 // 初始化查询一些配置
 const configStore = useConfigStore()
-configStore.getLoginConfig()
-
-// 查询站点信息
-systemStore.getSitenfo()
+configStore.getLoginConfig(router)
 
 // 如果已登录
 getToken() && useMemberStore().setToken(getToken())
@@ -57,11 +51,20 @@ watch(route, (nval, oval) => {
 	}, !oval ? 500 : 0)
 }, { immediate: true })
 
-// 设置title模板
-useHead({
-	titleTemplate: (title) => {
-		const siteTitle = systemStore.site.front_end_name || systemStore.site.site_name
-		return title ? `${title} - ${siteTitle}` : siteTitle
-	}
-})
+watch(() => systemStore.site, () => {
+    useHead({
+        titleTemplate: (title) => {
+            const siteTitle = systemStore.site.front_end_name || systemStore.site.site_name
+	        if(title){
+	        	if(siteTitle){
+			        return `${title} - ${siteTitle}`;
+		        }else {
+			        return title;
+		        }
+	        }else{
+	        	return siteTitle;
+	        }
+        }
+    })
+}, { deep: true, immediate: true })
 </script>

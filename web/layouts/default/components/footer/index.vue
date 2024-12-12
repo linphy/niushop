@@ -1,29 +1,14 @@
 <template>
     <div class="flex h-[220px] min-w-[1200px] bg-[#3F4045]">
 		<div class="mt-[70px] w-full">
-            <p class="text-center text-[#999]">
+            <p class="text-center text-[#999]" v-if="friendlyLink.length">
 				<span>友情链接：</span>
-				<NuxtLink to="https://www.bt.cn">
-				    <span class="mr-[10px]">宝塔</span>|
-				</NuxtLink>
-				<NuxtLink to="https://www.oschina.net">
-				    <span class="mr-[10px]">开源中国</span>|
-				</NuxtLink>
-				<NuxtLink to="https://www.aliyun.com">
-				    <span class="mr-[10px]">阿里云</span>|
-				</NuxtLink>
-				<NuxtLink to="https://gitee.com/">
-				    <span class="mr-[10px]">码云Gitee</span>|
-				</NuxtLink>
-				<NuxtLink to="https://cloud.tencent.com/">
-				    <span class="mr-[10px]">腾讯云</span>|
-				</NuxtLink>
-				<NuxtLink to="https://mp.weixin.qq.com">
-				    <span class="mr-[10px]">微信公众平台</span>|
-				</NuxtLink>
-				<NuxtLink to="http://www.thinkphp.cn">
-				    <span class="mr-[10px]">Thinkphp</span>
-				</NuxtLink>
+				<template v-for="(item,index) in friendlyLink" :key="index">
+					<NuxtLink :to="item.link_url" target="_blank">
+						<span>{{item.link_title}}</span>
+						<span class="mx-[10px] text-[#D9D9D9]"  v-if="(index + 1) != friendlyLink.length">|</span>
+					</NuxtLink>
+				</template>
 			</p>
             <p class="text-center mt-[20px] text-[#999]" v-if="copyright">
                 <NuxtLink :to="copyright.gov_url" v-if="copyright.gov_record">
@@ -44,6 +29,7 @@
 <script lang="ts" setup>
 import { getCopyRight } from '@/app/api/system';
 import { reactive, ref } from 'vue'
+import { getFriendlyLink } from '@/app/api/system'
 
 const copyright = ref(null);
 const getCopy = () => {
@@ -52,6 +38,15 @@ const getCopy = () => {
     })
 }
 getCopy()
+
+const friendlyLink = ref([]) // 格式：{ link_title: '', link_url: '' }
+
+const getFriendlyLinkFn = () =>{
+	getFriendlyLink().then((res:any) =>{
+		friendlyLink.value = res.data
+	})
+}
+getFriendlyLinkFn()
 </script>
 
 <style lang="scss" scoped>

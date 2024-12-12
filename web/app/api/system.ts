@@ -23,7 +23,7 @@ export function wechatSync(data: AnyObject) {
  * 获取协议信息
  */
 export function getAgreementInfo(key: string) {
-    return request.get(`agreement/${key}`)
+    return request.get(`agreement/${ key }`)
 }
 
 /**
@@ -37,7 +37,7 @@ export function resetPassword(data: AnyObject) {
  * 发送短信验证码
  */
 export function sendSms(data: AnyObject) {
-    return request.post(`send/mobile/${data.type}`, data)
+    return request.post(`send/mobile/${ data.type }`, data)
 }
 
 /**
@@ -73,4 +73,24 @@ export function getCopyRight() {
  */
 export function getSiteInfo() {
     return request.get('site')
+}
+/**
+ * 获取广告位
+ */
+export function getAdvInfo(params: Record<string, any>) {
+    return request.get(`web/adv`, params, { showErrorMessage: false })
+}
+
+/**
+ * 获取导航列表
+ */
+export function getNavList() {
+    return request.get(`web/nav`)
+}
+
+/**
+ * 获取友情链接
+ */
+export function getFriendlyLink() {
+    return request.get(`web/friendly_link`)
 }

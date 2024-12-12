@@ -5,7 +5,8 @@ const addonRoutes = import.meta.globEager('@/addon/**/pages/routes.ts')
 
 for (const key in addonRoutes) {
     const addon = key.split('/')[2]
-    routes.push(...addonRoutes[key].default.map((item) => {
+    // 先加载插件路由后加载app路由
+    routes.unshift(...addonRoutes[key].default.map((item) => {
         item.meta = item.meta ? Object.assign(item.meta, { addon }) : { addon }
         return item
     }))

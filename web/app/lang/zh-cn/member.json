@@ -5,5 +5,6 @@
     "point": "积分",
     "balance": "余额",
     "looseChange": "零钱",
-    "notBound": "未绑定"
+    "notBound": "未绑定",
+    "coupon":"优惠劵"
 }

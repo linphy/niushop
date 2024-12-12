@@ -1,6 +1,6 @@
 <template>
-    <div class="h-[30px]">
-        <el-button type="primary" link :disabled="!sendSms.canGetCode.value" @click="handleClick">{{ sendSms.text.value }}</el-button>
+    <div class="h-[30px] leading-[28px]">
+        <el-button type="primary" link class="!text-[12px]" :disabled="!sendSms.canGetCode.value" @click="handleClick">{{ sendSms.text.value }}</el-button>
     </div>
 
     <el-dialog v-model="captchaDialog" :title="t('captchaTitle')" width="350px" :append-to-body="true" :align-center="true">
@@ -59,7 +59,7 @@ const formRules = reactive({
     captcha_code: {
         required: true,
         message: t('captchaPlaceholder'),
-        trigger: ['blur', 'change']
+        trigger: ['blur']
     }
 })
 const formRef = ref<AnyObject | null>(null)
@@ -86,6 +86,8 @@ const confirm = async () => {
             if (sendRes) {
                 value.value = sendRes
                 captchaDialog.value = false
+                captcha.refresh()
+                formData.captcha_code = ''
                 loading.value = false
             } else if (sendRes === false) {
                 captcha.refresh()

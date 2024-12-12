@@ -5,6 +5,7 @@ import { getSiteInfo } from '@/app/api/system'
 interface System {
     lang: string,
     site: Record<string, any>
+
 }
 
 const useSystemStore = defineStore('system', {
@@ -18,15 +19,16 @@ const useSystemStore = defineStore('system', {
         }
     },
     actions: {
-        async getSitenfo() {
-            await getSiteInfo()
-                .then((res: any) => {
-                    this.site = res.data
-                    if (this.site.status == 3) navigateTo('/site/close', { replace: true })
-                })
-                .catch((err) => {
-                    navigateTo('/site/nosite', { replace: true })
-                })
+        async getSiteInfoFn() {
+            await getSiteInfo().then((res: any) => {
+                this.site = res.data
+                if (!('shop_web' in this.site.site_addons)) {
+                    navigateTo('/app/index', { replace: true })
+                }
+
+            }).catch((err) => {
+
+            })
         }
     }
 })

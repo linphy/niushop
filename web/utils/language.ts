@@ -63,7 +63,6 @@ class Language {
     }
 
     /**
-     *
      * @param app
      * @param path
      */

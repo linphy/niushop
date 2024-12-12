@@ -1,6 +1,6 @@
-import { breakpointsTailwind } from '@vueuse/core'
 import { ElMessage } from 'element-plus'
 import useMemberStore from '@/stores/member'
+import qs from 'qs'
 
 interface ConfigOption {
     showErrorMessage?: boolean
@@ -48,7 +48,8 @@ class Http {
                 if (data.code == 1) {
                     if (options.showSuccessMessage) ElMessage({ message: data.msg, type: 'success' })
                 } else {
-                    if (data.code == 0) {
+                    if (options.showErrorMessage === false) return;
+                    if (data.code == 0 || data.code == 400) {
                         ElMessage({ message: data.msg, type: 'error' })
                     } else {
                         this.handleAuthError(data.code)
@@ -59,7 +60,8 @@ class Http {
     }
 
     public get(url: string, query = {}, config: ConfigOption = {}) {
-        return this.request(url, 'GET', { query }, config)
+        url += '?' + qs.stringify(query)
+        return this.request(url, 'GET', {}, config)
     }
 
     public post(url: string, body = {}, config: ConfigOption = {}) {
@@ -78,8 +80,8 @@ class Http {
      * 发送请求
      * @param url
      * @param method
-     * @param showMessageConfig
-     * @returns
+     * @param param
+     * @param config
      */
     private request(url: string, method: string, param: AnyObject = {}, config: ConfigOption = {}) {
         return new Promise((resolve, reject) => {
@@ -88,7 +90,6 @@ class Http {
                 const runtimeConfig = useRuntimeConfig()
                 !this.options.baseURL && (this.options.baseURL = runtimeConfig.public.VITE_APP_BASE_URL || `${location.origin}/api/`)
                 this.options.baseURL.substr(-1) != '/' && (this.options.baseURL += '/')
-
                 // 处理数组格式
                 for (const key in param.query) {
                     if (param.query[key] instanceof Array) {
@@ -98,7 +99,6 @@ class Http {
                         delete param.query[key]
                     }
                 }
-
                 useFetch(url, { ...this.options, method, ...config, ...param }).then((response) => {
                     const { data: { value }, error } = response
                     if (value) {

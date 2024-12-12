@@ -9,11 +9,9 @@ interface loginConfig {
     agreement_show: number | boolean
 }
 
-
 interface Config {
     login: loginConfig
 }
-
 
 const useConfigStore = defineStore('config', {
     state: (): Config => {
@@ -28,15 +26,17 @@ const useConfigStore = defineStore('config', {
         }
     },
     actions: {
-        async getLoginConfig() {
+        async getLoginConfig(router: any = null) {
             await getConfig().then(({ data }) => {
                 this.login.is_username = parseInt(data.is_username)
                 this.login.is_mobile = parseInt(data.is_mobile)
                 this.login.is_auth_register = parseInt(data.is_auth_register)
                 this.login.is_bind_mobile = parseInt(data.is_bind_mobile)
                 this.login.agreement_show = parseInt(data.agreement_show)
+                if(data && router && router.currentRoute.value.path === '/site/close'){
+                    navigateTo('/', { replace: true })
+                }
             }).catch(() => {
-
             })
         }
     }

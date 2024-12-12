@@ -1,3 +1,4 @@
+import { ref } from 'vue'
 import { getCaptcha } from '@/app/api/system'
 
 interface formData {

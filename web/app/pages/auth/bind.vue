@@ -36,10 +36,12 @@ import { bind } from '@/app/api/auth'
 import { bindMobile } from '@/app/api/member'
 import useMemberStore from '@/stores/member'
 import { FormInstance } from 'element-plus'
+import { useRouter } from 'vue-router'
+
 definePageMeta({
     layout: "container"
 });
-
+let router = useRouter()
 const memberStore = useMemberStore()
 const info = computed(() => memberStore.info)
 const loading = ref(false)
@@ -88,7 +90,7 @@ const handleRegister = async () => {
 
             request(formData).then((res: responseResult) => {
                 memberStore.setToken(res.data.token)
-                useLogin().handleLoginBack()
+                router.push({ path: '/' })
             }).catch(() => {
                 loading.value = false
                 captcha.refresh()

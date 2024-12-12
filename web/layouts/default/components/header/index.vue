@@ -1,5 +1,5 @@
 <template>
-    <div class="flex h-full min-w-[1200px]">
+    <div class="flex h-full min-w-[1200px] bg-[#fff]">
         <div class="flex items-center ml-[20px]">
             <NuxtLink to="/">
                 <div class="w-[132px] mr-[10px]"><img src="@/assets/images/index/logo.jpg" /></div>
@@ -10,48 +10,57 @@
 
         <div class="mx-auto flex-shrink">
             <el-menu :default-active="appStore.route" class="h-full" mode="horizontal" :ellipsis="false" :router="true">
-                <el-menu-item index="/" route="/">
+                <el-menu-item index="/" route="/app/index">
                     <span class="text-base mx-4">首页</span>
                     <span></span>
                 </el-menu-item>
-                <el-menu-item index="/article/list" route="/article/list">
-                    <span class="text-base mx-4">文章</span>
-                    <span></span>
-                </el-menu-item>
-                <el-menu-item route="/">
-                    <span class="text-base mx-4">社区</span>
+                <el-menu-item index="bbs">
+                    <span class="text-base mx-4" @click.stop="openBbs">社区</span>
                     <span></span>
                 </el-menu-item>
             </el-menu>
         </div>
 
-        <div class="flex items-center justify-end mr-[20px] ml-auto whitespace-pre">
+        <div class="flex items-center justify-end mr-[20px] ml-auto whitespace-pre-wrap">
             <div v-if="info">
-                <NuxtLink to="/member/center">
+                <NuxtLink to="/app/member/center">
                     <span class="cursor-pointer">{{ info.nickname }}</span>
                 </NuxtLink>
                 <span class="mx-2">|</span>
                 <span class="cursor-pointer" @click="logoutFn">退出</span>
             </div>
-            <NuxtLink to="/auth/login" v-else>
-                <el-button type="primary" link>{{ t('login') }} / {{ t('register') }}</el-button>
-            </NuxtLink>
+            <el-button type="primary" link v-else @click="toLogin">{{ t('login') }} / {{ t('register') }}</el-button>
         </div>
+        <LoadingDialog/>
     </div>
 </template>
 
 <script lang="ts" setup>
+import {  getToken } from '@/utils/common'
 import useMemberStore from '@/stores/member'
 import useAppStore from '@/stores/app'
+import useConfigStore from '@/stores/config'
+import LoadingDialog from '@/components/login-dialog/index.vue'
 
+const configStore = useConfigStore()
 const memberStore = useMemberStore()
 const info = computed(() => memberStore.info)
 
+const toLogin = () => {
+    if(!getToken() && !configStore.login.is_username && !configStore.login.is_mobile && !configStore.login.is_bind_mobile){
+        ElMessage.error('商家未开启普通账号登录注册')
+        return false
+    }
+    memberStore.logOpen()
+}
 const logoutFn = () => {
     memberStore.logout()
-    navigateTo(`/auth/login`)
+    navigateTo(`/app/index`)
 }
 
+const openBbs = () => {
+    window.open('https://www.niushop.com/bbs.html')
+}
 const appStore = useAppStore()
 </script>
 

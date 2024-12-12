@@ -4,14 +4,16 @@ import { logout } from '@/app/api/auth'
 
 interface Member {
     token: string | null
-    info: Record<string, any> | null
+    info: Record<string, any> | null,
+    loginPopup:boolean
 }
 
 const useMemberStore = defineStore('member', {
     state: (): Member => {
         return {
             token: useCookie('token').value,
-            info: null
+            info: null,
+            loginPopup:false
         }
     },
     actions: {
@@ -36,6 +38,12 @@ const useMemberStore = defineStore('member', {
             this.info = null
             useCookie('token').value = null
             logout().then().catch()
+        },
+        logOpen(){
+            this.loginPopup = true
+        },
+        logClose(){
+            this.loginPopup = false
         }
     }
 })

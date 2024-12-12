@@ -1,21 +1,7 @@
 <template>
     <div class="w-full h-full bg-page flex items-center justify-center">
-        <div class="flex bg-white">
-            <div class="flex flex-col items-center w-[330px] py-[100px] border-r">
-                <div class="title font-bold text-xl">打开手机微信</div>
-                <div class="tips text-sm mt-[5px]">点击右上角打开扫一扫</div>
-                <div class="qrcode p-[10px] mt-[30px] border h-[120px] leading-none box-content">
-                    <div class="relative">
-                        <el-image :src="weixinCode.url" class="w-[120px]" />
-                        <div class="flex flex-col justify-center items-center absolute inset-0 bg-gray-50" v-if="weixinCode.pastDue">
-                            <span class="text-xs text-gray-600">{{ weixinCode.pastDueContent }}</span>
-                            <span @click="scanLoginFn()" class="text-xs cursor-pointer text-color mt-2">点击刷新</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white w-[380px] p-[30px]">
+        <div class="bg-white" v-if="loginType.length" >
+            <div class="bg-white w-[380px] p-[30px] h-[424px]" v-if="active">
                 <div class="flex items-end my-[30px]">
                     <div class="mr-[20px] text-base cursor-pointer leading-none" :class="{ 'font-bold': type == item.type }" v-for="item in loginType" @click="type = item.type">{{item.title }}</div>
                 </div>
@@ -67,25 +53,57 @@
                             <span class="text-primary">{{ t('privacyAgreement') }}</span>
                         </NuxtLink>
                     </div>
-
+                    <div class="mt-[20px] flex justify-center" v-if="show">
+                        <span class="iconfont icon-weixin1 text-[#1AAD19] !text-[24px] cursor-pointer" @click="handleChange"></span>
+                    </div>
                 </el-form>
+            </div>
+            <div class="flex flex-col items-center w-[380px] py-[60px] h-[424px]" v-else>
+                <div class="title font-bold text-xl">打开手机微信</div>
+                <div class="tips text-sm mt-[5px]">点击右上角打开扫一扫</div>
+                <div class="qrcode p-[10px] mt-[30px] border h-[120px] leading-none box-content">
+                    <div class="relative">
+                        <el-image :src="weixinCode.url" class="w-[120px]" />
+                        <div class="flex flex-col justify-center items-center absolute inset-0 bg-gray-50" v-if="weixinCode.pastDue">
+                            <span class="text-xs text-gray-600">{{ weixinCode.pastDueContent }}</span>
+                            <span @click="scanLoginFn()" class="text-xs cursor-pointer text-color mt-2">点击刷新</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-[60px] text-base cursor-pointer leading-none" @click="handleChange">账号登录</div>
             </div>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref,reactive,watch,computed } from 'vue'
 import { FormInstance } from 'element-plus'
-import { usernameLogin, mobileLogin, scanlogin, checkscan } from '@/app/api/auth'
+import { usernameLogin, mobileLogin, scanlogin, checkscan, wechatCheck } from '@/app/api/auth'
+import { useRouter } from 'vue-router'
 import useMemberStore from '@/stores/member'
 import useConfigStore from '@/stores/config'
 import QRCode from "qrcode";
 
-definePageMeta({
-    layout: "container"
-});
-
+let router = useRouter()
+let active = ref(true)
+let timer:any = null
+const handleChange = () => {
+    active.value = !active.value
+    if(!active.value){
+        scanLoginFn();
+    }else{
+        clearTimeout(timer)
+    }
+}
+watch(
+	() => router.currentRoute.value.path,
+	(toPath) => {
+		if (toPath != '/auth/login') {
+			clearTimeout(timer)
+		}
+	}, { immediate: true, deep: true }
+)
 // 校验二维码
 const checkScanFn = (key) => {
     let parameter = { key };
@@ -94,18 +112,17 @@ const checkScanFn = (key) => {
         let data = res.data;
         switch (data.status) {
             case 'wait':
-                setTimeout(() => {
+                timer = setTimeout(() => {
                     checkScanFn(weixinCode.value.key);
                 }, 1000);
                 break;
-
             case 'success':
                 if (!data.login_data.token) {
                     useCookie('openId').value = data.login_data.openid
                     navigateTo(`/auth/bind`)
                 } else {
                     memberStore.setToken(data.login_data.token)
-                    useLogin().handleLoginBack()
+                    router.push({ path: '/' })
                 }
                 break;
             case 'fail':
@@ -139,7 +156,14 @@ const scanLoginFn = async () => {
         checkScanFn(weixinCode.value.key);
     }, 1000);
 }
-scanLoginFn();
+
+let show = ref(false)
+const wechatCheckFn = () =>{
+    wechatCheck().then((res:any) =>{
+        show.value = res.data
+    })
+}
+wechatCheckFn()
 
 const memberStore = useMemberStore()
 
@@ -153,7 +177,6 @@ const loginType = computed(() => {
     type.value = value[0] ? value[0].type : ''
     return value
 })
-
 const loading = ref(false)
 const type = ref('')
 const formData = reactive({
@@ -209,7 +232,7 @@ const handleLogin = async () => {
 
             login(formData).then(async (res) => {
                 await memberStore.setToken(res.data.token)
-                useLogin().handleLoginBack()
+                router.push({ path: '/app/index' })
             }).catch(() => {
                 loading.value = false
             })

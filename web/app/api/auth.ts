@@ -31,7 +31,7 @@ export function logout() {
  */
 export function usernameRegister(data: AnyObject) {
     let url = 'register'
-    data.pid && (url += `?pid=${data.pid}`)
+    data.pid && (url += `?pid=${ data.pid }`)
     return request.post(url, data)
 }
 
@@ -40,7 +40,7 @@ export function usernameRegister(data: AnyObject) {
  */
 export function mobileRegister(data: AnyObject) {
     let url = 'register/mobile'
-    data.pid && (url += `?pid=${data.pid}`)
+    data.pid && (url += `?pid=${ data.pid }`)
     return request.post(url, data)
 }
 
@@ -63,7 +63,7 @@ export function weappLogin(data: AnyObject) {
  */
 export function bind(data: AnyObject) {
     let url = 'bind'
-    data.pid && (url += `?pid=${data.pid}`)
+    data.pid && (url += `?pid=${ data.pid }`)
     return request.post(url, data)
 }
 
@@ -79,4 +79,11 @@ export function scanlogin() {
  */
 export function checkscan(data: AnyObject) {
     return request.get('checkscan', data)
+}
+
+/**
+ * 校验扫码信息
+ */
+export function wechatCheck() {
+    return request.get('wechat/check')
 }

@@ -4,6 +4,10 @@ export default [
         component: () => import('~/app/pages/index.vue')
     },
     {
+        path: "/app/index",
+        component: () => import('~/app/pages/index.vue')
+    },
+    {
         path: "/auth/login",
         component: () => import('~/app/pages/auth/login.vue'),
         meta: {
@@ -26,46 +30,45 @@ export default [
     },
     {
         path: "/auth/agreement",
-        component: () => import('~/app/pages/auth/agreement.vue')
-    },
-    {
-        path: "/member",
-        component: () => import('~/app/pages/member/index.vue'),
+        component: () => import('~/app/pages/auth/agreement.vue'),
         meta: {
-            middleware: ["auth"]
+            layout: "member"
         }
     },
     {
-        path: "/member/center",
+        path: "/app/auth/agreement",
+        component: () => import('~/app/pages/auth/agreement.vue'),
+        meta: {
+            layout: "member"
+        }
+    },
+    {
+        path: "/app/member/center",
         component: () => import('~/app/pages/member/center.vue'),
         meta: {
-            middleware: ["auth"]
+            middleware: ["auth"],
+            layout: "member"
         }
     },
     {
-        path: "/member/balance",
+        path: "/app/member/balance",
         component: () => import('~/app/pages/member/balance.vue'),
         meta: {
-            middleware: ["auth"]
+            middleware: ["auth"],
+            layout: "member"
         }
     },
     {
-        path: "/member/point",
+        path: "/app/member/point",
         component: () => import('~/app/pages/member/point.vue'),
         meta: {
-            middleware: ["auth"]
+            middleware: ["auth"],
+            layout: "member"
         }
     },
     {
         path: "/site/close",
         component: () => import('~/app/pages/site/close.vue'),
-        meta: {
-            layout: "container"
-        }
-    },
-    {
-        path: "/site/nosite",
-        component: () => import('~/app/pages/site/nosite.vue'),
         meta: {
             layout: "container"
         }
