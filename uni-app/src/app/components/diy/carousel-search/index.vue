@@ -77,7 +77,7 @@
 
 			<!-- 轮播图 -->
 			<view class="relative" :class="{'mx-[20rpx]': swiperStyleBool && diyComponent.swiper.swiperStyle != 'style-3', 'swiper-style-3': diyComponent.swiper.swiperStyle == 'style-3'}" :style="carouselSwiperStyle()">
-				<swiper v-if="diyComponent.swiper.control" class="swiper" :style="{ height: imgHeight }" autoplay="true" circular="true" @change="swiperChange"
+				<swiper v-if="diyComponent.swiper.control" class="swiper" :style="{ height: imgHeight }" autoplay="true" circular="true" @change="swiperChange" 
 					:class="{
 						'swiper-left': diyComponent.swiper.indicatorAlign == 'left',
 						'swiper-right': diyComponent.swiper.indicatorAlign == 'right',
@@ -146,6 +146,7 @@
     import {useLocation} from '@/hooks/useLocation'
 	import useSystemStore from '@/stores/system';
 	const systemStore = useSystemStore();
+	const systemInfo = uni.getSystemInfoSync();
 
 	const instance = getCurrentInstance();
 	const props = defineProps(['component', 'index', 'pullDownRefreshCount', 'global', 'scrollBool']);
@@ -210,19 +211,28 @@
 	const fixedStyle = computed(()=>{
 		var style = '';
 		if(diyComponent.value.swiper.swiperStyle == 'style-3'){
-			style += 'position: absolute;z-index: 10;left: 0;right: 0;';
+			style += 'position: absolute;z-index: 99;left: 0;right: 0;';
 		}
-        if (diyStore.mode == 'decorate') return style;
 
         // #ifdef H5
-        if(props.global.topStatusBar.isShow && props.global.topStatusBar.style == 'style-4') {
+		if(props.global.topStatusBar.isShow && props.global.topStatusBar.style == 'style-4') {
             style += 'top:' + diyStore.topTabarHeight + 'px;';
         }
+		if(diyComponent.value.swiper.swiperStyle == 'style-3'){
+			// h5,上移的像素，采取的是平均值
+			if (systemInfo.platform === 'ios') {
+			    style += 'top: 55px;';
+			}else{
+				style += 'top: 44.5px;';
+			}
+		}
         // #endif
+		
+		if (diyStore.mode == 'decorate') return style;
 
         if(diyComponent.value.positionWay == 'fixed') {
 			if (props.scrollBool != undefined && props.scrollBool != -1) {
-				style += 'position: fixed;z-index: 10;left: 0;right: 0;';
+				style += 'position: fixed;z-index: 99;top: 0;left: 0;right: 0;';
 			}
 
             // #ifdef MP-WEIXIN || MP-BAIDU || MP-TOUTIAO || MP-QQ
@@ -231,6 +241,15 @@
 				style += 'top:' + diyStore.topTabarHeight + 'px;';
 			}
             // #endif
+			
+			if (props.scrollBool == 1 || props.scrollBool == 2) {
+				// #ifdef H5
+				if(props.global.topStatusBar.isShow && props.global.topStatusBar.style == 'style-4') {
+					style += 'top:' + diyStore.topTabarHeight + 'px;';
+				}
+				// #endif
+			}
+			
 
 			fixedStyleBg.value = false;
             if (props.scrollBool == 1) {
@@ -252,8 +271,13 @@
 	const carouselSwiperStyle = ()=> {
 		let style = "";
 		if(diyComponent.value.swiper.swiperStyle == 'style-3'){
-			// #ifdef MP
-			style = 'padding-top:' + menuButtonInfo.top + 'px;';
+			// #ifdef H5
+			// h5,上移的像素，采取的是平均值
+			if (systemInfo.platform === 'ios') {
+			    style = 'margin-top: -55px;';
+			}else{
+				style = 'margin-top: -44.5px;';
+			}
 			// #endif
 		}
 	    return style;
@@ -384,7 +408,9 @@
         }
 		// 判断让轮播指示器是否出现
 		// #ifdef H5
-		isShowDots.value = diyComponent.value.swiper.list.length > 1 ? true : false;
+		isShowDots = computed(() => {
+			return diyComponent.value?.swiper?.list?.length > 1;
+		});
 		// #endif
 
         // 如果是小程序，获取右上角胶囊的尺寸信息，避免导航栏右侧内容与胶囊重叠(支付宝小程序非本API，尚未兼容)
@@ -474,7 +500,7 @@
 	// #ifdef H5
 	isShowDots.value = true;
 	// #endif
-
+	
 	// #ifdef MP-WEIXIN
 	isShowDots.value = false;
 	// #endif
@@ -510,6 +536,12 @@
 				filter: blur(15px);
 				-webkit-transform: scale(2) translateY(15%);
 				transform: scale(2) translateY(15%);
+			}
+			&.no-filter{
+				uni-image, image{
+					-webkit-filter: blur(0);
+					filter: blur(0);
+				}
 			}
 			.bg-img-box{
 				position: absolute;

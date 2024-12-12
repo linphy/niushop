@@ -59,10 +59,9 @@ class Request {
         return this.request('PUT', url, data, config)
     }
 
-    public delete(url: string, config: RequestConfig = {}) {
-        return this.request('DELETE', url, {}, config)
+    public delete(url: string, data: AnyObject = {}, config: RequestConfig = {}) {
+        return this.request('DELETE', url, data, config)
     }
-
     /**
      * 发送上传请求
      */
@@ -109,7 +108,7 @@ class Request {
             method
         })
 
-        if (params.method.toUpperCase() == 'GET') {
+        if (params.method.toUpperCase() == 'GET' || params.method.toUpperCase() == 'DELETE') {
             params.url += '?' + qs.stringify(data);
         } else {
             params.data = data;
