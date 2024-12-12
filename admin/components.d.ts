@@ -92,6 +92,7 @@ declare module '@vue/runtime-core' {
     VerifyPoints: typeof import('./src/components/verifition/Verify/VerifyPoints.vue')['default']
     VerifySlide: typeof import('./src/components/verifition/Verify/VerifySlide.vue')['default']
     VideoPlayer: typeof import('./src/components/video-player/index.vue')['default']
+    WebLink: typeof import('./src/components/web-link/web-link.vue')['default']
   }
   export interface ComponentCustomProperties {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']
