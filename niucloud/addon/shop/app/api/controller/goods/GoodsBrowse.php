@@ -28,7 +28,10 @@ class GoodsBrowse extends BaseApiController
      */
     public function getMemberGoodsBrowseList()
     {
-        return success(( new GoodsBrowseService() )->getMemberGoodsBrowse());
+        $data = $this->request->params([
+            [ 'date', [] ],
+        ]);
+        return success(( new GoodsBrowseService() )->getMemberGoodsBrowse($data));
     }
 
     /**
@@ -38,7 +41,6 @@ class GoodsBrowse extends BaseApiController
     {
         $data = $this->request->params([
             [ 'goods_id', 0 ],
-            [ 'sku_id', 0 ],
         ]);
         return success(( new GoodsBrowseService() )->addGoodsBrowse($data));
     }
@@ -49,7 +51,7 @@ class GoodsBrowse extends BaseApiController
     public function deleteGoodsBrowse()
     {
         $data = $this->request->params([
-            [ 'goods_ids', '' ],
+            [ 'goods_ids', [] ],
         ]);
         return success(( new GoodsBrowseService() )->deleteGoodsBrowse($data));
     }

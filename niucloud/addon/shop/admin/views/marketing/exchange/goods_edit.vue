@@ -2,7 +2,7 @@
     <div class="main-container" v-loading="loading">
 
 		<el-card class="card !border-none" shadow="never">
-		    <el-page-header :content="pageName" :icon="ArrowLeft" @back="$router.back()" />
+		    <el-page-header :content="pageName" :icon="ArrowLeft" @back="back()" />
 		</el-card>
 
         <!-- 表单 -->
@@ -711,7 +711,7 @@ const onSave = async (formEl: FormInstance | undefined) => {
             // formData.value.goods_data = JSON.stringify(formData.value.product_list)
             editActiveExchange(formData.value).then(res => {
                 loading.value = false
-                router.push(`/shop/marketing/exchange/goods_list`)
+                router.push('/shop/marketing/exchange/goods_list')
             }).catch(() => {
                 loading.value = false
             })
@@ -719,7 +719,7 @@ const onSave = async (formEl: FormInstance | undefined) => {
     })
 }
 const back = () => {
-    router.push(`/shop/marketing/exchange/goods_list`)
+    router.push('/shop/marketing/exchange/goods_list')
 }
 </script>
 

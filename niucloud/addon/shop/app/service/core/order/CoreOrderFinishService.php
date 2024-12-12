@@ -62,6 +62,7 @@ class CoreOrderFinishService extends BaseCoreService
         $update_data = array(
             'status' => OrderDict::FINISH,
             'finish_time' => time(),
+            'is_enable_refund' => 0,
             'timeout' => 0
         );
         $this->model->where($where)->update($update_data);

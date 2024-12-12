@@ -75,11 +75,11 @@
                                     </el-icon>
                                 </div> -->
                                 <div :class="['flex items-center justify-center w-[65px] h-[65px] border-0 border-color rounded-[4px] border-solid box-border cursor-pointer mr-[15px]', formData.cart.style === 'style-3' ? '!border-[1px]' : '']" @click="carStyleClick(3)">
-                                    <span class="text-color nc-iconfont nc-icon-gouwucheV6xx-2 !text-[24px]"></span>
+                                    <span class="text-color nc-iconfont nc-icon-gouwucheV6xx6 !text-[24px]"></span>
                                 </div>
                                 <div :class="['flex items-center justify-center w-[65px] h-[65px] border-0 border-color rounded-[4px] border-solid box-border cursor-pointer mr-[15px]', formData.cart.style === 'style-4' ? '!border-[1px]' : '']" @click="carStyleClick(4)">
                                     <div class="text-[#fff] bg-color h-[30px] w-[30px] leading-[30px] rounded-[30px] text-center">
-                                        <span class="nc-iconfont nc-icon-gouwucheV6xx-2 !text-[20px]"></span>
+                                        <span class="nc-iconfont nc-icon-gouwucheV6xx6 !text-[20px]"></span>
                                     </div>
                                 </div>
                             </div>

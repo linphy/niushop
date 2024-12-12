@@ -73,7 +73,8 @@ class CoreRefundActionService extends BaseCoreService
         if ($is_agree) {
             $money = $data[ 'money' ];
             //退款金额不能大于可退款总额
-            if ($money > $max_refund_money) throw new CommonException('SHOP_ORDER_REFUND_MONEY_GT_ORDER_MONEY');//退款金额不能大于可退款总额
+            $comparison = bccomp(bcsub($money, $max_refund_money), 0);//浮点数直接进行比较会出现精度问题
+            if ($comparison > 0) throw new CommonException('SHOP_ORDER_REFUND_MONEY_GT_ORDER_MONEY');//退款金额不能大于可退款总额
             $update_data[ 'money' ] = $money;
             //只退款
             if ($order_refund_info[ 'refund_type' ] == OrderRefundDict::ONLY_REFUND) {

@@ -12,6 +12,7 @@ use addon\shop\app\model\order\OrderGoods;
 use addon\shop\app\service\admin\marketing\DiscountService;
 use addon\shop\app\service\core\CoreStatService;
 use addon\shop\app\service\core\goods\CoreGoodsStatService;
+use addon\shop\app\service\core\marketing\CoreManjianService;
 use addon\shop\app\service\core\order\CoreInvoiceService;
 use addon\shop\app\service\core\order\CoreOrderDeliveryService;
 use addon\shop\app\service\core\order\CoreOrderLogService;
@@ -79,6 +80,9 @@ class AfterShopOrderPay
             ( new DiscountService() )->orderPayAfter($order_data);
 
             ( new CoreGoodsStatService() )->saveGoodsPayNumAndMoneyByOrderId($order_data); // 商品支付数量 金额统计数据
+
+            //满减送订单支付后赠品发放
+            ( new CoreManjianService() )->giftGrant($order_data);
 
             // 小票打印，订单付款之后
             return ( new CorePrinterService() )->printTicket([

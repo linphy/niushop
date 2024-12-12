@@ -69,6 +69,7 @@ import { t } from '@/lang'
 import { getShopAddressList, deleteShopAddress } from '@/addon/shop/api/shop_address'
 import { ElMessageBox, FormInstance } from 'element-plus'
 import { useRouter, useRoute } from 'vue-router'
+import { setTablePageStorage,getTablePageStorage } from "@/utils/common";
 
 const route = useRoute()
 const pageName = route.meta.title
@@ -102,11 +103,12 @@ const loadShopAddressList = (page: number = 1) => {
         shopAddressTable.loading = false
         shopAddressTable.data = res.data.data
         shopAddressTable.total = res.data.total
+	    setTablePageStorage(shopAddressTable.page, shopAddressTable.limit, shopAddressTable.searchParam);
     }).catch(() => {
         shopAddressTable.loading = false
     })
 }
-loadShopAddressList()
+loadShopAddressList(getTablePageStorage(shopAddressTable.searchParam).page);
 
 const router = useRouter()
 

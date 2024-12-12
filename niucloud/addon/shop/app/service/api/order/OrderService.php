@@ -11,16 +11,22 @@
 
 namespace addon\shop\app\service\api\order;
 
+use addon\shop\app\dict\coupon\CouponDict;
 use addon\shop\app\dict\delivery\DeliveryDict;
 use addon\shop\app\dict\order\OrderDeliveryDict;
 use addon\shop\app\dict\order\OrderDict;
 use addon\shop\app\dict\order\OrderLogDict;
 use addon\shop\app\dict\order\OrderRefundDict;
+use addon\shop\app\model\coupon\Coupon;
 use addon\shop\app\model\delivery\Store;
 use addon\shop\app\model\goods\Goods;
+use addon\shop\app\model\goods\GoodsSku;
+use addon\shop\app\model\manjian\Manjian;
+use addon\shop\app\model\manjian\ManjianGiveRecords;
 use addon\shop\app\model\order\Order;
 use addon\shop\app\model\order\OrderDelivery;
 use addon\shop\app\model\order\OrderRefund;
+use addon\shop\app\service\core\marketing\CoreManjianService;
 use addon\shop\app\service\core\order\CoreOrderCloseService;
 use addon\shop\app\service\core\order\CoreOrderConfigService;
 use addon\shop\app\service\core\order\CoreOrderFinishService;
@@ -60,7 +66,7 @@ class OrderService extends BaseApiService
             ->with(
                 [
                     'order_goods' => function($query) {
-                        $query->field('extend,order_goods_id, order_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money, is_enable_refund, delivery_id,is_enable_refund, status')
+                        $query->field('extend,order_goods_id, order_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money, is_enable_refund, delivery_id,is_enable_refund, status, is_gift')
                             ->with([
                                 'order_delivery' => function($query) {
                                     $query->field('id, express_company_id, express_number')->with('company');
@@ -140,7 +146,10 @@ class OrderService extends BaseApiService
             ->with(
                 [
                     'order_goods' => function($query) {
-                        $query->field('extend,order_goods_id, order_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money, discount_money, is_enable_refund, status, order_refund_no, delivery_status, verify_count, verify_expire_time, is_verify, goods_type')->append([ 'goods_image_thumb_small' ]);
+                        $query->field('extend,order_goods_id, order_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money, discount_money, is_enable_refund, status, order_refund_no, delivery_status, verify_count, verify_expire_time, is_verify, goods_type, is_gift')->append([ 'goods_image_thumb_small' ]);
+                    },
+                    'order_discount' => function ($query) {
+                        $query->field('order_id,discount_type,money');
                     }
                 ]
             )->append([ 'order_from_name', 'order_type_name', 'status_name', 'delivery_type_name' ])->findOrEmpty()->toArray();
@@ -167,15 +176,31 @@ class OrderService extends BaseApiService
             }
 
             if ($info[ 'order_goods' ]) {
-                foreach ($info[ 'order_goods' ] as $k => $v) {
+                foreach ($info[ 'order_goods' ] as $k => &$v) {
                     $goods_info = ( new Goods() )->field('unit')->where([ [ 'goods_id', '=', $v[ 'goods_id' ] ] ])->findOrEmpty()->toArray();
                     if (!empty($goods_info)) {
-                        $info[ 'order_goods' ][ $k ][ 'unit' ] = $goods_info[ 'unit' ];
+                        $v[ 'unit' ] = $goods_info[ 'unit' ];
                     } else {
-                        $info[ 'order_goods' ][ $k ][ 'unit' ] = '件';
+                        $v[ 'unit' ] = '件';
+                    }
+                    ( new CoreManjianService() )->getOrderGoodsGiveInfo($v, $info[ 'order_goods' ], $this->member_id);
+                }
+            }
+
+            $coupon_money = 0;
+            $manjian_discount_money = 0;
+            if ($info[ 'order_discount' ]) {
+                foreach ($info[ 'order_discount' ] as $item) {
+                    if ($item[ 'discount_type' ] == 'coupon') {
+                        $coupon_money += $item[ 'money' ];
+                    }
+                    if ($item[ 'discount_type' ] == 'manjian') {
+                        $manjian_discount_money += $item[ 'money' ];
                     }
                 }
             }
+            $info[ 'coupon_money' ] = number_format($coupon_money, 2, '.', '');
+            $info[ 'manjian_discount_money' ] = number_format($manjian_discount_money, 2, '.', '');
 
             // 查询小程序是否已开通发货信息管理服务
             try {

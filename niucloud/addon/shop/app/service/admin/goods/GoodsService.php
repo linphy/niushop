@@ -18,6 +18,7 @@ use addon\shop\app\model\active\ActiveGoods;
 use addon\shop\app\model\goods\Goods;
 use addon\shop\app\model\goods\GoodsSku;
 use addon\shop\app\model\goods\GoodsSpec;
+use addon\shop\app\model\goods\Stat;
 use addon\shop\app\model\order\OrderGoods;
 use app\service\admin\addon\AddonService;
 use core\base\BaseAdminService;
@@ -54,7 +55,7 @@ class GoodsService extends BaseAdminService
 
         if (!empty($params[ 'goods_id' ])) {
             // 查询商品信息，用于编辑
-            $field = 'goods_id,goods_name,sub_title,goods_type,goods_cover,goods_image,goods_video,goods_desc,brand_id,goods_category,label_ids,service_ids,unit,stock,virtual_sale_num,is_limit,limit_type,max_buy,min_buy,status,sort,delivery_type,is_free_shipping,fee_type,delivery_money,delivery_template_id,supplier_id,attr_id,attr_format,member_discount,poster_id';
+            $field = 'goods_id,goods_name,sub_title,goods_type,goods_cover,goods_image,goods_video,goods_desc,brand_id,goods_category,label_ids,service_ids,unit,stock,virtual_sale_num,is_limit,limit_type,max_buy,min_buy,status,sort,delivery_type,is_free_shipping,fee_type,delivery_money,delivery_template_id,supplier_id,attr_id,attr_format,member_discount,poster_id,is_gift';
             $goods_info = $this->model->field($field)->where([ [ 'goods_id', '=', $params[ 'goods_id' ] ] ])->findOrEmpty()->toArray();
             if (!empty($goods_info)) {
 
@@ -151,7 +152,7 @@ class GoodsService extends BaseAdminService
      */
     public function getPage(array $where = [])
     {
-        $field = 'goods_id,goods_name,goods_type,goods_cover,stock,sale_num,status,sort,create_time,member_discount';
+        $field = 'goods_id,goods_name,goods_type,goods_cover,stock,sale_num,status,sort,create_time,member_discount,is_gift';
         $order = 'sort asc, create_time desc';
         $sku_where = [
             [ 'goodsSku.is_default', '=', 1 ],
@@ -202,6 +203,7 @@ class GoodsService extends BaseAdminService
             Db::startTrans();
             $goods_sku_model = new GoodsSku();
             $goods_spec_model = new GoodsSpec();
+            $goods_stat_model = new Stat();
 
             // 商品封面
             if (!empty($data[ 'goods_image' ])) $data[ 'goods_cover' ] = explode(',', $data[ 'goods_image' ])[ 0 ];
@@ -225,6 +227,7 @@ class GoodsService extends BaseAdminService
                 'limit_type' => $data[ 'limit_type' ],
                 'max_buy' => $data[ 'max_buy' ],
                 'min_buy' => $data[ 'min_buy' ],
+                'is_gift' => $data[ 'is_gift' ],
                 'status' => $data[ 'status' ],
                 'sort' => $data[ 'sort' ],
                 'attr_id' => $data[ 'attr_id' ],
@@ -309,6 +312,14 @@ class GoodsService extends BaseAdminService
 
             }
 
+            //添加商品统计表数据
+            $goods_stat_data = [
+                'date' => date('Y-m-d'),
+                'date_time' => strtotime(date('Y-m-d')),
+                'goods_id' => $res->goods_id,
+            ];
+            $goods_stat_model->create($goods_stat_data);
+
             Db::commit();
 
             event('AfterGoodsEdit', [
@@ -369,6 +380,7 @@ class GoodsService extends BaseAdminService
                 'limit_type' => $data[ 'limit_type' ],
                 'max_buy' => $data[ 'max_buy' ],
                 'min_buy' => $data[ 'min_buy' ],
+                'is_gift' => $data[ 'is_gift' ],
                 'status' => $data[ 'status' ],
                 'sort' => $data[ 'sort' ],
                 'attr_id' => $data[ 'attr_id' ],
@@ -799,15 +811,17 @@ class GoodsService extends BaseAdminService
      */
     public function getSelectPage(array $where = [])
     {
-        $field = 'goods_id, goods_name, goods_type, goods_cover,goods_image, stock,sub_title,goods_desc';
+        $field = 'goods_id, goods_name, goods_type, goods_cover,goods_image, stock,sub_title,goods_desc,is_gift';
         $order = 'sort desc,create_time desc';
 
         $sku_where = [
             [ 'goodsSku.is_default', '=', 1 ],
         ];
 
-        if (isset($where['is_gift']) && $where['is_gift'] == GoodsDict::NOT_IS_GIFT) {
-            $sku_where[] = [ 'goods.is_gift', '=',  GoodsDict::NOT_IS_GIFT ];
+        if (isset($where[ 'is_gift' ]) && $where[ 'is_gift' ] == GoodsDict::IS_GIFT) {
+            $sku_where[] = [ 'goods.is_gift', 'in', [ GoodsDict::NOT_IS_GIFT, GoodsDict::IS_GIFT ] ];
+        } else {
+            $sku_where[] = [ 'goods.is_gift', '=', GoodsDict::NOT_IS_GIFT ];
         }
 
         if (!empty($where[ 'keyword' ])) {
@@ -888,10 +902,16 @@ class GoodsService extends BaseAdminService
      */
     public function getSelectSku(array $where = [])
     {
-        $field = 'goods_id, goods_name, goods_type, goods_cover, stock';
+        $field = 'goods_id, goods_name, goods_type, goods_cover, stock,is_gift';
         $order = 'sort desc,create_time desc';
 
         $select_goods_list = [];// 已选商品列表
+
+        if (isset($where[ 'is_gift' ]) && $where[ 'is_gift' ] == GoodsDict::IS_GIFT) {
+            $sku_where[] = [ 'goods.is_gift', 'in', [ GoodsDict::NOT_IS_GIFT, GoodsDict::IS_GIFT ] ];
+        } else {
+            $sku_where[] = [ 'goods.is_gift', '=', GoodsDict::NOT_IS_GIFT ];
+        }
 
         // 检测商品id集合是否存在，移除不存在的商品id，纠正数据准确性
         if (!empty($where[ 'verify_goods_ids' ])) {
@@ -916,6 +936,7 @@ class GoodsService extends BaseAdminService
                     [ 'goodsSku.is_default', '=', 1 ],
                     [ 'goods.goods_id', 'in', $verify_goods_ids ]
                 ])
+                ->where($sku_where)
                 ->order($order)->append([ 'goods_type_name', 'goods_cover_thumb_small', 'goods_cover_thumb_mid' ])
                 ->select()->toArray();
         }
@@ -951,6 +972,7 @@ class GoodsService extends BaseAdminService
                     [ 'goodsSku.is_default', '=', 1 ],
                     [ 'goods.goods_id', 'in', $goods_ids ]
                 ])
+                ->where($sku_where)
                 ->order($order)->append([ 'goods_type_name', 'goods_cover_thumb_small', 'goods_cover_thumb_mid' ])
                 ->select()->toArray();
         }

@@ -4,6 +4,7 @@ declare (strict_types = 1);
 namespace addon\shop\app\listener\order;
 
 use addon\shop\app\model\order\Order;
+use addon\shop\app\service\core\marketing\CoreManjianService;
 use addon\shop\app\service\core\order\CoreOrderConfigService;
 use think\facade\Log;
 
@@ -28,5 +29,8 @@ class ShopOrderCreate
 //                OrderClose::dispatch(['order_id' => $order_data['order_id'] ], secs: $order_config['close_length'] * 60);
             }
         }
+
+        //满减赠送记录
+        (new CoreManjianService())->addGiveRecords($data);
     }
 }

@@ -54,6 +54,8 @@ class CoreGoodsStatService extends BaseCoreService
             'date_time' => strtotime(date('Y-m-d', time())),
             'goods_id' => $data[ 'goods_id' ],
         ];
+        if ($stat_data['goods_id'] <= 0) return false;
+
         $stat = ( new Stat() )->where($stat_data)->findOrEmpty();
         if ($stat->isEmpty()) {
             $stat->allowField(array_merge(array_keys($stat_data), self::STAT_FIELD))->save(array_merge($stat_data, $data));
@@ -69,9 +71,10 @@ class CoreGoodsStatService extends BaseCoreService
 
     /**
      * 获取时间区间内天统计数据
+     * @param int $goods_id
      * @param string $start_date
      * @param string $end_date
-     *
+     * @return array
      */
     public function getStatData(int $goods_id, string $start_date, string $end_date)
     {
@@ -102,18 +105,19 @@ class CoreGoodsStatService extends BaseCoreService
 
     /**
      * 根据订单统计商品的支付数量及支付金额
-     *
+     * @param $order_data
+     * @return bool
      */
     public function saveGoodsPayNumAndMoneyByOrderId($order_data)
     {
         $order_goods_model = new OrderGoods();
-        $order_goods_data = $order_goods_model->where(['order_id' => $order_data['order_id']])->select()->toArray();
+        $order_goods_data = $order_goods_model->where([ 'order_id' => $order_data[ 'order_id' ] ])->select()->toArray();
         if (!empty($order_goods_data)) {
             foreach ($order_goods_data as $goods) {
-                CoreGoodsStatService::addStat(['goods_id' => $goods[ 'goods_id' ], 'pay_num' => $goods[ 'num' ], 'pay_money' => $goods[ 'order_goods_money' ]]);
+                CoreGoodsStatService::addStat([ 'goods_id' => $goods[ 'goods_id' ], 'pay_num' => $goods[ 'num' ], 'pay_money' => $goods[ 'order_goods_money' ] ]);
 
-                (new Goods())->where([['goods_id', '=', $goods['goods_id']]])->inc('pay_num', $goods['num']) ->update(); // 更新支付件数
-                (new Goods())->where([['goods_id', '=', $goods['goods_id']]])->inc('pay_money', $goods['order_goods_money']) ->update(); // 更新支付金额
+                ( new Goods() )->where([ [ 'goods_id', '=', $goods[ 'goods_id' ] ] ])->inc('pay_num', $goods[ 'num' ])->update(); // 更新支付件数
+                ( new Goods() )->where([ [ 'goods_id', '=', $goods[ 'goods_id' ] ] ])->inc('pay_money', $goods[ 'order_goods_money' ])->update(); // 更新支付金额
             }
         }
         return true;
@@ -121,17 +125,18 @@ class CoreGoodsStatService extends BaseCoreService
 
     /**
      * 根据退款订单统计商品的退款件数、金额
-     *
+     * @param $refund_data
+     * @return bool
      */
     public function saveGoodsRefundNumAndMoneyByOrderId($refund_data)
     {
         $order_goods_model = new OrderGoods();
-        $order_goods_info = $order_goods_model->where(['order_goods_id' => $refund_data['order_goods_id']])->findOrEmpty();
+        $order_goods_info = $order_goods_model->where([ 'order_goods_id' => $refund_data[ 'order_goods_id' ] ])->findOrEmpty();
         if (!$order_goods_info->isEmpty()) {
-            CoreGoodsStatService::addStat(['goods_id' => $order_goods_info[ 'goods_id' ], 'refund_num' => $order_goods_info['num'], 'refund_money' => $refund_data['money']]);
+            CoreGoodsStatService::addStat([ 'goods_id' => $order_goods_info[ 'goods_id' ], 'refund_num' => $order_goods_info[ 'num' ], 'refund_money' => $refund_data[ 'money' ] ]);
 
-            (new Goods())->where([['goods_id', '=', $order_goods_info['goods_id']]])->inc('refund_num', $order_goods_info['num']) ->update(); // 更新退款件数
-            (new Goods())->where([['goods_id', '=', $order_goods_info['goods_id']]])->inc('refund_money', $refund_data['money']) ->update(); // 更新退款金额
+            ( new Goods() )->where([ [ 'goods_id', '=', $order_goods_info[ 'goods_id' ] ] ])->inc('refund_num', $order_goods_info[ 'num' ])->update(); // 更新退款件数
+            ( new Goods() )->where([ [ 'goods_id', '=', $order_goods_info[ 'goods_id' ] ] ])->inc('refund_money', $refund_data[ 'money' ])->update(); // 更新退款金额
         }
 
         return true;

@@ -146,7 +146,7 @@
 import { reactive, ref } from 'vue'
 import { t } from '@/lang'
 import { orderRefund } from '@/addon/shop/api/order'
-import { img, filterNumber } from '@/utils/common'
+import { img, filterNumber,setTablePageStorage,getTablePageStorage } from '@/utils/common'
 import type { FormInstance } from 'element-plus'
 import { useRouter, useRoute } from 'vue-router'
 
@@ -219,11 +219,12 @@ const loadOrderList = (page: number = 1) => {
 			return el
 		})
 		orderTable.total = res.data.total
+		setTablePageStorage(orderTable.page,orderTable.limit,orderTable.searchParam);
 	}).catch(() => {
 		orderTable.loading = false
 	})
 }
-loadOrderList()
+loadOrderList(getTablePageStorage(orderTable.searchParam).page)
 
 const handleClick = (event: string) => {
 	orderTable.searchParam.status = event

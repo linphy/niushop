@@ -5,6 +5,10 @@ return [
 
     ],
     'listen' => [
+        // 手机端初始化加载事件
+        'initWap' => [
+            'addon\shop\app\listener\config\initWapListener'
+        ],
 
         // 添加/编辑商品之后的事件
         'AfterGoodsEdit' => [

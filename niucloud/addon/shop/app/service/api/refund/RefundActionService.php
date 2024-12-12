@@ -61,7 +61,7 @@ class RefundActionService extends BaseApiService
         $apply_money = $data['apply_money'];
 
         //查询是否是最后一笔退款且还没有退运费
-        $order_goods_count = $order_goods_model->where([['order_id', '=', $order_id], ])->count();
+        $order_goods_count = $order_goods_model->where([['order_id', '=', $order_id], ['is_gift', '=', 0]])->count();
         $refund_count = $this->model->where([['order_id', '=', $order_id], ['status', '<>', OrderRefundDict::CLOSE]])->count();
         //是否包含运费
         $is_refund_delivery = 0;
@@ -78,7 +78,8 @@ class RefundActionService extends BaseApiService
             $max_refund_money += $order['delivery_money'];
         }
         //退款金额不能大于可退款总额
-        if ($apply_money > $max_refund_money) throw new ApiException('SHOP_ORDER_REFUND_MONEY_GT_ORDER_MONEY');//退款金额不能大于可退款总额
+        $comparison = bccomp(bcsub($apply_money, $max_refund_money), 0);//浮点数直接进行比较会出现精度问题
+        if ($comparison > 0) throw new ApiException('SHOP_ORDER_REFUND_MONEY_GT_ORDER_MONEY');//退款金额不能大于可退款总额
         $reason = $data['reason'];
         $insert_data = [
             'order_id' => $order_goods_info['order_id'],
@@ -145,7 +146,8 @@ class RefundActionService extends BaseApiService
         }
 
         //退款金额不能大于可退款总额
-        if ($apply_money > $max_refund_money) throw new ApiException('SHOP_ORDER_REFUND_MONEY_GT_ORDER_MONEY');//退款金额不能大于可退款总额
+        $comparison = bccomp(bcsub($apply_money, $max_refund_money), 0);//浮点数直接进行比较会出现精度问题
+        if ($comparison > 0) throw new ApiException('SHOP_ORDER_REFUND_MONEY_GT_ORDER_MONEY');//退款金额不能大于可退款总额
         $reason = $data['reason'];
         $update_data = [
             'refund_type' => $refund_type,
@@ -159,7 +161,7 @@ class RefundActionService extends BaseApiService
         ];
         $order_refund_info->save($update_data);
         //订单申请退款后事件
-        event('AfterShopOrderRefundEdit', [ 'order_refund_no' => $order_refund_no, 'refund_data' => array_merge($order_refund_info->toArray(), $update_data)]);
+        event('AfterShopOrderRefundEdit', ['order_refund_no' => $order_refund_no, 'refund_data' => array_merge($order_refund_info->toArray(), $update_data)]);
         return true;
     }
 
@@ -286,7 +288,7 @@ class RefundActionService extends BaseApiService
         if ($order->isEmpty()) throw new ApiException('SHOP_ORDER_IS_INVALID');//订单已失效
 
         //查询是否是最后一笔退款且还没有退运费
-        $order_goods_count = $order_goods_model->where([['order_id', '=', $order_id], ])->count();
+        $order_goods_count = $order_goods_model->where([['order_id', '=', $order_id], ['is_gift', '=', 0]])->count();
         $refund_count = $this->model->where([['order_id', '=', $order_id], ['status', '<>', OrderRefundDict::CLOSE]])->count();
         $is_refund_delivery = 0;
         if(($refund_count + 1) >= $order_goods_count){//最后一笔退款

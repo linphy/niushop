@@ -113,4 +113,16 @@ class Cart extends BaseApiController
         return success('SUCCESS', ( new CartService() )->getSum($data));
     }
 
+    /**
+     * 购物车计算
+     */
+    public function calculate()
+    {
+        $data = $this->request->params([
+            [ 'sku_ids', [] ],
+        ]);
+
+        return success(( new CartService() )->calculate($data));
+    }
+
 }

@@ -107,7 +107,7 @@
                                         </div>
                                     </template>
                                     <template #default="{ row }">
-                                        <div class="flex flex-col"> 
+                                        <div class="flex flex-col">
                                             <span class="text-[13px]">￥{{ row.price }}</span>
                                             <span v-if="row.extend && row.extend.newcomer_price" class="text-[13px] mt-[5px]">
                                                 <span v-if="parseFloat(row.extend.newcomer_price) && row.num > 1">{{ row.num }}{{ t('piece') }}<span class="text-[#999]">（第1{{ t('piece') }}，￥{{parseFloat(row.extend.newcomer_price).toFixed(2)}}/{{ t('piece') }}；第{{row.num>2?'2~'+row.num:'2'}}{{ t('piece') }}，￥{{parseFloat(row.price).toFixed(2)}}/{{ t('piece') }}）</span></span>
@@ -118,7 +118,7 @@
                                     </template>
                                 </el-table-column>
                                 <el-table-column :label="t('orderMoney')" min-width="150" class-name="border-0 border-l-[1px] border-solid border-[var(--el-table-border-color)]">
-                                    <template #default="{ row }">      
+                                    <template #default="{ row }">
                                         <span class="text-[14px]">￥{{ item.order_money }}</span>
                                     </template>
                                 </el-table-column>
@@ -151,7 +151,7 @@
 import { reactive, ref } from 'vue'
 import { t } from '@/lang'
 import { getOrderList, getOrderStatus, getOrderPayType, getOrderFrom } from '@/addon/shop/api/order'
-import { img } from '@/utils/common'
+import { img,setTablePageStorage,getTablePageStorage } from '@/utils/common'
 import { FormInstance } from 'element-plus'
 import { useRouter, useRoute } from 'vue-router'
 
@@ -219,11 +219,12 @@ const loadOrderList = (page: number = 1) => {
             return el
         })
         orderTable.total = res.data.total
+        setTablePageStorage(orderTable.page, orderTable.limit, orderTable.searchParam);
     }).catch(() => {
         orderTable.loading = false
     })
 }
-loadOrderList()
+loadOrderList(getTablePageStorage(orderTable.searchParam).page);
 // 合并表格行
 const arraySpanMethod = ({
     row,

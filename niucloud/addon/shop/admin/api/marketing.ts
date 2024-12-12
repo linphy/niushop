@@ -43,7 +43,14 @@ export function getCouponStatusList() {
 export function getCouponList(params: Record<string, any>) {
     return request.get(`shop/goods/coupon`, { params })
 }
-
+/**
+ * 获取优惠券列表
+ * @param params
+ * @returns
+ */
+export function getCouponSelectList(params: Record<string, any>) {
+    return request.get(`shop/goods/coupon/select`, { params })
+}
 /**
  * 获取优惠券领取记录
  * @param params
@@ -327,7 +334,6 @@ export function getNewcomerGoodsList(params: Record<string, any>) {
     return request.get('shop/active/newcomer/goods/select', { params })
 }
 
-
 /**
  *  新人专享 - 已选商品列表
  * @param params
@@ -335,4 +341,204 @@ export function getNewcomerGoodsList(params: Record<string, any>) {
  */
 export function getNewcomerSelectGoodsList(params: Record<string, any>) {
     return request.get('shop/active/newcomer/goods/selectgoodssku', { params })
+}
+
+/************ 商品榜单 ****************/
+
+/**
+ * 设置排行榜配置
+ * @param params
+ * @returns
+ */
+export function setRankConfig(params: Record<string, any>) {
+    return request.post('shop/good/rank/config', params, { showErrorMessage: true, showSuccessMessage: true })
+}
+
+/**
+ * 获取排行榜配置
+ * @returns
+ */
+export function getRankConfig() {
+    return request.get(`shop/good/rank/config`)
+}
+
+/**
+ * 获取排行榜列表
+ * @param params
+ * @returns
+ */
+export function getRankPageList(params: Record<string, any>) {
+    return request.get(`shop/good/rank`, { params })
+}
+
+/**
+ * 获取排行榜选项列表
+ * @returns
+ */
+export function optionData() {
+    return request.get(`shop/good/rank/dict`)
+}
+
+/**
+ * 获取排行榜详情
+ * @param rank_id
+ * @returns
+ */
+export function getRankInfo(rank_id: number) {
+    return request.get(`shop/good/rank/${ rank_id }`);
+}
+
+/**
+ * 添加排行榜
+ * @param params
+ * @returns
+ */
+export function addGoodRank(params: Record<string, any>) {
+    return request.post('shop/good/rank', params, { showErrorMessage: true, showSuccessMessage: true })
+}
+
+/**
+ * 编辑排行榜
+ * @param params
+ * @returns
+ */
+export function editGoodRank(params: Record<string, any>) {
+    return request.put(`shop/good/rank/${ params.id }`, params, {
+        showErrorMessage: true,
+        showSuccessMessage: true
+    })
+}
+
+/**
+ * 排行榜状态
+ * @param params
+ * @returns
+ */
+export function editRankStatus(params: Record<string, any>) {
+    return request.put(`shop/goods/rank/status`, params, {
+        showErrorMessage: true,
+        showSuccessMessage: true
+    })
+}
+
+/**
+ * 删除排行榜
+ * @param id
+ * @returns
+ */
+export function deleteGoodRank(id: number) {
+    return request.delete(`shop/good/rank/${ id }`, { showSuccessMessage: true })
+}
+
+/**
+ * 批量删除排行榜
+ * @param params
+ * @returns
+ */
+export function batchDelete(params: Record<string, any>) {
+    return request.put(`shop/good/rank/batchDelete`, params, { showSuccessMessage: true })
+}
+
+/**
+ * 排行榜修改排序
+ * @param params
+ * @returns
+ */
+export function modifyGoodsRankSort(params: Record<string, any>) {
+    return request.put(`shop/good/rank/sort`, params, { showSuccessMessage: true })
+}
+
+/**
+ * 商品排行榜列表
+ * @param params
+ * @returns
+ */
+export function getSelectRankPageList(params: Record<string, any>) {
+    return request.get(`shop/good/rank/select`, { params })
+}
+
+/************ 满减 ****************/
+
+
+/**
+ * 获取满减列表
+ * @param params
+ * @returns
+ */
+export function getManjianList(params: Record<string, any>) {
+    return request.get(`shop/manjian`, { params })
+}
+
+/**
+ * 获取满减状态
+ * @returns
+ */
+export function getManjianStatusList() {
+    return request.get(`shop/manjian/status`)
+}
+
+/**
+ * 添加满减
+ * @param params
+ * @returns
+ */
+export function addManjian(params: Record<string, any>) {
+    return request.post('shop/manjian', params)
+}
+
+/**
+ * 编辑满减
+ * @param params
+ * @returns
+ */
+export function editManjian(params: Record<string, any>) {
+    return request.put(`shop/manjian/${ params.id }`, params)
+}
+
+/**
+ * 获取满减详情
+ * @param params
+ * @returns
+ */
+export function getManjianInfo(params: Record<string, any>) {
+    return request.get(`shop/manjian/init`, { params });
+}
+
+/**
+ * 检查商品
+ * @param params
+ * @returns
+ */
+export function goodsCheck(params: Record<string, any>) {
+    return request.post('shop/manjian/goods/check', params)
+}
+
+/**
+ * 获取满减详情会员列表
+ * @param params
+ * @returns
+ */
+export function getManjianMemberPageList(params: Record<string, any>) {
+    return request.get(`shop/manjian/member/${ params.id }`, { params })
+}
+
+/**
+ * 关闭满减
+ * @param manjian_id
+ * @returns
+ */
+export function closeManjian(manjian_id: number) {
+    return request.put(`shop/manjian/close/${ manjian_id }`, {}, {
+        showErrorMessage: true,
+        showSuccessMessage: true
+    })
+}
+
+/**
+ * 删除满减
+ * @param manjian_id
+ * @returns
+ */
+export function deleteManjian(manjian_id: number) {
+    return request.delete(`shop/manjian/${ manjian_id }`, { showSuccessMessage: true })
 }

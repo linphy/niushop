@@ -26,6 +26,13 @@ return [
                 'action' => ''
             ],
             [
+                'name' => 'SHOP_GOODS_RANK',
+                'title' => get_lang('dict_diy.shop_link_goods_rank'),
+                'url' => '/addon/shop/pages/goods/rank',
+                'is_share' => 1,
+                'action' => ''
+            ],
+            [
                 'name' => 'SHOP_GOODS_SEARCH',
                 'title' => get_lang('dict_diy.shop_link_goods_search'),
                 'url' => '/addon/shop/pages/goods/search',
@@ -57,6 +64,20 @@ return [
                 'name' => 'SHOP_MY_COUPON',
                 'title' => get_lang('dict_diy.shop_link_my_coupon'),
                 'url' => '/addon/shop/pages/member/my_coupon',
+                'is_share' => 0,
+                'action' => ''
+            ],
+            [
+                'name' => 'SHOP_MY_GOODS_COLLECT',
+                'title' => get_lang('dict_diy.shop_link_my_goods_collect'),
+                'url' => '/addon/shop/pages/goods/collect',
+                'is_share' => 0,
+                'action' => ''
+            ],
+            [
+                'name' => 'SHOP_MY_GOODS_BROWSE',
+                'title' => get_lang('dict_diy.shop_link_my_goods_browse'),
+                'url' => '/addon/shop/pages/goods/browse',
                 'is_share' => 0,
                 'action' => ''
             ],

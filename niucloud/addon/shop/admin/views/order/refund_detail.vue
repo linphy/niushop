@@ -220,7 +220,12 @@
 					<span>￥{{ refuseFormData.apply_money }}</span>
 				</el-form-item>
 				<el-form-item :label="t('agreeMoney')" prop="money">
-					<el-input v-model.trim="refuseFormData.money" clearable class="input-width" />
+					<div>
+						<el-input v-model.trim="refuseFormData.money" clearable class="input-width" />
+						<div  class="mt-[10px] text-[#999] text-[12px] leading-[20px]" v-if="formData.gift_balance && (Number(formData.gift_balance) > Number(formData.member.balance))">
+							当前订单需退还{{ formData.gift_balance}}元赠品余额。若用户余额不足，则默认不进行扣除。请联系客户确认退款金额。
+						</div>
+					</div>
 				</el-form-item>
 				<el-form-item :label="t('refundDeliveryAddress')" prop="refund_address_id" v-if="refuseFormData.refund_type == 2" >
 					<el-select v-model="refuseFormData.refund_address_id" clearable class="input-item">

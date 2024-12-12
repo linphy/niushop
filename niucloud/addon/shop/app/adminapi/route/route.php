@@ -468,6 +468,9 @@ Route::group('shop', function() {
     //删除优惠券
     Route::delete('goods/coupon/:id', 'addon\shop\app\adminapi\controller\marketing\Coupon@del');
 
+    //查询优惠券选择分页列表
+    Route::get('goods/coupon/select', 'addon\shop\app\adminapi\controller\marketing\Coupon@select');
+
     //查询选中的优惠券
     Route::get('goods/coupon/selected', 'addon\shop\app\adminapi\controller\marketing\Coupon@getSelectedLists');
 
@@ -614,6 +617,38 @@ Route::group('shop', function() {
     //新人专享商品选择已选商品列表
     Route::get('active/newcomer/goods/selectgoodssku', 'addon\shop\app\adminapi\controller\marketing\Newcomer@selectGoodsSku');
 
+    /************************************************** 商品排行榜 *****************************************************/
+
+    // 排行榜配置
+    Route::post('good/rank/config', 'addon\shop\app\adminapi\controller\goods\Rank@setRankConfig');
+
+    Route::get('good/rank/config', 'addon\shop\app\adminapi\controller\goods\Rank@getRankConfig');
+
+    // 排行榜分页列表
+    Route::get('good/rank', 'addon\shop\app\adminapi\controller\goods\Rank@pages');
+
+    Route::post('good/rank', 'addon\shop\app\adminapi\controller\goods\Rank@add');
+
+    Route::put('good/rank/:id', 'addon\shop\app\adminapi\controller\goods\Rank@edit');
+
+    Route::get('good/rank/:id', 'addon\shop\app\adminapi\controller\goods\Rank@info');
+
+    Route::get('good/rank/dict', 'addon\shop\app\adminapi\controller\goods\Rank@getOptionData');
+
+    Route::delete('good/rank/:id', 'addon\shop\app\adminapi\controller\goods\Rank@del');
+
+    //排行榜修改排序
+    Route::put('good/rank/sort', 'addon\shop\app\adminapi\controller\goods\Rank@editSort');
+
+    //排行榜批量删除
+    Route::put('good/rank/batchDelete', 'addon\shop\app\adminapi\controller\goods\Rank@batchDelete');
+
+    //获取排行榜分页列表
+    Route::get('good/rank/select', 'addon\shop\app\adminapi\controller\goods\Rank@select');
+
+    // 修改排行榜状态
+    Route::put('goods/rank/status', 'addon\shop\app\adminapi\controller\goods\Rank@modifyStatus');
+
     /************************************************** 商品统计 *****************************************************/
 
     //获取商品统计基本信息
@@ -627,6 +662,40 @@ Route::group('shop', function() {
 
     //获取统计类型
     Route::get('goods/statistics/type', 'addon\shop\app\adminapi\controller\goods\Statistics@getType');
+
+    //同步商品统计信息
+    Route::post('goods/statistics/sync', 'addon\shop\app\adminapi\controller\goods\Statistics@syncStatGoods');
+
+    /************************************************** 满减送 *****************************************************/
+    //满减送列表
+    Route::get('manjian', 'addon\shop\app\adminapi\controller\marketing\Manjian@lists');
+
+    //关闭满减送
+    Route::put('manjian/close/:id', 'addon\shop\app\adminapi\controller\marketing\Manjian@closeManjian');
+
+    //删除满减送
+    Route::delete('manjian/:id', 'addon\shop\app\adminapi\controller\marketing\Manjian@del');
+
+    //满减送详情
+    Route::get('manjian/:id', 'addon\shop\app\adminapi\controller\marketing\Manjian@info');
+
+    //满减送参与会员
+    Route::get('manjian/member/:id', 'addon\shop\app\adminapi\controller\marketing\Manjian@member');
+
+    //添加满减送
+    Route::post('manjian', 'addon\shop\app\adminapi\controller\marketing\Manjian@add');
+
+    //编辑满减送
+    Route::put('manjian/:id', 'addon\shop\app\adminapi\controller\marketing\Manjian@edit');
+
+    //获取编辑数据
+    Route::get('manjian/init', 'addon\shop\app\adminapi\controller\marketing\Manjian@init');
+
+    //状态
+    Route::get('manjian/status', 'addon\shop\app\adminapi\controller\marketing\Manjian@status');
+
+    //满减送商品校验
+    Route::post('manjian/goods/check', 'addon\shop\app\adminapi\controller\marketing\Manjian@checkGoods');
 
 })->middleware([
     AdminCheckToken::class,

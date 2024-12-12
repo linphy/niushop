@@ -78,7 +78,7 @@ class CoreGoodsConfigService extends BaseCoreService
                 'cart' => [
                     'control' => 1, // 开关，1：开启，0：关闭
                     'event' => 'detail', // 购物车事件，detail：跳转商品详情，cart：加入购物车
-                    'style' => 'style-1', // 样式风格
+                    'style' => 'style-4', // 样式风格
                     'text' => '购买' //文字
                 ]
             ];

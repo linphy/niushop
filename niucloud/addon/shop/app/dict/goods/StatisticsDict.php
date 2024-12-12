@@ -21,7 +21,7 @@ class StatisticsDict
     const PAY_NUM = 'pay_num';
     const COLLECT_NUM = 'collect_num';
     const PAY_MONEY = 'pay_money';
-
+    const GOODS_VISIT_MEMBER_COUNT = 'goods_visit_member_count';
 
     /**
      * 排行周期
@@ -32,17 +32,17 @@ class StatisticsDict
     {
         $data = [
             self::ACCESS_NUM => get_lang('dict_shop_goods_statistics_type.access_num'), // 访问次数（浏览量）
+            self::GOODS_VISIT_MEMBER_COUNT => get_lang('dict_shop_goods_statistics_type.goods_visit_member_count'), // 访客数
             self::CART_NUM => get_lang('dict_shop_goods_statistics_type.cart_num'), // 加入购物车数量
             self::SALE_NUM => get_lang('dict_shop_goods_statistics_type.sale_num'), // 商品销量（下单数）
             self::PAY_NUM => get_lang('dict_shop_goods_statistics_type.pay_num'), // 支付件数
-            self::COLLECT_NUM => get_lang('dict_shop_goods_statistics_type.collect_num'), // 收藏数量
             self::PAY_MONEY => get_lang('dict_shop_goods_statistics_type.pay_money'), // 支付总金额
+            self::COLLECT_NUM => get_lang('dict_shop_goods_statistics_type.collect_num'), // 收藏数量
         ];
         if (!$type) {
             return $data;
         }
         return $data[ $type ] ?? '';
     }
-
 
 }

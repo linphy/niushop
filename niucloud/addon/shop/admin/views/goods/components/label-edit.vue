@@ -41,7 +41,7 @@
                 <el-input v-model.trim="formData.memo" type="textarea" clearable :placeholder="t('memoPlaceholder')" class="input-width" maxlength="50"/>
             </el-form-item>
             <el-form-item :label="t('sort')" >
-                <el-input v-model.trim="formData.sort" clearable :placeholder="t('sortPlaceholder')" class="input-width" @keyup="filterNumber($event)" maxlength="6" show-word-limit @blur="formData.sort = $event.target.value"/>
+                <el-input v-model.trim="formData.sort" clearable :placeholder="t('sortPlaceholder')" class="input-width" @keyup="filterNumber($event)" maxlength="8" show-word-limit @blur="formData.sort = $event.target.value"/>
             </el-form-item>
         </el-form>
 

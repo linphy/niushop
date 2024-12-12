@@ -57,6 +57,8 @@ class CoreOrderCreateService extends BaseCoreService
         $order_key = $this->param[ 'order_key' ] ?? '';
         //获取订单缓存缓存
         $this->getOrderCache($order_key);
+
+        $this->goods_data = array_merge($this->goods_data, $this->gift_goods);
         //校验错误
         $this->checkError();
         //普通订单校验库存
@@ -113,6 +115,7 @@ class CoreOrderCreateService extends BaseCoreService
                 'discount_money' => $v[ 'discount_money' ] ?? 0,
                 'status' => OrderGoodsDict::NORMAL,
                 'extend' => $v[ 'extend' ] ?? '',
+                'is_gift' => $v[ 'is_gift' ] ?? 0,
             ];
         }
         $create_order_data = array(

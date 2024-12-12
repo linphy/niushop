@@ -105,7 +105,7 @@ class DiscountService extends BaseAdminService
                 if ($where[ 'active_id' ]) $active_where[] = [ 'active_id', '=', $where[ 'active_id' ] ];
                 $query->where($active_where);
             } ])
-            ->where($sku_where)->order($order)->append([ 'goods_type_name', 'goods_cover_thumb_small', 'goods_cover_thumb_mid', 'goods_label_name', 'activeGoods.active_goods_status_name' ]);
+            ->where($sku_where)->order($order)->append([ 'goods_type_name', 'goods_cover_thumb_mid', 'goods_label_name', 'activeGoods.active_goods_status_name' ]);
         $list = $this->pageQuery($search_model);
 
         foreach ($list[ 'data' ] as $key => $item) {

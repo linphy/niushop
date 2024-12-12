@@ -68,7 +68,7 @@ class AfterShopOrderCreate
                 ]);
 
                 // 商品销量统计 - 下单数
-                CoreGoodsStatService::addStat(['goods_id' => $v[ 'goods_id' ], 'sale_num' => $v[ 'num' ]]);
+                CoreGoodsStatService::addStat([ 'goods_id' => $v[ 'goods_id' ], 'sale_num' => $v[ 'num' ] ]);
             }
 
             //写入发票

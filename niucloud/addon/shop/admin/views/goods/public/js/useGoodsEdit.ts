@@ -43,6 +43,7 @@ export function useGoodsEdit(params: any = {}) {
         service_ids: [],
         supplier_id: '',
         status: '1',
+        is_gift: 0,
         sort: '',
 
         addon_shop_supplier: [],
@@ -351,6 +352,7 @@ export function useGoodsEdit(params: any = {}) {
             formData.supplier_id = data.goods_info.supplier_id
             formData.status = data.goods_info.status
             formData.sort = data.goods_info.sort
+            formData.is_gift = data.goods_info.is_gift
 
             /*************** 商品参数-start ****************/
             formData.attr_format = data.goods_info.attr_format ? JSON.parse(data.goods_info.attr_format) : []
@@ -549,7 +551,7 @@ export function useGoodsEdit(params: any = {}) {
         // 渲染商品规格数据、表格
         refreshGoodsSkuData()
         refreshSkuTable()
-        
+
     })
 
     // 删除规格值

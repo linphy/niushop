@@ -38,8 +38,7 @@ class Coupon extends BaseAdminController
     {
         $data = $this->request->params([
             [ "title", "" ],
-            [ "status", "" ],
-            [ "verify_coupon_ids", "" ]
+            [ "status", "" ]
         ]);
         return success(( new CouponService() )->getPage($data));
     }
@@ -146,6 +145,23 @@ class Coupon extends BaseAdminController
         return success('EDIT_SUCCESS');
     }
 
+    /**
+     * 优惠券选择分页列表
+     * @return \think\Response
+     */
+    public function select()
+    {
+        $data = $this->request->params([
+            [ "title", "" ],
+            [ "verify_coupon_ids", "" ]
+        ]);
+        return success(( new CouponService() )->getSelectPage($data));
+    }
+
+    /**
+     * 查询选中的优惠券
+     * @return \think\Response
+     */
     public function getSelectedLists()
     {
         $data = $this->request->params([

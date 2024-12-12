@@ -84,4 +84,13 @@ class Goods extends BaseApiController
         return success(( new GoodsService() )->getGoodsComponents($data));
     }
 
+    /**
+     * 猜你喜欢
+     * @return \think\Response
+     */
+    public function recommend()
+    {
+        return success(( new GoodsService() )->getRecommend());
+    }
+
 }

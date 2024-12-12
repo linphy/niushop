@@ -43,6 +43,12 @@ Route::group('shop', function() {
     // 获取商品列表供组件调用
     Route::get('goods/components', 'addon\shop\app\api\controller\goods\Goods@components');
 
+    // 获取商品服务列表
+    Route::get('goods/service', 'addon\shop\app\api\controller\goods\GoodsService@all');
+
+    // 获取推荐商品列表
+    Route::get('goods/recommend', 'addon\shop\app\api\controller\goods\Goods@recommend');
+
     /***************************************************** 评价 ****************************************************/
     // 获取 评价设置
     Route::get('goods/evaluate/config', 'addon\shop\app\api\controller\Config@evaluate');
@@ -124,6 +130,24 @@ Route::group('shop', function() {
     // 新人专享活动配置
     Route::get('newcomer/config', 'addon\shop\app\api\controller\marketing\Newcomer@config');
 
+    /***************************************************** 商品榜单 ****************************************************/
+
+    // 商品榜单列表
+    Route::get('rank', 'addon\shop\app\api\controller\goods\Rank@pages');
+
+    // 榜单商品列表
+    Route::get('rank/goods', 'addon\shop\app\api\controller\goods\Rank@goods');
+
+    // 商品排行榜组件列表
+    Route::get('rank/components', 'addon\shop\app\api\controller\goods\Rank@components');
+
+    Route::get('rank/getRankConfig', 'addon\shop\app\api\controller\goods\Rank@getRankConfig');
+
+    /***************************************************** 满减送 ****************************************************/
+
+    // 获取商品满减优惠信息
+    Route::get('manjian/info', 'addon\shop\app\api\controller\marketing\Manjian@info');
+
 })->middleware(ApiChannel::class)
     ->middleware(ApiCheckToken::class)//false表示不验证登录
     ->middleware(ApiLog::class);
@@ -153,6 +177,9 @@ Route::group('shop', function() {
 
     // 购物车数量
     Route::get('cart/sum', 'addon\shop\app\api\controller\cart\Cart@sum');
+
+    // 购物车计算
+    Route::get('cart/calculate', 'addon\shop\app\api\controller\cart\Cart@calculate');
 
     /***************************************************** 订单 ****************************************************/
 
@@ -214,7 +241,7 @@ Route::group('shop', function() {
     Route::post('goods/collect/:goods_id', 'addon\shop\app\api\controller\goods\GoodsCollect@addGoodsCollect');
 
     //商品取消收藏
-    Route::delete('goods/collect/:goods_id', 'addon\shop\app\api\controller\goods\GoodsCollect@cancelGoodsCollect');
+    Route::put('goods/collect', 'addon\shop\app\api\controller\goods\GoodsCollect@cancelGoodsCollect');
 
     //商品足迹
     Route::get('goods/browse','addon\shop\app\api\controller\goods\GoodsBrowse@getMemberGoodsBrowseList');
@@ -257,6 +284,11 @@ Route::group('shop', function() {
 
     // 退款方式
     Route::get('order/refund/type', 'addon\shop\app\api\controller\refund\Refund@getRefundType');
+
+    // 发票列表
+    Route::get('invoice', 'addon\shop\app\api\controller\order\Invoice@lists');
+    // 发票详情
+    Route::get('invoice/:id', 'addon\shop\app\api\controller\order\Invoice@info');
 
 })->middleware(ApiChannel::class)
     ->middleware(ApiCheckToken::class, true)//表示验证登录

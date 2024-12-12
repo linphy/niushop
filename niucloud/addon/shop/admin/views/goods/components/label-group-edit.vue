@@ -5,7 +5,7 @@
                 <el-input v-model.trim="formData.group_name" clearable :placeholder="t('groupNamePlaceholder')" class="input-width" maxlength="10" />
             </el-form-item>
             <el-form-item :label="t('sort')" >
-                <el-input v-model.trim="formData.sort" clearable :placeholder="t('sortPlaceholder')" class="input-width" @keyup="filterNumber($event)" maxlength="6" show-word-limit @blur="formData.sort = $event.target.value"/>
+                <el-input v-model.trim="formData.sort" clearable :placeholder="t('sortPlaceholder')" class="input-width" @keyup="filterNumber($event)" maxlength="8" show-word-limit @blur="formData.sort = $event.target.value"/>
             </el-form-item>
         </el-form>
 

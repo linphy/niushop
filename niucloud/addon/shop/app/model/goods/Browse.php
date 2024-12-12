@@ -42,7 +42,7 @@ class Browse extends BaseModel
      */
     public function goods()
     {
-        return $this->hasOne(Goods::class, 'goods_id', 'goods_id')->joinType('left')->withField('goods_id, goods_name,goods_cover')->append([ 'goods_cover_thumb_small','goods_cover_thumb_mid' ])->bind([ 'goods_name', 'goods_cover_thumb_small', 'goods_cover_thumb_mid' ]);
+        return $this->hasOne(Goods::class, 'goods_id', 'goods_id')->joinType('left')->withField('goods_id, goods_name,goods_cover,status')->append([ 'goods_cover_thumb_mid' ])->bind([ 'goods_name',  'goods_cover_thumb_mid','member_discount','status' ]);
     }
 
     /**
@@ -51,7 +51,7 @@ class Browse extends BaseModel
      */
     public function goodsSku()
     {
-        return $this->hasOne(GoodsSku::class, 'goods_id', 'goods_id')->bind(['price','market_price']);
+        return $this->hasOne(GoodsSku::class, 'sku_id', 'sku_id')->bind(['price','market_price','member_price']);
     }
 
 }

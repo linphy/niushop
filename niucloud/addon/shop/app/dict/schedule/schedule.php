@@ -89,5 +89,40 @@ return [
         'class' => 'addon\shop\app\job\marketing\ActiveEnd',
         'function' => ''
     ],
+    [
+        'key' => 'shop_manjiansong_start',
+        'name' => '满减送自动开始',
+        'desc' => '',
+        'time' => [
+            'type' => 'min',
+            'min' => 1
+        ],
+        'class' => 'addon\shop\app\job\marketing\ManjianStart',
+        'function' => ''
+    ],
+    [
+        'key' => 'shop_manjiansong_end',
+        'name' => '满减送自动结束',
+        'desc' => '',
+        'time' => [
+            'type' => 'min',
+            'min' => 1
+        ],
+        'class' => 'addon\shop\app\job\marketing\ManjianEnd',
+        'function' => ''
+    ],
+    [
+        'key' => 'shop_goods_statistical_update',
+        'name' => '商品统计更新',
+        'desc' => '',
+        'time' => [
+            'type' => 'day',
+            'day' => 1,
+            'min' => 0,
+            'hour' => 0
+        ],
+        'class' => 'addon\shop\app\job\goods\GoodsStatisticalUpdate',
+        'function' => ''
+    ],
 
 ];

@@ -60,7 +60,7 @@
                 </el-form-item>
 
                 <el-form-item :label="t('sort')" >
-                    <el-input v-model.trim="formData.sort"  maxlength="6" show-word-limit clearable :placeholder="t('sortPlaceholder')" class="input-width" @keyup="filterNumber($event)"/>
+                    <el-input v-model.trim="formData.sort"  maxlength="8" show-word-limit clearable :placeholder="t('sortPlaceholder')" class="input-width" @keyup="filterNumber($event)"/>
                 </el-form-item>
 
             </el-form>

@@ -24,7 +24,7 @@
                                         <img class="w-[50px] h-[50px]" v-if="row.goods_image" :src="img(row.goods_image)" alt="">
                                         <img class="w-[50px] h-[50px]" v-else src="" alt="">
                                     </div>
-                                    <div class="flex flex-col">
+                                    <div class="flex flex-col items-start">
                                         <el-tooltip class="box-item" effect="light" placement="top">
                                             <template #content>
                                                 <div class="max-w-[250px]">{{row.goods_name}}</div>
@@ -32,6 +32,7 @@
                                             <p class="multi-hidden text-[14px]">{{ row.goods_name }}</p>
                                         </el-tooltip>
                                         <span class="text-[12px] text-[#999] truncate">{{ row.sku_name }}</span>
+                                        <span class="px-[4px]  text-[12px] text-[#fff] rounded-[4px] bg-primary leading-[18px]" v-if="row.is_gift == 1">赠品</span>
                                     </div>
                                 </div>
                             </template>
@@ -134,11 +135,15 @@ const refundSelectAll = (selection)=>{
 }
 
 const selectable = (row:any, index:number) => {
-    let bool = false;
-    if(row.status == 1){
-        bool = true;
+    let bool = false
+    if (row.status == 1) {
+        bool = true
     }
-    return bool;
+    if (row.is_gift == 1) {
+        bool = false
+    }
+
+    return bool
 }
 
 /**

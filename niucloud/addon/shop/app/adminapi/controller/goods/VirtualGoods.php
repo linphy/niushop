@@ -55,6 +55,7 @@ class VirtualGoods extends BaseAdminController
             [ "sort", 0 ],
             [ 'attr_id', 0 ],
             [ 'attr_format', '' ],
+            [ 'is_gift', 0 ],
 
             // 规格类型，single：单规格，multi：多规格
             [ 'spec_type', '' ],
@@ -117,6 +118,7 @@ class VirtualGoods extends BaseAdminController
             [ "sort", 0 ],
             [ 'attr_id', 0 ],
             [ 'attr_format', '' ],
+            [ 'is_gift', 0 ],
 
             // 规格类型，single：单规格，multi：多规格
             [ 'spec_type', '' ],

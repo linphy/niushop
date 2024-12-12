@@ -2,7 +2,7 @@
     <div class="main-container">
 
         <el-card class="card !border-none" shadow="never">
-            <el-page-header :content="pageName" :icon="ArrowLeft" @back="$router.back()" />
+            <el-page-header :content="pageName" :icon="ArrowLeft" @back="back()" />
         </el-card>
 
         <el-card class="box-card mt-[15px] !border-none" shadow="never">
@@ -113,6 +113,10 @@ import { ArrowLeft } from '@element-plus/icons-vue'
 const route = useRoute()
 const router = useRouter()
 const pageName = route.meta.title
+
+const back = () => {
+    router.push('/shop/marketing/coupon/list')
+}
 
 const couponId: number = parseInt(route.query.id)
 const loading = ref(false)

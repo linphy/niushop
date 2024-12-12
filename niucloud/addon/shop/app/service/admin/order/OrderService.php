@@ -71,7 +71,7 @@ class OrderService extends BaseAdminService
             ], 'left')
             ->with([
                 'order_goods' => function($query) {
-                    $query->field('extend,order_goods_id, order_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money, is_enable_refund, goods_type, delivery_status, status,discount_money,delivery_id')->append([ 'delivery_status_name', 'status_name', 'goods_image_thumb_small' ]);
+                    $query->field('extend,order_goods_id, order_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money, is_enable_refund, goods_type, delivery_status, status,discount_money,delivery_id,is_gift')->append([ 'delivery_status_name', 'status_name', 'goods_image_thumb_small' ]);
                 }
             ])->order($order)->append([ 'order_from_name', 'order_type_name', 'status_name', 'delivery_type_name' ]);
         $order_status_list = OrderDict::getStatus();
@@ -97,13 +97,16 @@ class OrderService extends BaseAdminService
             ->with(
                 [
                     'order_goods' => function($query) {
-                        $query->field('extend,order_goods_id, order_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money, is_enable_refund, goods_type, delivery_status, status,discount_money,delivery_id')->append([ 'delivery_status_name', 'status_name' ]);
+                        $query->field('extend,order_goods_id, order_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money, is_enable_refund, goods_type, delivery_status, status,discount_money,delivery_id,is_gift')->append([ 'delivery_status_name', 'status_name' ]);
                     },
                     'member' => function($query) {
                         $query->field('member_id, nickname, mobile, headimg');
                     },
                     'order_log' => function($query) {
                         $query->field('order_id, content, main_type, create_time, main_id, type')->order("create_time desc, id desc")->append([ 'main_type_name', 'type_name', 'main_name' ]);
+                    },
+                    'order_discount' => function ($query) {
+                        $query->field('order_id,discount_type,money');
                     }
                 ])->append([ 'order_from_name', 'order_type_name', 'status_name', 'delivery_type_name' ])->findOrEmpty()->toArray();
         $order_status_list = OrderDict::getStatus();
@@ -126,6 +129,21 @@ class OrderService extends BaseAdminService
             $info[ 'pay' ] = ( new Pay() )->where([ [ 'out_trade_no', '=', $info[ 'out_trade_no' ] ] ])
                 ->field('out_trade_no, type, pay_time')->append([ 'type_name' ])->findOrEmpty()->toArray();
         }
+
+        $coupon_money = 0;
+        $manjian_discount_money = 0;
+        if ($info[ 'order_discount' ]) {
+            foreach ($info[ 'order_discount' ] as $item) {
+                if ($item[ 'discount_type' ] == 'coupon') {
+                    $coupon_money += $item[ 'money' ];
+                }
+                if ($item[ 'discount_type' ] == 'manjian') {
+                    $manjian_discount_money += $item[ 'money' ];
+                }
+            }
+        }
+        $info[ 'coupon_money' ] = number_format($coupon_money, 2, '.', '');
+        $info[ 'manjian_discount_money' ] = number_format($manjian_discount_money, 2, '.', '');
 
         return $info;
     }

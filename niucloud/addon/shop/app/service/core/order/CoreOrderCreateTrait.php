@@ -26,6 +26,7 @@ use addon\shop\app\service\core\delivery\CoreExpressService;
 use addon\shop\app\service\core\delivery\CoreLocalDeliveryService;
 use addon\shop\app\service\core\delivery\CoreStoreService;
 use addon\shop\app\service\core\goods\CoreGoodsLimitBuyService;
+use addon\shop\app\service\core\marketing\CoreManjianService;
 use app\service\core\member\CoreMemberAddressService;
 use core\exception\CommonException;
 use Exception;
@@ -43,6 +44,7 @@ trait CoreOrderCreateTrait
     public $buyer = [];//买家信息
     public $basic = [
         'discount_money' => 0,//优惠金额
+        'coupon_money' => 0,//优惠券金额
         'delivery_money' => 0,
         'goods_money' => 0,
         'order_money' => 0
@@ -51,6 +53,8 @@ trait CoreOrderCreateTrait
     public $extend_data = [];//活动数据
     public $config = [];//配置集合
     public $discount = [];//优惠整合
+    public $gift = [];//赠品集合
+    public $gift_goods = [];//赠品商品
     public $limit_buy = [];//限购
 
     public $delivery = [];//配送相关
@@ -125,10 +129,26 @@ trait CoreOrderCreateTrait
      */
     public function checkStock($order_goods_data)
     {
-        $order_goods_data_column = array_column($order_goods_data, 'num', 'sku_id');
-        $sku_list = ( new GoodsSku() )->where([ [ 'sku_id', 'in', array_column($order_goods_data, 'sku_id') ] ])->select();
+        $sku_list = ( new GoodsSku() )->field('sku_id,goods_id,sku_name,stock')->where([ [ 'sku_id', 'in', array_column($order_goods_data, 'sku_id') ] ])
+            ->with([
+                'goods' => function ($query) {
+                    $query->field('goods_id,goods_name');
+                }
+            ])->select()->toArray();
+
+        // todo 赠品库存校验
+        $sku_num = [];
+        foreach ($order_goods_data as $v) {
+            if (isset($sku_num[ 'num_'  . $v[ 'sku_id' ] ])) {
+                $sku_num[ 'num_'  . $v[ 'sku_id' ] ] += $v[ 'num' ];
+            } else {
+                $sku_num[ 'num_'  . $v[ 'sku_id' ] ] = $v[ 'num' ];
+            }
+        }
+
         foreach ($sku_list as $v) {
-            if ($v[ 'stock' ] < $order_goods_data_column[ $v[ 'sku_id' ] ]) throw new CommonException('商品库存不足');
+            $goods_name = count($sku_list) > 1 ? '“'. $v[ 'goods' ][ 'goods_name' ] . $v[ 'sku_name' ] . '”' : '';
+            if ($v[ 'stock' ] < $sku_num[ 'num_'  . $v[ 'sku_id' ] ]) throw new CommonException('商品' . $goods_name . '库存不足');
         }
     }
 
@@ -221,15 +241,29 @@ trait CoreOrderCreateTrait
                             break;
                     }
                 }
-                $insert_discount_data[] = [
-                    'type' => $v[ 'type' ],
-                    'num' => $v[ 'num' ],
-                    'money' => $v[ 'money' ],
-                    'discount_type' => $v[ 'discount_type' ],
-                    'discount_type_id' => $v[ 'discount_type_id' ],
-                    'content' => $v[ 'content' ],
-                    'order_id' => $this->order_id,
-                ];
+                if (isset($v[ 'discount_type' ])) {
+                    $insert_discount_data[] = [
+                        'type' => $v[ 'type' ],
+                        'num' => $v[ 'num' ],
+                        'money' => $v[ 'money' ],
+                        'discount_type' => $v[ 'discount_type' ],
+                        'discount_type_id' => $v[ 'discount_type_id' ],
+                        'content' => $v[ 'content' ],
+                        'order_id' => $this->order_id,
+                    ];
+                } else {
+                    foreach ($v as $vv) {
+                        $insert_discount_data[] = [
+                            'type' => $vv[ 'type' ],
+                            'num' => $vv[ 'num' ],
+                            'money' => $vv[ 'money' ],
+                            'discount_type' => $vv[ 'discount_type' ],
+                            'discount_type_id' => $vv[ 'discount_type_id' ],
+                            'content' => $vv[ 'content' ],
+                            'order_id' => $this->order_id,
+                        ];
+                    }
+                }
 
             }
 
@@ -352,6 +386,8 @@ trait CoreOrderCreateTrait
     {
         //查询积分优惠
 //        $this->getPoint();
+        //满减送优惠计算
+        $this->calculateManjian();
         //查询可用优惠券
         $this->calculateCoupon();
     }
@@ -426,8 +462,11 @@ trait CoreOrderCreateTrait
                         $coupon_money = $match_order_goods_money;
                     }
                     $surplus_money = $coupon_money;
-                    $match_count = count($match_goods_list);
                     $match_goods_list = array_values($match_goods_list);
+                    $match_goods_list = array_filter($match_goods_list, function($item){
+                        return ($item[ 'goods_money' ] - $item[ 'discount_money' ]) !== 0;
+                    });
+                    $match_count = count($match_goods_list);
                     //根据商品金额计算个订单项享受的优惠
                     foreach ($match_goods_list as $k => $v) {
                         $item_order_goods_money = $this->calculateOrderGoodsMoney($v);
@@ -454,6 +493,7 @@ trait CoreOrderCreateTrait
                     }
                     //优惠累增
                     $this->basic[ 'discount_money' ] += $coupon_money;
+                    $this->basic[ 'coupon_money' ] += $coupon_money;
 //                    $discount_money = $this->basic['discount']['discount_money'];
                     $this->discount[ 'coupon' ] = $this->discountFormat(
                         array_column($match_goods_list, 'sku_id'),
@@ -621,7 +661,7 @@ trait CoreOrderCreateTrait
             if (!empty($this->extend_data) && isset($this->extend_data[ 'delivery_money' ])) {
                 $this->basic[ 'delivery_money' ] = $this->extend_data[ 'delivery_money' ];
             } else {
-                $this->basic[ 'delivery_money' ] = round($this->basic[ 'delivery_money' ] ?? 0);
+                $this->basic[ 'delivery_money' ] = round($this->basic[ 'delivery_money' ] ?? 0, 2);
             }
 
         }
@@ -674,6 +714,15 @@ trait CoreOrderCreateTrait
             $this->setError($error);
         }
         return true;
+    }
+
+    /**
+     * 满减送优惠计算
+     * @return void
+     */
+    public function calculateManjian()
+    {
+        (new CoreManjianService())->calculate($this);
     }
 
     /**

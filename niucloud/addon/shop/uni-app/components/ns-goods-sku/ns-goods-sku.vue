@@ -123,7 +123,7 @@
         let price = "0.00";
         if (Object.keys(goodsDetail.value).length && goodsDetail.value.type == 'newcomer_discount' && goodsDetail.value.is_newcomer && goodsDetail.value.newcomer_price != goodsDetail.value.price && (Object.keys(cartSkuList.value).length ? parseInt(cartSkuList.value.num) + buyNum.value : buyNum.value) < 2) {
             // 新人价
-            price = goodsDetail.value.newcomer_price ? goodsDetail.value.newcomer_price : goodsDetail.value.price;
+            price = goodsDetail.value.newcomer_price;
         } else if (Object.keys(goodsDetail.value).length && goodsDetail.value.type == 'discount' && Object.keys(goodsDetail.value.goods).length && goodsDetail.value.goods.is_discount && goodsDetail.value.sale_price != goodsDetail.value.price) {
             price = goodsDetail.value.sale_price // 折扣价
         } else if (Object.keys(goodsDetail.value).length && Object.keys(goodsDetail.value.goods).length && goodsDetail.value.goods.member_discount && getToken() && goodsDetail.value.member_price != goodsDetail.value.price) {
@@ -370,7 +370,7 @@
 
             num += Number(buyNum.value);
 			limitNum += Number(buyNum.value);
-			/************** 限购-start **************/ 
+			/************** 限购-start **************/
 			if(goodsDetail.value.goods.is_limit){
 				let tips = `该商品单次限购${goodsDetail.value.goods.max_buy}件`;
 				if(goodsDetail.value.goods.limit_type != 1){ //单次限购
@@ -384,7 +384,7 @@
 					return false;
 				}
 			}
-			/************** 限购-end **************/ 
+			/************** 限购-end **************/
             cartStore.increase({
                 id: cartId || '',
                 goods_id: goodsDetail.value.goods_id,

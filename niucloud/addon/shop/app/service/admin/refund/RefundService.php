@@ -14,6 +14,7 @@ namespace addon\shop\app\service\admin\refund;
 use addon\shop\app\dict\delivery\DeliveryDict;
 use addon\shop\app\model\delivery\Store;
 use addon\shop\app\model\order\OrderRefund;
+use addon\shop\app\service\core\marketing\CoreManjianService;
 use core\base\BaseAdminService;
 
 /**
@@ -72,7 +73,7 @@ class RefundService extends BaseAdminService
                         $query->field('order_goods_id, order_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money, is_enable_refund, goods_type');
                     },
                     'member' => function($query) {
-                        $query->field('member_id, nickname, mobile, headimg');
+                        $query->field('member_id, nickname, mobile, headimg, balance');
                     },
                     'pay_refund' => function($query) {
                         $query->field('refund_no, type, money, create_time, refund_time')->append([ 'type_name' ]);
@@ -89,6 +90,20 @@ class RefundService extends BaseAdminService
                     ->field('store_id, store_name, full_address, store_mobile, trade_time')
                     ->findOrEmpty()->toArray();
             }
+
+            $refund_gift_list = (new CoreManjianService())->refundCheck($info);
+            if (!empty($refund_gift_list)) {
+                $gift_balance = 0;
+                foreach ($refund_gift_list as $value) {
+                    if (isset($value[ 'balance' ]) && $value[ 'balance' ] > 0) {
+                        $gift_balance = bcadd($gift_balance, $value[ 'balance' ], 2);
+                    }
+                }
+                if ($gift_balance > 0) {
+                    $info[ 'gift_balance' ] = $gift_balance;
+                }
+            }
+
         }
         return $info;
     }

@@ -133,7 +133,7 @@
 				</div>
 			</el-dialog>
 
-			<el-dialog v-model="categoryShowDialog" :title="t('goodsCategoryTitle')" width="1000px" :close-on-press-escape="false" :destroy-on-close="true" :close-on-click-modal="false">
+			<el-dialog v-model="categoryShowDialog" :title="t('goodsCategoryTitle')" width="750px" :close-on-press-escape="false" :destroy-on-close="true" :close-on-click-modal="false">
 				<el-table :data="categoryTable.data" ref="categoryTableRef" size="large" v-loading="categoryTable.loading"
 					height="490px" @selection-change="handleSelectionChange" row-key="category_id"
 					:expand-row-keys="expand_category_ids"

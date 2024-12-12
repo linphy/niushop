@@ -43,11 +43,12 @@
                         <div class="flex cursor-pointer">
                             <div class="flex items-center min-w-[50px] mr-[10px]">
                                 <img class="w-[50px] h-[50px]" v-if="row.goods_image" :src="img(row.goods_image)" alt="">
-                                <img class="w-[50px] h-[50px]" v-else src="" alt="">
+                                 <img class="w-[50px] h-[50px]" v-else src="" alt="">
                             </div>
-                            <div class="flex  flex-col">
+                            <div class="flex  flex-col items-start">
                                 <span class="multi-hidden text-[14px]">{{row.goods_name}}</span>
                                 <span class="text-[#999] text-[12px]" v-if="row.sku_name">{{row.sku_name}}</span>
+                                <span class="px-[4px]  text-[12px] text-[#fff] rounded-[4px] bg-primary leading-[18px]" v-if="row.is_gift == 1">赠品</span>
                             </div>
                         </div>
                     </template>
@@ -98,12 +99,12 @@ getCompanyList({}).then((data) => {
     companyData.value = data.data
 })
 
-getIsTradeManaged().then(res=>{
-    isTradeManaged.value = res.data.is_trade_managed;
+getIsTradeManaged().then(res => {
+    isTradeManaged.value = res.data.is_trade_managed
 })
 
-getElectronicSheetConfig().then((res:any)=>{
-    if(res.data) {
+getElectronicSheetConfig().then((res:any) => {
+    if (res.data) {
         loadCLodop(res.data)
     }
 })
@@ -111,19 +112,19 @@ getElectronicSheetConfig().then((res:any)=>{
 const electronicSheetAll: any = ref([])
 const electronicSheetData: any = ref([])
 getElectronicSheetList({
-    status: 1,
+    status: 1
 }).then((res: any) => {
     if (res.data) {
-        electronicSheetAll.value = res.data;
+        electronicSheetAll.value = res.data
     }
 })
 
 const companyChange = (value: any) => {
-    electronicSheetData.value = [];
+    electronicSheetData.value = []
     formData.electronic_sheet_id = ''
     electronicSheetAll.value.forEach((item: any) => {
         if (item.express_company_id == value) {
-            electronicSheetData.value.push(cloneDeep(item));
+            electronicSheetData.value.push(cloneDeep(item))
         }
     })
 }
@@ -189,7 +190,7 @@ const electronicSheetIdPass = (rule: any, value: any, callback: any) => {
 }
 
 const selectable = (row:any, index:number) => {
-    if (row.status == 2 || row.delivery_status == 'delivery_finish' || row.status == 3) {
+    if (row.status == 2 || row.delivery_status == 'delivery_finish' || row.status == 3 || row.is_gift == 1) {
         return false
     }
     return true
@@ -199,17 +200,17 @@ interface goodsDataType{
 }
 const goodsDataArr = ref<goodsDataType[]>([])
 const deliveryChange = () => {
-    let arr: any = []
+    const arr: any = []
     if (formData.delivery_type && formData.delivery_type == 'virtual') {
         goodsData.value.forEach((item: any, index) => {
             if (item.goods_type == 'virtual') {
-                arr.push(item);
+                arr.push(item)
             }
         })
     } else if (formData.delivery_type && formData.delivery_type != 'virtual') {
         goodsData.value.forEach((item: any, index) => {
             if (item.goods_type != 'virtual') {
-                arr.push(item);
+                arr.push(item)
             }
         })
     }
@@ -246,13 +247,14 @@ const confirm = async (formEl: FormInstance | undefined) => {
             orderDelivery(data).then(res => {
                 if (formData.delivery_type == 'express' && formData.delivery_way == 'electronic_sheet') {
                     // 打印电子面单
-                   printElectronicSheetFn();
+                    printElectronicSheetFn()
                 }
                 loading.value = false
                 showDialog.value = false
                 emit('complete')
-                initFormData();
-            }).catch(err => {
+                initFormData()
+            }).catch(() => {
+                loading.value = false
             })
         }
     })
@@ -291,18 +293,18 @@ const setFormData = async (row: any = null) => {
     loading.value = false
 }
 
-const initFormData = ()=> {
-    formData.order_id = 0;
-    formData.delivery_type = '';
-    formData.express_company_id = '';
+const initFormData = () => {
+    formData.order_id = 0
+    formData.delivery_type = ''
+    formData.express_company_id = ''
     formData.electronic_sheet_id = ''
-    formData.express_number = '';
-    formData.order_goods_ids = [];
+    formData.express_number = ''
+    formData.order_goods_ids = []
 }
 
 const printElectronicSheetFn = () => {
-    let LODOP = getLodop();
-    if (!LODOP) return;
+    const LODOP = getLodop()
+    if (!LODOP) return
 
     printElectronicSheet({
         print_type: 'multiple',
@@ -310,31 +312,26 @@ const printElectronicSheetFn = () => {
         electronic_sheet_id: formData.electronic_sheet_id,
         order_goods_ids: formData.order_goods_ids
     }).then((res: any) => {
-
         if (res.data) {
-
-            let data = res.data;
-            let haveSuccessData = false;
-            LODOP.PRINT_INIT("打印电子面单"); // 只能初始化一次
+            const data = res.data
+            let haveSuccessData = false
+            LODOP.PRINT_INIT('打印电子面单') // 只能初始化一次
 
             // 单订单打印
             for (let i = 0; i < data.length; i++) {
-
                 if (data[i].success) {
                     // 调用打印机，开始打印
-                    let html = data[i].print_template;
-                    LODOP.ADD_PRINT_HTM(0, 0, "100%", "100%", html);
-                    LODOP.NewPage(); // 批量打印，分页
-                    haveSuccessData = true;
+                    const html = data[i].print_template
+                    LODOP.ADD_PRINT_HTM(0, 0, '100%', '100%', html)
+                    LODOP.NewPage() // 批量打印，分页
+                    haveSuccessData = true
                 }
             }
 
             if (haveSuccessData) {
-                LODOP.PREVIEW(); // 预览
+                LODOP.PREVIEW() // 预览
             }
-
         }
-
     })
 }
 

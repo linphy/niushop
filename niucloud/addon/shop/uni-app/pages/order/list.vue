@@ -140,16 +140,15 @@ onLoad((option: any) => {
 	})
 	// #endif
 });
+	
 
 onShow(() => {
 	nextTick(()=>{
 		// 评价完成之后，会返回到订单列表，需要请求最新数据
-		if(getMescroll()){
-			getMescroll().resetUpScroll();
-		}
+		if(getMescroll()){ getMescroll().resetUpScroll();}
 	})
 })
-	
+
 const evaluateEvent = () => {
 	getEvaluateConfig().then((data: any) => {
 		evaluateConfig.value = data.data

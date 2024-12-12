@@ -75,7 +75,10 @@
 				<mescroll-empty v-else-if="!goodsList.length && loading" :option="{tip : '暂无商品，请看看其他商品吧！', btnText:'去逛逛'}" @emptyclick="redirect({ url: '/addon/shop/pages/goods/list' })"></mescroll-empty>
 			</mescroll-body>
 		</block>
-		<mescroll-empty v-if="!pageLoading && Object.keys(configInfo).length && configInfo.active_status !='active'" :option="{tip : '活动未开启,请看看其他商品吧！', btnText:'去逛逛'}" @emptyclick="redirect({ url: '/addon/shop/pages/index' })"></mescroll-empty>
+		<block v-if="!pageLoading && Object.keys(configInfo).length && configInfo.active_status !='active'">
+			<top-tabbar :data="pageNullParam" class="top-header"/>
+			<mescroll-empty :option="{tip : '活动未开启,请看看其他商品吧！', btnText:'去逛逛'}" @emptyclick="redirect({ url: '/addon/shop/pages/index' })"></mescroll-empty>
+		</block>
 		<view @touchmove.prevent.stop>
 			<u-popup :show="newcomerPopup" @close="closeFn" mode="center" round="var(--rounded-big)">
 				<view class="w-[570rpx] px-[32rpx] popup-common center">
@@ -122,7 +125,8 @@ menuButtonInfo = uni.getMenuButtonBoundingClientRect();
 // #endif
 /********* 自定义头部 - start ***********/
 const topTabarObj = topTabar()
-let param = topTabarObj.setTopTabbarParam({title:'新人专享列表'})
+let param = topTabarObj.setTopTabbarParam({title:'',topStatusBar: {textColor: '#fff'}})
+let pageNullParam = topTabarObj.setTopTabbarParam({title:'新人专享列表',topStatusBar: {textColor: '#333'} })
 const topStyle = computed(() => {
 	let style = pxToRpx(Number(menuButtonInfo.height) + menuButtonInfo.top + 8)+ 30 + 'rpx;'
 	return style

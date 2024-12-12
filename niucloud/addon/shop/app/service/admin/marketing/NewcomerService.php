@@ -146,7 +146,7 @@ class NewcomerService extends BaseAdminService
         $active_goods_model = new ActiveGoods();
         $active_goods = $active_goods_model->field('goods_id,sku_id,active_goods_value')->where([
             [ 'active_class', '=', ActiveDict::NEWCOMER_DISCOUNT ],
-            [ 'active_goods_status', '=', ActiveDict::ACTIVE ]
+//            [ 'active_goods_status', '=', ActiveDict::ACTIVE ]
         ])->select()->toArray();
         $active_goods_ids = array_unique(array_column($active_goods, 'goods_id'));
         $active_sku_ids = array_column($active_goods, 'sku_id');
@@ -257,7 +257,7 @@ class NewcomerService extends BaseAdminService
         $active_goods_model = new ActiveGoods();
         $active_goods = $active_goods_model->field('goods_id,sku_id,active_goods_value')->where([
             [ 'active_class', '=', ActiveDict::NEWCOMER_DISCOUNT ],
-            [ 'active_goods_status', '=', ActiveDict::ACTIVE ]
+//            [ 'active_goods_status', '=', ActiveDict::ACTIVE ]
         ])->select()->toArray();
         $active_goods_ids = array_unique(array_column($active_goods, 'goods_id'));
         $active_sku_ids = array_column($active_goods, 'sku_id');

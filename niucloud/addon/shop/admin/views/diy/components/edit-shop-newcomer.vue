@@ -44,7 +44,7 @@
                 </el-form-item>
 			</el-form>
 		</div>
-        
+
 		<div class="edit-attr-item-wrap">
 			<h3 class="mb-[10px]">{{ t("selectSource") }}</h3>
 			<el-form label-width="80px" class="px-[10px]">
@@ -67,6 +67,17 @@
 
 	<!-- 样式 -->
 	<div class="style-wrap" v-show="diyStore.editTab == 'style'">
+        <div class="edit-attr-item-wrap">
+			<h3 class="mb-[10px]">{{ t('goodsStyle') }}</h3>
+			<el-form label-width="80px" class="px-[10px]">
+				<el-form-item :label="t('topRounded')">
+					<el-slider v-model="diyStore.editComponent.topElementRounded" show-input size="small" class="ml-[10px] diy-nav-slider" :max="50" />
+				</el-form-item>
+				<el-form-item :label="t('bottomRounded')">
+					<el-slider v-model="diyStore.editComponent.bottomElementRounded" show-input size="small" class="ml-[10px] diy-nav-slider" :max="50" />
+				</el-form-item>
+			</el-form>
+		</div>
 		<div class="edit-attr-item-wrap"  v-if="diyStore.editComponent && diyStore.editComponent.style && diyStore.editComponent.style.value == 'style-3'">
 			<h3 class="mb-[10px]">{{ t('subTitleStyle') }}</h3>
 			<el-form label-width="90px" class="px-[10px]">
@@ -110,7 +121,7 @@ import { ref, reactive } from 'vue'
 import newcomerGoodsSelectPopup from '@/addon/shop/views/goods/components/newcomer-goods-select-popup.vue'
 
 const diyStore:any = useDiyStore()
-diyStore.editComponent.ignore = [] // 忽略公共属性
+diyStore.editComponent.ignore = ['componentBgUrl'] // 忽略公共属性
 
 // 组件验证
 diyStore.editComponent.verify = (index: number) => {
@@ -184,8 +195,8 @@ const initStyle = (style: any) => {
 		diyStore.editComponent.bottomRounded = 12;
 		diyStore.editComponent.topRounded = 12;
 		diyStore.editComponent.elementBgColor = "";
-		diyStore.editComponent.bottomElementRounded = 0;
-		diyStore.editComponent.topElementRounded = 0;
+		diyStore.editComponent.bottomElementRounded = 10;
+		diyStore.editComponent.topElementRounded = 10;
 		diyStore.editComponent.margin.top = 10;
 		diyStore.editComponent.margin.bottom = 0;
 		diyStore.editComponent.margin.both = 10;
@@ -205,8 +216,8 @@ const initStyle = (style: any) => {
 		diyStore.editComponent.bottomRounded = 12;
 		diyStore.editComponent.topRounded = 12;
 		diyStore.editComponent.elementBgColor = "";
-		diyStore.editComponent.bottomElementRounded = 0;
-		diyStore.editComponent.topElementRounded = 0;
+		diyStore.editComponent.bottomElementRounded = 5;
+		diyStore.editComponent.topElementRounded = 5;
 		diyStore.editComponent.margin.top = 10;
 		diyStore.editComponent.margin.bottom = 0;
 		diyStore.editComponent.margin.both = 10;
@@ -252,8 +263,8 @@ const initStyle = (style: any) => {
 		diyStore.editComponent.bottomRounded = 12;
 		diyStore.editComponent.topRounded = 12;
 		diyStore.editComponent.elementBgColor = "";
-		diyStore.editComponent.bottomElementRounded = 0;
-		diyStore.editComponent.topElementRounded = 0;
+		diyStore.editComponent.bottomElementRounded = 10;
+		diyStore.editComponent.topElementRounded = 10;
 		diyStore.editComponent.margin.top = 10;
 		diyStore.editComponent.margin.bottom = 0;
 		diyStore.editComponent.margin.both = 10;

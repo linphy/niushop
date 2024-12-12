@@ -34,8 +34,8 @@ class CoreGoodsSaleNumService extends BaseCoreService
      */
     public function inc($data)
     {
-        $this->model->where([['goods_id', '=', $data['goods_id']]])->inc('sale_num', $data['num']) ->update();
-        (new GoodsSku())->where([['sku_id', '=', $data['sku_id']]])->inc('sale_num', $data['num']) ->update();
+        $this->model->where([ [ 'goods_id', '=', $data[ 'goods_id' ] ] ])->inc('sale_num', $data[ 'num' ])->update();
+        ( new GoodsSku() )->where([ [ 'sku_id', '=', $data[ 'sku_id' ] ] ])->inc('sale_num', $data[ 'num' ])->update();
         return true;
     }
 
@@ -46,8 +46,8 @@ class CoreGoodsSaleNumService extends BaseCoreService
      */
     public function dec($data)
     {
-        $this->model->where([['goods_id', '=', $data['goods_id']]])->dec('sale_num', $data['num']) ->update();
-        (new GoodsSku())->where([['sku_id', '=', $data['sku_id']]])->dec('sale_num', $data['num']) ->update();
+        $this->model->where([ [ 'goods_id', '=', $data[ 'goods_id' ] ] ])->dec('sale_num', $data[ 'num' ])->update();
+        ( new GoodsSku() )->where([ [ 'sku_id', '=', $data[ 'sku_id' ] ] ])->dec('sale_num', $data[ 'num' ])->update();
         return true;
     }
 

@@ -16,6 +16,7 @@ use addon\shop\app\model\active\ActiveGoods;
 use addon\shop\app\model\goods\Goods;
 use addon\shop\app\model\goods\GoodsSku;
 use addon\shop\app\model\goods\GoodsSpec;
+use addon\shop\app\model\goods\Stat;
 use addon\shop\app\model\order\OrderGoods;
 use app\service\admin\addon\AddonService;
 use core\base\BaseAdminService;
@@ -52,7 +53,7 @@ class VirtualGoodsService extends BaseAdminService
 
         if (!empty($params[ 'goods_id' ])) {
             // 查询商品信息，用于编辑
-            $field = 'goods_id,goods_name,sub_title,goods_type,goods_cover,goods_image,goods_video,goods_desc,brand_id,goods_category,label_ids,service_ids,unit,stock,virtual_sale_num,is_limit,limit_type,max_buy,min_buy,status,sort,supplier_id,attr_id,attr_format,virtual_auto_delivery,virtual_receive_type,virtual_verify_type,virtual_indate,member_discount,poster_id';
+            $field = 'goods_id,goods_name,sub_title,goods_type,goods_cover,goods_image,goods_video,goods_desc,brand_id,goods_category,label_ids,service_ids,unit,stock,virtual_sale_num,is_limit,limit_type,max_buy,min_buy,status,sort,supplier_id,attr_id,attr_format,virtual_auto_delivery,virtual_receive_type,virtual_verify_type,virtual_indate,member_discount,poster_id,is_gift';
             $goods_info = $this->model->field($field)->where([ [ 'goods_id', '=', $params[ 'goods_id' ] ] ])->findOrEmpty()->toArray();
             if (!empty($goods_info)) {
 
@@ -159,6 +160,7 @@ class VirtualGoodsService extends BaseAdminService
             Db::startTrans();
             $goods_sku_model = new GoodsSku();
             $goods_spec_model = new GoodsSpec();
+            $goods_stat_model = new Stat();
 
             // 商品封面
             if (!empty($data[ 'goods_image' ])) $data[ 'goods_cover' ] = explode(',', $data[ 'goods_image' ])[ 0 ];
@@ -182,6 +184,7 @@ class VirtualGoodsService extends BaseAdminService
                 'limit_type' => $data[ 'limit_type' ],
                 'max_buy' => $data[ 'max_buy' ],
                 'min_buy' => $data[ 'min_buy' ],
+                'is_gift' => $data[ 'is_gift' ],
                 'status' => $data[ 'status' ],
                 'sort' => $data[ 'sort' ],
                 'attr_id' => $data[ 'attr_id' ],
@@ -261,6 +264,14 @@ class VirtualGoodsService extends BaseAdminService
 
             }
 
+            //添加商品统计表数据
+            $goods_stat_data = [
+                'date' => date('Y-m-d'),
+                'date_time' => strtotime(date('Y-m-d')),
+                'goods_id' => $res->goods_id,
+            ];
+            $goods_stat_model->create($goods_stat_data);
+
             Db::commit();
 
             event('AfterGoodsEdit', [
@@ -320,6 +331,7 @@ class VirtualGoodsService extends BaseAdminService
                 'limit_type' => $data[ 'limit_type' ],
                 'max_buy' => $data[ 'max_buy' ],
                 'min_buy' => $data[ 'min_buy' ],
+                'is_gift' => $data[ 'is_gift' ],
                 'status' => $data[ 'status' ],
                 'sort' => $data[ 'sort' ],
                 'attr_id' => $data[ 'attr_id' ],

@@ -108,9 +108,10 @@
 								<div class="flex items-center shrink-0">
 									<img class="w-[50px] h-[50px] mr-[10px]" :src="img(row.goods_image)" />
 								</div>
-								<div class="flex flex-col">
+								<div class="flex flex-col items-start">
 									<p class="multi-hidden text-[14px]">{{ row.goods_name }}</p>
 									<span class="text-[12px] text-[#999]">{{ row.sku_name }}</span>
+									<span class="px-[4px]  text-[12px] text-[#fff] rounded-[4px] bg-primary leading-[18px]" v-if="row.is_gift == 1">赠品</span>
 								</div>
 							</div>
 						</template>
@@ -142,6 +143,14 @@
 								</span>
 								<span v-else class="text-[14px]">￥{{ formData.goods_money }}</span>
 							</div>
+						</div>
+						<div class="flex mb-[10px]" v-if="formData.coupon_money > 0">
+							<div class="text-base flex-1">{{ t('couponMoney') }}</div>
+							<div class="text-base flex-1 pl-[30px]">{{ formData.coupon_money }}</div>
+						</div>
+						<div class="flex mb-[10px]" v-if="formData.manjian_discount_money > 0">
+							<div class="text-base flex-1">{{ t('manjianDiscountMoney') }}</div>
+							<div class="text-base flex-1 pl-[30px]">{{ formData.manjian_discount_money }}</div>
 						</div>
 						<div class="flex mb-[10px]">
 							<div class="text-base flex-1">{{ t('discountMoney') }}</div>

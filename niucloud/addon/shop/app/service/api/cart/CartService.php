@@ -13,7 +13,9 @@ namespace addon\shop\app\service\api\cart;
 
 use addon\shop\app\model\cart\Cart;
 use addon\shop\app\model\goods\Goods;
+use addon\shop\app\model\goods\GoodsSku;
 use addon\shop\app\service\api\goods\GoodsService;
+use addon\shop\app\service\api\marketing\ManjianService;
 use addon\shop\app\service\core\goods\CoreGoodsCartNumService;
 use addon\shop\app\service\core\goods\CoreGoodsStatService;
 use addon\shop\app\service\core\goods\CoreGoodsLimitBuyService;
@@ -21,6 +23,7 @@ use app\dict\member\MemberDict;
 use app\service\core\member\CoreMemberService;
 use core\base\BaseApiService;
 use core\exception\ApiException;
+use addon\shop\app\service\core\marketing\CoreManjianService;
 
 /**
  * 购物车服务层
@@ -54,21 +57,23 @@ class CartService extends BaseApiService
             [ 'sku_id', '=', $data[ 'sku_id' ] ],
         ])->field('id,num')->findOrEmpty()->toArray();
 
-        // 商品加入购物车统计
-        CoreGoodsStatService::addStat(['goods_id' => $data[ 'goods_id' ], 'cart_num' => $data[ 'num' ]]);
-        (new CoreGoodsCartNumService())->inc(['goods_id' => $data[ 'goods_id' ], 'cart_num' => $data[ 'num' ]]);
 
-        $other_sku_num = $this->model->where([
-            [ 'member_id', '=', $this->member_id ],
-            [ 'goods_id', '=', $data[ 'goods_id' ] ],
-            [ 'sku_id', '<>', $data[ 'sku_id' ] ]
-        ])->sum('num');
+
+//        $other_sku_num = $this->model->where([
+//            [ 'member_id', '=', $this->member_id ],
+//            [ 'goods_id', '=', $data[ 'goods_id' ] ],
+//            [ 'sku_id', '<>', $data[ 'sku_id' ] ]
+//        ])->sum('num');
 
         $goods_info = ( new Goods() )->where([
             [ 'goods_id', '=', $data[ 'goods_id' ] ],
         ])->field('goods_id,goods_name,stock,is_limit,limit_type,max_buy,min_buy')->findOrEmpty()->toArray();
         if (empty($goods_info)) throw new ApiException("SHOP_GOODS_NOT_EXIST");
-        $core_goods_limit_buy_service = new CoreGoodsLimitBuyService();
+        // 商品加入购物车统计
+        CoreGoodsStatService::addStat([ 'goods_id' => $data[ 'goods_id' ], 'cart_num' => $data[ 'num' ] ]);
+        ( new CoreGoodsCartNumService() )->inc([ 'goods_id' => $data[ 'goods_id' ], 'cart_num' => $data[ 'num' ] ]);
+
+//        $core_goods_limit_buy_service = new CoreGoodsLimitBuyService();
         if (!empty($info)) {
             // 存在，更新数量
             $update = [
@@ -133,11 +138,11 @@ class CartService extends BaseApiService
         ])->field('goods_id,goods_name,stock,is_limit,limit_type,max_buy,min_buy')->findOrEmpty()->toArray();
         if (empty($goods_info)) throw new ApiException("SHOP_GOODS_NOT_EXIST");
 
-        $other_sku_num = $this->model->where([
-            [ 'member_id', '=', $this->member_id ],
-            [ 'goods_id', '=', $info[ 'goods_id' ] ],
-            [ 'sku_id', '<>', $info[ 'sku_id' ] ]
-        ])->sum('num');
+//        $other_sku_num = $this->model->where([
+//            [ 'member_id', '=', $this->member_id ],
+//            [ 'goods_id', '=', $info[ 'goods_id' ] ],
+//            [ 'sku_id', '<>', $info[ 'sku_id' ] ]
+//        ])->sum('num');
 
         // 检测限购
 //        if ($data[ 'num' ] > $info['num']) {
@@ -149,8 +154,8 @@ class CartService extends BaseApiService
         $this->model->where([ [ 'id', '=', $data[ 'id' ] ] ])->update($update);
 
         // 商品加入购物车统计
-        CoreGoodsStatService::addStat(['goods_id' => $info[ 'goods_id' ], 'cart_num' => ($data[ 'num' ] - $info['num'])]);
-        (new CoreGoodsCartNumService())->inc(['goods_id' => $info[ 'goods_id' ], 'cart_num' => ($data[ 'num' ] - $info['num'])]);
+        CoreGoodsStatService::addStat([ 'goods_id' => $info[ 'goods_id' ], 'cart_num' => ( $data[ 'num' ] - $info[ 'num' ] ) ]);
+        ( new CoreGoodsCartNumService() )->inc([ 'goods_id' => $info[ 'goods_id' ], 'cart_num' => ( $data[ 'num' ] - $info[ 'num' ] ) ]);
 
         return true;
     }
@@ -204,8 +209,8 @@ class CartService extends BaseApiService
             }
             if (!empty($v[ 'goods' ])) {
                 // 限购查询当前会员已购数量
-                $has_buy = (new CoreGoodsLimitBuyService())->getGoodsHasBuyNumber($this->member_id, $v[ 'goods' ]['goods_id']);
-                $v[ 'goods' ]['has_buy'] = $has_buy;
+                $has_buy = ( new CoreGoodsLimitBuyService() )->getGoodsHasBuyNumber($this->member_id, $v[ 'goods' ][ 'goods_id' ]);
+                $v[ 'goods' ][ 'has_buy' ] = $has_buy;
             }
         }
         array_multisort(array_column($list, 'id'), SORT_DESC, $list);
@@ -245,12 +250,103 @@ class CartService extends BaseApiService
             }
             if (!empty($v[ 'goods' ])) {
                 // 限购查询当前会员已购数量
-                $has_buy = (new CoreGoodsLimitBuyService())->getGoodsHasBuyNumber($this->member_id, $v[ 'goods' ]['goods_id']);
-                $v[ 'goods' ]['has_buy'] = $has_buy;
+                $has_buy = ( new CoreGoodsLimitBuyService() )->getGoodsHasBuyNumber($this->member_id, $v[ 'goods' ][ 'goods_id' ]);
+                $v[ 'goods' ][ 'has_buy' ] = $has_buy;
             }
+
+            $manjian_info = ( new ManjianService() )->getManjianInfo([ 'goods_id' => $v[ 'goods_id' ], 'sku_id' => $v[ 'sku_id' ] ]);
+            $v[ 'manjian_info' ] = $manjian_info;
         }
         array_multisort(array_column($list, 'id'), SORT_DESC, $list);
         return $list;
+    }
+
+    /**
+     * 购物车计算
+     * @param $data
+     * @return array
+     */
+    public function calculate($data)
+    {
+        //获取商品信息
+        $data = $this->getGoods($data);
+        //满减
+        $data = ( new CoreManjianService() )->manjianPromotion($data, $this->member_id);
+        $promotion_money = $data[ 'promotion_money' ] ?? 0;
+        $order_money = $data[ 'goods_money' ] - $promotion_money;
+        $data[ 'order_money' ] = $order_money;
+
+        $good_list = $data[ 'goods_list' ];
+        $match_list = [];
+        foreach ($good_list as $k => $v) {
+            $match_list[ $k ][ 'goods_id' ] = $v[ 'goods_id' ];
+            $match_list[ $k ][ 'sku_id' ] = $v[ 'sku_id' ];
+            if (!empty($v[ 'promotion' ][ 'manjian' ])) {
+                $manjian_info = $v[ 'promotion' ][ 'manjian' ];
+                if ($manjian_info[ 'discount_array' ][ 'level' ] >= 0) {
+                    $match_list[ $k ][ 'level' ] = $manjian_info[ 'discount_array' ][ 'level' ];
+                }
+            }
+        }
+
+        return [
+            'goods_money' => $data[ 'goods_money' ],
+            'promotion_money' => $promotion_money,
+            'order_money' => $order_money,
+            'match_list' => $match_list
+        ];
+    }
+
+    /**
+     * 获取购物车商品列表信息
+     * @param $data
+     * @return mixed
+     */
+    public function getGoods($data)
+    {
+        $member_id = $this->member_id;
+
+        $sku_ids = $data[ 'sku_ids' ] ?? [];
+        $sku_id_list = array_column($sku_ids, 'sku_id');
+        $sku_num_list = array_column($sku_ids, 'num', 'sku_id');
+        //组装商品列表
+        $field = 'goodsSku.sku_id, goodsSku.sku_name,  goodsSku.price, goodsSku.stock, goodsSku.goods_id, cart.id as cart_id,cart.num, goodsSku.member_price,goods.member_discount';
+        $condition = [
+            [ 'goodsSku.sku_id', 'in', $sku_id_list ],
+        ];
+        $goods_list = ( new GoodsSku() )
+            ->alias('goodsSku')
+            ->field($field)
+            ->where($condition)
+            ->join('shop_cart cart', 'cart.sku_id = goodsSku.sku_id and cart.member_id = ' . $member_id)
+            ->join('shop_goods goods', 'goods.goods_id = goodsSku.goods_id')
+            ->select()
+            ->toArray();
+        $goods_service = new GoodsService();
+        $member_info = $goods_service->getMemberInfo();
+
+        $data[ 'goods_num' ] = 0;
+        $data[ 'goods_money' ] = 0;
+        $data[ 'goods_list' ] = [];
+        if (!empty($goods_list)) {
+            foreach ($goods_list as $k => $v) {
+                $member_price = $goods_service->getMemberPrice($member_info, $v[ 'member_discount' ], $v[ 'member_price' ], $v[ 'price' ]);
+                $item_num = $sku_num_list[ $v[ 'sku_id' ] ];
+                $price = $v[ 'price' ];
+                if (isset($member_price) && !empty($member_price) && $member_price < $v[ 'price' ]) {
+                    $price = $member_price;
+                }
+                $v[ 'price' ] = $price;
+                $v[ 'goods_money' ] = $price * $item_num;
+                $v[ 'real_goods_money' ] = $v[ 'goods_money' ];
+                $v[ 'coupon_money' ] = 0; //优惠券金额
+                $v[ 'promotion_money' ] = 0; //优惠金额
+                $data[ 'goods_num' ] += $item_num;
+                $data[ 'goods_money' ] += $v[ 'goods_money' ];
+                $data[ 'goods_list' ][] = $v;
+            }
+        }
+        return $data;
     }
 
     /**

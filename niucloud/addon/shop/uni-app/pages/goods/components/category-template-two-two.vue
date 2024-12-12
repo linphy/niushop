@@ -14,9 +14,9 @@
 				<view class="tabs-box z-2 fixed left-0 bg-[#fff] bottom-[50px] top-0" :class="{ '!top-[96rpx]': config.search.control, 'pb-[98rpx]': config.cart.control && config.cart.event === 'cart' }">
 					<scroll-view :scroll-y="true" class="scroll-height">
 						<view class="bg-[var(--temp-bg)]">
-							<view class="tab-item truncate"
+							<view class="tab-item"
 							      :class="{ 'tab-item-active ': index == tabActive,'rounded-br-[12rpx]':tabActive-1===index && (!tabsData[tabActive].child_list || !tabsData[tabActive].child_list.length),'rounded-tr-[12rpx]':tabActive+1===index&&(!tabsData[tabActive].child_list || !tabsData[tabActive].child_list.length) }" v-for="(item, index) in tabsData" :key="index" @click="firstLevelClick(index, item)">
-								<view class="text-box truncate px-[24rpx]">{{ item.category_name }}</view>
+								<view class="text-box leading-[1.3] break-words px-[24rpx]">{{ item.category_name }}</view>
 							</view>
 						</view>
 					</scroll-view>
@@ -27,8 +27,8 @@
 				<view class="tabs-box z-2 fixed left-0 bg-[#fff] pb-ios bottom-[100rpx] top-0" :class="{ 'top-[96rpx]': config.search.control, '!bottom-[198rpx]': config.cart.control && config.cart.event === 'cart' }">
 					<scroll-view :scroll-y="true" class="scroll-height">
 						<view class="bg-[var(--temp-bg)]">
-							<view class="tab-item truncate" :class="{ 'tab-item-active': index == tabActive,'rounded-br-[12rpx]':tabActive-1===index&&(!tabsData[tabActive].child_list || !tabsData[tabActive].child_list.length),'rounded-tr-[12rpx]':tabActive+1===index&&(!tabsData[tabActive].child_list || !tabsData[tabActive].child_list.length) }" v-for="(item, index) in tabsData" :key="index" @click="firstLevelClick(index, item)">
-								<view class="text-box px-[16rpx] truncate">
+							<view class="tab-item" :class="{ 'tab-item-active': index == tabActive,'rounded-br-[12rpx]':tabActive-1===index&&(!tabsData[tabActive].child_list || !tabsData[tabActive].child_list.length),'rounded-tr-[12rpx]':tabActive+1===index&&(!tabsData[tabActive].child_list || !tabsData[tabActive].child_list.length) }" v-for="(item, index) in tabsData" :key="index" @click="firstLevelClick(index, item)">
+								<view class="text-box px-[16rpx] leading-[1.3] break-words">
 									{{ item.category_name }}
 								</view>
 							</view>
@@ -99,11 +99,11 @@
 											item.goodsSku.sku_spec_format === '' && cartList['goods_' + item.goods_id] && cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id] && config.cart.control && config.cart.event === 'cart'"
 											class="flex items-center">
 											<view class="relative w-[32rpx] h-[32rpx]">
-												<text class="text-[32rpx] text-color nc-iconfont nc-icon-jianshaoV6xx absolute flex items-center justify-center -left-[8rpx] -bottom-[8rpx] -right-[8rpx] -top-[8rpx]" @click.stop="reduceCart(item,cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id])"></text>
+												<text class="text-[32rpx] text-color nc-iconfont nc-icon-jianshaoV6xx absolute flex items-center justify-center -left-[12rpx] -bottom-[14rpx] -right-[14rpx] -top-[14rpx]" @click.stop="reduceCart(item,cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id])"></text>
 											</view>
 											<text class="text-[#333] text-[24rpx] mx-[16rpx]">{{ cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id].num }}</text>
 											<view class="relative w-[32rpx] h-[32rpx]">
-												<text class="text-[32rpx] text-color iconfont iconjiahao2fill absolute flex items-center justify-center -left-[8rpx] -bottom-[8rpx] -right-[8rpx] -top-[8rpx]" :id="'itemCart' + index" @click.stop="addCartBtn(item,cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id], 'itemCart' + index)"></text>
+												<text class="text-[32rpx] text-color iconfont iconjiahao2fill absolute flex items-center justify-center -left-[14rpx] -bottom-[14rpx] -right-[14rpx] -top-[14rpx]" :id="'itemCart' + index" @click.stop="addCartBtn(item,cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id], 'itemCart' + index)"></text>
 											</view>
 										</view>
 										<template v-else-if="(item.goods_type == 'virtual' && config.cart.event !== 'cart') || item.goods_type == 'real'">
@@ -115,39 +115,36 @@
 												</view>
 												<view
 													v-if="cartList['goods_' + item.goods_id] && cartList['goods_' + item.goods_id].totalNum"
-													:class="['absolute right-[-16rpx] top-[-16rpx] rounded-[30rpx] h-[30rpx] min-w-[30rpx] text-center leading-[30rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border box-border border-[2rpx] border-solid border-[#fff]', cartList['goods_' + item.goods_id].totalNum > 9 ? 'px-[10rpx]' : '']">
+													:class="['absolute right-[-16rpx] top-[-16rpx] rounded-[30rpx] h-[30rpx] min-w-[30rpx] text-center leading-[26rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border box-border border-[2rpx] border-solid border-[#fff]', cartList['goods_' + item.goods_id].totalNum > 9 ? 'px-[10rpx]' : '']">
 													{{ cartList['goods_' + item.goods_id].totalNum }}
 												</view>
 											</view>
-											<view v-if="config.cart.control && config.cart.style === 'style-2'" class="w-[44rpx] h-[44rpx] relative">
+											<view v-if="config.cart.control && config.cart.style === 'style-2'" class="w-[50rpx] h-[50rpx] relative" @click.stop="itemCart(item, 'itemCart' + index)">
 												<text :id="'itemCart' + index"
-													class="text-color nc-iconfont nc-icon-tianjiaV6xx text-[44rpx]"
-													@click.stop="itemCart(item, 'itemCart' + index)"></text>
+													class="text-color nc-iconfont nc-icon-tianjiaV6xx text-[44rpx]"></text>
 												<view
 													v-if="cartList['goods_' + item.goods_id] && cartList['goods_' + item.goods_id].totalNum"
-													:class="['absolute right-[-16rpx] top-[-16rpx] rounded-[30rpx] h-[30rpx] min-w-[30rpx] text-center leading-[30rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border box-border border-[2rpx] border-solid border-[#fff]', cartList['goods_' + item.goods_id].totalNum > 9 ? 'px-[10rpx]' : '']">
+													:class="['absolute right-[-16rpx] top-[-16rpx] rounded-[30rpx] h-[30rpx] min-w-[30rpx] text-center leading-[26rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border box-border border-[2rpx] border-solid border-[#fff]', cartList['goods_' + item.goods_id].totalNum > 9 ? 'px-[10rpx]' : '']">
 													{{ cartList['goods_' + item.goods_id].totalNum }}
 												</view>
 											</view>
-											<view v-if="config.cart.control && config.cart.style === 'style-3'" class="w-[44rpx] h-[44rpx] relative">
+											<view v-if="config.cart.control && config.cart.style === 'style-3'" class="w-[50rpx] h-[50rpx] flex justify-center items-end  relative" @click.stop="itemCart(item, 'itemCart' + index)">
 												<text :id="'itemCart' + index"
-													class="text-color nc-iconfont nc-icon-gouwucheV6xx-2 !text-[44rpx]"
-													@click.stop="itemCart(item, 'itemCart' + index)"></text>
+													class="text-color nc-iconfont nc-icon-gouwucheV6xx6 !text-[34rpx]"></text>
 												<view
 													v-if="cartList['goods_' + item.goods_id] && cartList['goods_' + item.goods_id].totalNum"
-													:class="['absolute right-[-16rpx] top-[-16rpx] rounded-[30rpx] h-[30rpx] min-w-[30rpx] text-center leading-[30rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border box-border border-[2rpx] border-solid border-[#fff]', cartList['goods_' + item.goods_id].totalNum > 9 ? 'px-[10rpx]' : '']">
+													:class="['absolute right-[-10rpx] top-[-2rpx] rounded-[30rpx] h-[30rpx] min-w-[30rpx] text-center leading-[26rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border box-border border-[2rpx] border-solid border-[#fff]', cartList['goods_' + item.goods_id].totalNum > 9 ? 'px-[10rpx]' : '']">
 													{{ cartList['goods_' + item.goods_id].totalNum }}
 												</view>
 											</view>
-											<view v-if="config.cart.control && config.cart.style === 'style-4'" class="w-[44rpx] h-[44rpx] relative">
+											<view v-if="config.cart.control && config.cart.style === 'style-4'" class="w-[50rpx] h-[50rpx] flex items-end relative" @click.stop="itemCart(item, 'itemCart' + index)">
 												<view :id="'itemCart' + index"
-													class=" flex items-center justify-center text-[#fff] bg-color h-[44rpx] w-[44rpx] rounded-[22rpx] text-center"
-													@click.stop="itemCart(item, 'itemCart' + index)">
-													<text class="nc-iconfont nc-icon-gouwucheV6xx-2 !text-[26rpx]"></text>
+													class=" flex items-center justify-center text-[#fff] bg-color h-[44rpx] w-[44rpx] rounded-[22rpx] text-center">
+													<text class="nc-iconfont nc-icon-gouwucheV6xx6 !text-[26rpx]"></text>
 												</view>
 												<view
 													v-if="cartList['goods_' + item.goods_id] && cartList['goods_' + item.goods_id].totalNum"
-													:class="['absolute right-[-16rpx] top-[-16rpx] rounded-[30rpx] h-[30rpx] min-w-[30rpx] text-center leading-[30rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border border-[2rpx] border-solid border-[#fff]', cartList['goods_' + item.goods_id].totalNum > 9 ? 'px-[10rpx]' : '']">
+													:class="['absolute right-[-10rpx] top-[-10rpx] rounded-[30rpx] h-[30rpx] min-w-[30rpx] text-center leading-[26rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border border-[2rpx] border-solid border-[#fff]', cartList['goods_' + item.goods_id].totalNum > 9 ? 'px-[10rpx]' : '']">
 													{{ cartList['goods_' + item.goods_id].totalNum }}
 												</view>
 											</view>
@@ -213,7 +210,7 @@
 
 		<view v-show="animationElStatus" :style="animationElStatus"
 			class="fixed z-999 flex items-center justify-center text-[#fff] bg-color h-[44rpx] w-[44rpx] rounded-[22rpx] text-center">
-			<text class=" nc-iconfont nc-icon-gouwucheV6xx-2 !text-[30rpx]"></text>
+			<text class=" nc-iconfont nc-icon-gouwucheV6xx6 !text-[30rpx]"></text>
 		</view>
 		<view class="flex justify-center items-center w-[100%]" v-if="!tabsData.length && !loading">
 			<mescroll-empty :option="{tip : '暂无商品分类'}"></mescroll-empty>
@@ -385,7 +382,7 @@ const animationAddCart = (row: any, id: any) => {
 			uni.createSelectorQuery().in(instance).select('#' + id).boundingClientRect((position: any) => {
 				animationElStatus.value = `top: ${ position.top }px; left: ${ position.left }px;`
 				setTimeout(() => {
-					animationElStatus.value = `top: ${ res.top + res.height / 2 - position.height / 2 }px; left: ${ res.left + res.width / 2 - position.width / 2 }px; transition: all 0.8s; transform: rotate(-720deg);`
+					animationElStatus.value = `top: ${ res.top + res.height / 2 - position.height / 3 }px; left: ${ res.left + res.width / 2 - position.width / 3 }px; transition: all 0.8s; transform: rotate(-720deg);`
 				}, 20);
 
 				setTimeout(() => {
@@ -410,7 +407,7 @@ const animationAddCart = (row: any, id: any) => {
 		animationElStatus.value = `top: ${ itemCartTop }px; left: ${ itemCartLift }px;`
 
 		setTimeout(() => {
-			animationElStatus.value = `top: ${ animationEndTop + animationEnd.offsetHeight / 2 - itemCart.offsetHeight / 2 }px; left: ${ animationEndLeft + animationEnd.offsetWidth / 2 - itemCart.offsetHeight / 2 }px; transition: all 0.8s; transform: rotate(-720deg);`
+			animationElStatus.value = `top: ${ animationEndTop + animationEnd.offsetHeight / 2 - itemCart.offsetHeight / 3 }px; left: ${ animationEndLeft + animationEnd.offsetWidth / 2 - itemCart.offsetHeight / 3 }px; transition: all 0.8s; transform: rotate(-720deg);`
 		}, 20);
 		setTimeout(() => {
 			animationElStatus.value = ''
@@ -520,11 +517,12 @@ const itemCart = (row: any, id: any) => {
         useLogin().setLoginBack({url: '/addon/shop/pages/goods/category'})
         return false
     }
+	
     if (row.goodsSku.sku_spec_format) {
         cartRef.value.open(row.goodsSku.sku_id)
     } else {
         //单规格添加购物车
-		if (parseInt(row.goodsSku.num||0) > parseInt(row.goodsSku.stock)) {
+		if (!row.goodsSku.stock || parseInt(row.goodsSku.num||0) > parseInt(row.goodsSku.stock)) {
 		    uni.showToast({ title: '商品库存不足', icon: 'none' })
 		    return;
 		}
@@ -760,8 +758,8 @@ const goodsPrice = (data:any) => {
 .tabs-box .tab-item {
 	display: flex;
 	align-items: center;
-	justify-content: center;
-	height: 96rpx;
+	min-height: 56rpx;
+	padding: 20rpx 0;
 	background-color: #fff;
 }
 .tabs-box .tab-item-active {

@@ -115,7 +115,7 @@ class CoreElectronicSheetService extends BaseCoreService
 
         // 查询订单信息
         $order_model = new Order();
-        $field = 'order_id, order_no, member_id, taker_name, taker_mobile, taker_province, taker_city, taker_district, taker_address';
+        $field = 'order_id, order_no, member_id, taker_name, taker_mobile, taker_province, taker_city, taker_district, taker_address,delivery_money';
         $order_list = $order_model->where([
             [ 'order_id', 'in', $params[ 'order_id' ] ],
             [ 'delivery_type', '=', DeliveryDict::EXPRESS ], // 物流配送
@@ -222,10 +222,10 @@ class CoreElectronicSheetService extends BaseCoreService
                         // 只打印 物流配送的订单项
                         if (!empty($order_goods_delivery)) {
                             $commodity[] = [
-                                'GoodsName' => str_replace($search, '', mb_substr($og_v[ 'goods_name' ] . ' ' . $og_v[ 'sku_name' ], 0, 100, 'UTF-8')),
+                                'GoodsName' => str_replace($search, '', mb_substr($og_v[ 'goods_name' ] . ' ' . $og_v[ 'sku_name' ], 0, 50, 'UTF-8')),
                                 'GoodsQuantity' => $og_v[ 'num' ]
                             ];
-                            $remark[] = str_replace($search, '', mb_substr($og_v[ 'goods_name' ] . ' ' . $og_v[ 'sku_name' ], 0, 100, 'UTF-8'));
+//                            $remark[] = str_replace($search, '', mb_substr($og_v[ 'goods_name' ] . ' ' . $og_v[ 'sku_name' ], 0, 50, 'UTF-8'));
                             $goods_sku_info = $goods_sku_model->field('weight,volume')->where([ [ 'sku_id', '=', $og_v[ 'sku_id' ] ] ])->findOrEmpty()->toArray();
                             if (!empty($goods_sku_info)) {
                                 $weight_total += number_format($goods_sku_info[ 'weight' ], 3);
@@ -293,7 +293,8 @@ class CoreElectronicSheetService extends BaseCoreService
                         'Commodity' => $commodity,
                         'Weight' => $weight_total, // 包裹总重量kg，京东、快运类必填
                         'Volume' => $volume_total, // 包裹总体积 m³，京东、快运类必填
-                        'Remark' => '<br>' . mb_substr(implode('<br>', $remark), 0, 80, 'UTF-8'), // 备注
+                        'Cost' => $cv[ 'delivery_money' ], // 快递运费
+                        'Remark' => '', // '<br>' . mb_substr(implode('<br>', $remark), 0, 80, 'UTF-8'), // 备注
 
                         'IsReturnPrintTemplate' => 1, // 是否返回电子面单模板：（不填默认为0）0：不需要，1：需要
 
@@ -402,10 +403,10 @@ class CoreElectronicSheetService extends BaseCoreService
                     // 只打印 物流配送的订单项
                     if (!empty($order_goods_delivery)) {
                         $commodity[] = [
-                            'GoodsName' => str_replace($search, '', mb_substr($cv[ 'goods_name' ] . ' ' . $cv[ 'sku_name' ], 0, 100, 'UTF-8')),
+                            'GoodsName' => str_replace($search, '', mb_substr($cv[ 'goods_name' ] . ' ' . $cv[ 'sku_name' ], 0, 50, 'UTF-8')),
                             'GoodsQuantity' => $cv[ 'num' ]
                         ];
-                        $remark[] = str_replace($search, '', mb_substr($cv[ 'goods_name' ] . ' ' . $cv[ 'sku_name' ], 0, 100, 'UTF-8'));
+//                        $remark[] = str_replace($search, '', mb_substr($cv[ 'goods_name' ] . ' ' . $cv[ 'sku_name' ], 0, 50, 'UTF-8'));
                         $goods_sku_info = $goods_sku_model->field('weight,volume')->where([ [ 'sku_id', '=', $cv[ 'sku_id' ] ] ])->findOrEmpty()->toArray();
                         if (!empty($goods_sku_info)) {
                             $weight_total += number_format($goods_sku_info[ 'weight' ], 3);
@@ -472,7 +473,8 @@ class CoreElectronicSheetService extends BaseCoreService
                     'Commodity' => $commodity,
                     'Weight' => $weight_total, // 包裹总重量kg，京东、快运类必填
                     'Volume' => $volume_total, // 包裹总体积 m³，京东、快运类必填
-                    'Remark' => '<br>' . mb_substr(implode('<br>', $remark), 0, 80, 'UTF-8'), // 备注
+                    'Cost' => $v[ 'delivery_money' ], // 快递运费
+                    'Remark' => '',// '<br>' . mb_substr(implode('<br>', $remark), 0, 80, 'UTF-8'), // 备注
 
                     'IsReturnPrintTemplate' => 1, // 是否返回电子面单模板：（不填默认为0）0：不需要，1：需要
 
@@ -505,7 +507,7 @@ class CoreElectronicSheetService extends BaseCoreService
 
         // 查询订单信息
         $order_model = new Order();
-        $field = 'order_id, order_no, member_id, taker_name, taker_mobile, taker_province, taker_city, taker_district, taker_address';
+        $field = 'order_id, order_no, member_id, taker_name, taker_mobile, taker_province, taker_city, taker_district, taker_address,delivery_money';
         $order_info = $order_model->where([
             [ 'order_id', '=', $params[ 'order_id' ] ],
             [ 'delivery_type', '=', DeliveryDict::EXPRESS ], // 物流配送
@@ -527,7 +529,7 @@ class CoreElectronicSheetService extends BaseCoreService
         $shop_address_model = new ShopAddress();
         $default_shop_address = $shop_address_model->where([
             [ 'is_delivery_address', '=', 1 ],
-            [ 'is_default_delivery', '=', 1 ]
+            [ 'is_default_delivery', '=', 1 ],
         ])->field('contact_name,mobile,province_id,city_id,district_id,address')->findOrEmpty()->toArray();
 
         if (empty($default_shop_address)) {
@@ -588,10 +590,10 @@ class CoreElectronicSheetService extends BaseCoreService
         foreach ($order_info[ 'order_goods' ] as $ck => $cv) {
 
             $commodity[] = [
-                'GoodsName' => str_replace($search, '', mb_substr($cv[ 'goods_name' ] . ' ' . $cv[ 'sku_name' ], 0, 100, 'UTF-8')),
+                'GoodsName' => str_replace($search, '', mb_substr($cv[ 'goods_name' ] . ' ' . $cv[ 'sku_name' ], 0, 50, 'UTF-8')),
                 'GoodsQuantity' => $cv[ 'num' ]
             ];
-            $remark[] = str_replace($search, '', mb_substr($cv[ 'goods_name' ] . ' ' . $cv[ 'sku_name' ], 0, 100, 'UTF-8'));
+//            $remark[] = str_replace($search, '', mb_substr($cv[ 'goods_name' ] . ' ' . $cv[ 'sku_name' ], 0, 50, 'UTF-8'));
             $goods_sku_info = $goods_sku_model->field('weight,volume')->where([ [ 'sku_id', '=', $cv[ 'sku_id' ] ] ])->findOrEmpty()->toArray();
             if (!empty($goods_sku_info)) {
                 $weight_total += number_format($goods_sku_info[ 'weight' ], 3);
@@ -657,7 +659,8 @@ class CoreElectronicSheetService extends BaseCoreService
             'Commodity' => $commodity,
             'Weight' => $weight_total, // 包裹总重量kg，京东、快运类必填
             'Volume' => $volume_total, // 包裹总体积 m³，京东、快运类必填
-            'Remark' => '<br>' . mb_substr(implode('<br>', $remark), 0, 80, 'UTF-8'), // 备注
+            'Cost' => $order_info[ 'delivery_money' ], // 快递运费
+            'Remark' => '', // '<br>' . mb_substr(implode('<br>', $remark), 0, 80, 'UTF-8'), // 备注
 
             'IsReturnPrintTemplate' => 1, // 是否返回电子面单模板：（不填默认为0）0：不需要，1：需要
 

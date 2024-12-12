@@ -70,18 +70,6 @@ class CouponService extends BaseAdminService
      */
     public function getPage(array $where = [])
     {
-        $verify_coupon_ids = [];
-        // 检测商品id集合是否存在，移除不存在的商品id，纠正数据准确性
-        if (!empty($where[ 'verify_coupon_ids' ])) {
-            $verify_coupon_ids = $this->model->where([
-                [ 'id', 'in', $where[ 'verify_coupon_ids' ] ]
-            ])->withSearch([ "title", "status" ], $where)->field('id')->select()->toArray();
-
-            if (!empty($verify_coupon_ids)) {
-                $verify_coupon_ids = array_column($verify_coupon_ids, 'id');
-            }
-        }
-
         $field = 'id,title,price,type,receive_type,start_time,end_time,remain_count,receive_count,status,limit_count,min_condition_money,receive_status,valid_type,length,valid_end_time';
         $order = 'id desc';
         $search_model = $this->model->where([ [ 'id', '>', 0 ] ])->withSearch([ "title", "status" ], $where)->append([ 'type_name', 'receive_type_name', 'status_name' ])->field($field)->order($order);
@@ -96,6 +84,39 @@ class CouponService extends BaseAdminService
             //查询已使用数量
             $v[ 'receive_use_count' ] = $coupon_member_model->where([ [ 'coupon_id', '=', $v[ 'id' ] ], [ 'use_time', '>', 1 ] ])->count();
         }
+        return $list;
+    }
+
+    /**
+     * 获取优惠券选择分页列表
+     * @param array $where
+     * @return array
+     * @throws \think\db\exception\DbException
+     */
+    public function getSelectPage(array $where = [])
+    {
+        $verify_coupon_ids = [];
+        // 检测优惠券id集合是否存在，移除不存在的优惠券id，纠正数据准确性
+        if (!empty($where[ 'verify_coupon_ids' ])) {
+            $verify_coupon_ids = $this->model->where([
+                [ 'id', 'in', $where[ 'verify_coupon_ids' ] ]
+            ])->withSearch([ "title" ], $where)->field('id')->select()->toArray();
+
+            if (!empty($verify_coupon_ids)) {
+                $verify_coupon_ids = array_column($verify_coupon_ids, 'id');
+            }
+        }
+
+        $field = 'id,title,price,type,receive_type,start_time,end_time,remain_count,receive_count,status,limit_count,min_condition_money,receive_status,valid_type,length,valid_end_time';
+        $order = 'id desc';
+        $search_model = $this->model->where([ [ 'status', '=', CouponDict::NORMAL ] ])->withSearch([ "title" ], $where)->append([ 'type_name', 'receive_type_name', 'status_name' ])->field($field)->order($order);
+        $list = $this->pageQuery($search_model);
+        foreach ($list[ 'data' ] as $k => $v) {
+            if ($v[ 'remain_count' ] == 0) {
+                unset($list[ 'data' ][ $k ]);
+            }
+        }
+        $list[ 'data' ] = array_values($list[ 'data' ]);
         $list[ 'verify_coupon_ids' ] = $verify_coupon_ids;
         return $list;
     }

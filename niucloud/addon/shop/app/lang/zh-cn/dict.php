@@ -106,11 +106,14 @@ return [
         'shop_link_index' => '商城首页',
         'shop_link_goods_category' => '商品分类',
         'shop_link_goods_list' => '商品列表',
+        'shop_link_goods_rank' => '商品排行榜',
         'shop_link_goods_search' => '商品搜索',
         'shop_link_goods_cart' => '购物车',
         'page_link_member_index' => '商城个人中心',
         'shop_link_coupon_list' => '优惠券列表',
         'shop_link_my_coupon' => '我的优惠券',
+        'shop_link_my_goods_collect' => '商品收藏',
+        'shop_link_my_goods_browse' => '我的足迹',
         'shop_link_order_list' => '订单列表',
         'shop_link_order_refund_list' => '退款列表',
         'shop_link_point_index' => '积分商城',
@@ -223,7 +226,12 @@ return [
         'account_point_exchange_close' => '兑换订单关闭',
         'account_point_exchange_order' => '兑换订单消费',
         'account_point_exchange_refund' => '兑换订单维权',
-        'account_point_consume_reward' => '下单奖励'
+        'account_point_consume_reward' => '下单奖励',
+        'account_point_manjian_gift_give' => '满减送活动赠品发放',
+        'account_point_manjian_gift_back' => '满减送活动赠品退还',
+        'account_balance_manjian_gift_give' => '满减送活动赠品发放',
+        'account_balance_manjian_gift_back' => '满减送活动赠品退还',
+        'recharge_point_give'=>'会员充值积分发放'
     ],
 
     'dict_shop_delivery_electronic_sheet' => [
@@ -252,7 +260,8 @@ return [
         'goods' => '指定商品',
         'category' => '指定分类',
         'brand' => '指定品牌',
-        'label' => '指定标签'
+        'label' => '指定标签',
+        'all' => '全部',
     ],
 
     'dict_shop_goods_rank_rule_type' => [
@@ -270,6 +279,7 @@ return [
         'pay_num' => '支付件数',
         'collect_num' => '收藏数量',
         'pay_money' => '支付总金额',
+        'goods_visit_member_count' => '访客数',
     ],
 
 

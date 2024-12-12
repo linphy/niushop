@@ -27,6 +27,7 @@ use addon\shop\app\service\core\goods\CoreGoodsLimitBuyService;
 use addon\shop\app\service\core\order\CoreOrderConfigService;
 use app\model\member\Member;
 use core\base\BaseApiService;
+use core\exception\CommonException;
 
 /**
  *  商品服务层
@@ -102,7 +103,7 @@ class GoodsService extends BaseApiService
             ->withJoin([
                 'goodsSku' => [ 'sku_id', 'sku_name', 'sku_image', 'sku_no', 'goods_id', 'sku_spec_format', 'price', 'market_price', 'sale_price', 'stock', 'weight', 'volume', 'member_price' ]
             ])
-            ->where($sku_where)->order($order)->append([ 'goods_cover_thumb_small', 'goods_cover_thumb_mid', 'goods_label_name', 'goods_brand' ]);
+            ->where($sku_where)->order($order)->append([ 'goods_cover_thumb_mid', 'goods_label_name', 'goods_brand' ]);
         $list = $this->pageQuery($search_model);
         if (!empty($this->member_id)) {
             $member_info = $this->getMemberInfo();
@@ -119,6 +120,47 @@ class GoodsService extends BaseApiService
     }
 
     /**
+     * 常规调用获取商品列表
+     * @param array $where
+     * @return array
+     */
+    public function getGoodsList(array $where = [])
+    {
+        $field = 'goods_id,goods_name,sub_title,goods_category,goods_type,goods_cover,unit,status,sale_num + goods.virtual_sale_num as sale_num,member_discount,is_discount';
+
+        $sku_where = [
+            [ 'goodsSku.is_default', '=', 1 ],
+            [ 'goods.is_gift', '=', GoodsDict::NOT_IS_GIFT ],
+            [ 'status', '=', 1 ]
+        ];
+
+        if (!empty($where[ 'goods_ids' ])) {
+            $sku_where[] = [ 'goods.goods_id', 'in', $where[ 'goods_ids' ] ];
+        }
+
+        // 参数过滤
+        if (!empty($where[ 'order' ]) && in_array($where[ 'order' ], [ 'sale_num', 'price' ])) {
+            $order = $where[ 'order' ] . ' desc';
+        } else {
+            $order = 'sort desc,create_time desc';
+        }
+
+        $list = $this->model
+            ->withSearch([ 'goods_category', 'label_ids', 'service_ids' ], $where)
+            ->field($field)
+            ->withJoin([ 'goodsSku' ])
+            ->where($sku_where)->order($order)->append([ 'goods_type_name', 'goods_cover_thumb_small', 'goods_cover_thumb_mid' ])
+            ->select()->toArray();
+        if (!empty($this->member_id)) {
+            $member_info = $this->getMemberInfo();
+            foreach ($list as $k => &$v) {
+                $v[ 'goodsSku' ][ 'member_price' ] = $this->getMemberPrice($member_info, $v[ 'member_discount' ], $v[ 'goodsSku' ][ 'member_price' ], $v[ 'goodsSku' ][ 'price' ]);
+            }
+        }
+        return $list;
+    }
+
+    /**
      * 获取商品详情
      * @param array $data
      * @return array
@@ -127,6 +169,10 @@ class GoodsService extends BaseApiService
     {
         $sku_id = $data[ 'sku_id' ];
         $goods_id = $data[ 'goods_id' ];
+        if (!empty($goods_id)) {
+            $goods_info = ( new Goods() )->where([ [ 'goods_id', '=', $goods_id ], [ 'delete_time', '=', 0 ] ])->count();
+            if (empty($goods_info)) throw new CommonException('SHOP_GOODS_NOT_EXIST');//商品不存在
+        }
 
         $goods_sku_model = new GoodsSku();
 
@@ -145,8 +191,8 @@ class GoodsService extends BaseApiService
             ->field($field)
             ->with([
                 'goods' => function($query) {
-                    $query->withField('goods_id, goods_name, goods_type, sub_title, goods_cover, goods_category, goods_image,goods_video,goods_desc,brand_id,label_ids,service_ids, unit, stock, sale_num + virtual_sale_num as sale_num, is_limit,limit_type,max_buy,min_buy,status,delivery_type,attr_id,attr_format,member_discount,is_discount,poster_id,virtual_receive_type')
-                        ->append([ 'goods_type_name', 'goods_cover_thumb_small', 'goods_cover_thumb_mid', 'goods_cover_thumb_big', 'delivery_type_list', 'goods_image_thumb_small', 'goods_image_thumb_mid', 'goods_image_thumb_big', 'goods_brand' ]);
+                    $query->withField('goods_id, goods_name, goods_type, sub_title, goods_cover, goods_category, goods_image,goods_video,goods_desc,brand_id,label_ids,service_ids, unit, stock, sale_num + virtual_sale_num as sale_num, is_limit,limit_type,max_buy,min_buy,status,delivery_type,attr_id,attr_format,member_discount,is_discount,poster_id,virtual_receive_type,is_gift')
+                        ->append([ 'goods_type_name', 'goods_cover_thumb_mid', 'delivery_type_list', 'goods_image_thumb_small', 'goods_image_thumb_mid', 'goods_image_thumb_big', 'goods_brand' ]);
                 },
                 // 商品规格列表
                 'skuList' => function($query) {
@@ -237,7 +283,7 @@ class GoodsService extends BaseApiService
                 }
 
                 // 限购查询当前会员已购数量
-                $has_buy = ( new CoreGoodsLimitBuyService() )->getGoodsHasBuyNumber($this->member_id, $goods_id);
+                $has_buy = ( new CoreGoodsLimitBuyService() )->getGoodsHasBuyNumber($this->member_id, $info[ 'goods' ][ 'goods_id' ]);
                 $info[ 'goods' ][ 'has_buy' ] = $has_buy;
             } else {
                 $info[ 'goods' ][ 'has_buy' ] = 0;
@@ -253,11 +299,11 @@ class GoodsService extends BaseApiService
             $evaluate_config = $core_order_config_service->getEvaluateConfig();
             $info[ 'evaluate_is_show' ] = $evaluate_config[ 'evaluate_is_show' ];
 
+            // 商品统计-浏览次数
+            CoreGoodsStatService::addStat([ 'goods_id' => $info[ 'goods' ][ 'goods_id' ], 'access_num' => 1 ]);
+            ( new CoreGoodsAccessNumService() )->inc([ 'goods_id' => $info[ 'goods' ][ 'goods_id' ], 'access_num' => 1 ]);
         }
 
-        // 商品统计-浏览次数
-        CoreGoodsStatService::addStat(['goods_id' => $goods_id, 'access_num' => 1]);
-        (new CoreGoodsAccessNumService())->inc(['goods_id' => $goods_id, 'access_num' => 1]);
         return $info;
     }
 
@@ -279,7 +325,7 @@ class GoodsService extends BaseApiService
                 // 商品主表
                 'goods' => function($query) {
                     $query->withField('goods_id, goods_name, goods_type, sub_title, goods_cover, unit, stock, sale_num + virtual_sale_num as sale_num, status,member_discount,is_discount')
-                        ->append([ 'goods_type_name', 'goods_cover_thumb_small', 'goods_cover_thumb_mid', 'goods_cover_thumb_big' ]);
+                        ->append([ 'goods_type_name', 'goods_cover_thumb_mid' ]);
                 },
                 // 商品规格列表
                 'skuList' => function($query) {
@@ -338,7 +384,7 @@ class GoodsService extends BaseApiService
             ->withJoin([
                 'goodsSku' => [ 'sku_id', 'sku_name', 'sku_image', 'sku_no', 'goods_id', 'sku_spec_format', 'price', 'market_price', 'sale_price', 'stock', 'weight', 'volume', 'member_price' ]
             ])
-            ->where($sku_where)->order($order)->append([ 'goods_cover_thumb_small', 'goods_cover_thumb_mid', 'goods_label_name', 'goods_brand' ])
+            ->where($sku_where)->order($order)->append([ 'goods_cover_thumb_mid', 'goods_label_name', 'goods_brand' ])
             ->limit($where[ 'num' ])
             ->select()->toArray();
         if (!empty($this->member_id)) {
@@ -416,7 +462,6 @@ class GoodsService extends BaseApiService
         }
 
         return $price;
-
     }
 
     /**
@@ -479,6 +524,35 @@ class GoodsService extends BaseApiService
         }
 
         return $sku_list;
+
+    }
+
+    /**
+     * 猜你喜欢
+     * @return void|array
+     */
+    public function getRecommend()
+    {
+        $field = 'goods_id,goods_name,sub_title,goods_category,goods_type,goods_cover,unit,status,sale_num + goods.virtual_sale_num as sale_num,member_discount,is_discount,virtual_receive_type';
+        $order = 'sale_num desc';
+
+        $where['goods_sku_is_default'] = 1;
+        $where['status'] = 1;
+        $search_model = $this->model
+            ->withSearch([  'status' ], $where)
+            ->field($field)
+            ->withJoin([ 'goodsSku' ])
+            ->order($order)->append([ 'goods_type_name', 'goods_cover_thumb_small', 'goods_cover_thumb_mid' ]);
+        $list = $this->pageQuery($search_model);
+        if (!empty($this->member_id)) {
+            $member_info = $this->getMemberInfo();
+            foreach ($list[ 'data' ] as $k => &$v) {
+                if (!empty($v[ 'goodsSku' ])) {
+                    $v['goodsSku']['member_price'] = $this->getMemberPrice($member_info, $v['member_discount'], $v['goodsSku']['member_price'], $v['goodsSku']['price']);
+                }
+            }
+        }
+        return $list;
 
     }
 

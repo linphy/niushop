@@ -2,7 +2,7 @@
     <div class="main-container">
 
         <el-card class="card !border-none" shadow="never">
-            <el-page-header :content="pageName" :icon="ArrowLeft" @back="$router.back()" />
+            <el-page-header :content="pageName" :icon="ArrowLeft" @back="back()" />
         </el-card>
 
         <!-- 表单 -->
@@ -725,13 +725,12 @@ const inputBlur = (row: any, discount_type: string, index: number) => {
                 formRef.value.validateField('goods_list.' + index + '.reduce_money').catch(() => {})
             }
         }
-
     }
     row.discount_type = discount_type + ''
 
 }
 const back = () => {
-    history.back()
+    router.push('/shop/marketing/discount/list')
 }
 </script>
 

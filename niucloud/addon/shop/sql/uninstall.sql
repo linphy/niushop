@@ -37,6 +37,8 @@ DROP TABLE IF EXISTS `{{prefix}}shop_goods_label`;
 
 DROP TABLE IF EXISTS `{{prefix}}shop_goods_label_group`;
 
+DROP TABLE IF EXISTS `{{prefix}}shop_goods_rank`;
+
 DROP TABLE IF EXISTS `{{prefix}}shop_goods_service`;
 
 DROP TABLE IF EXISTS `{{prefix}}shop_goods_sku`;
@@ -46,6 +48,12 @@ DROP TABLE IF EXISTS `{{prefix}}shop_goods_spec`;
 DROP TABLE IF EXISTS `{{prefix}}shop_goods_stat`;
 
 DROP TABLE IF EXISTS `{{prefix}}shop_invoice`;
+
+DROP TABLE IF EXISTS `{{prefix}}shop_manjian`;
+
+DROP TABLE IF EXISTS `{{prefix}}shop_manjian_goods`;
+
+DROP TABLE IF EXISTS `{{prefix}}shop_manjian_give_records`;
 
 DROP TABLE IF EXISTS `{{prefix}}shop_newcomer_member_records`;
 

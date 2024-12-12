@@ -69,9 +69,10 @@
                                     </el-image>
                                     <img v-else class="w-[60px] h-[60px]" src="@/addon/shop/assets/goods_default.png" fit="contain" />
                                 </div>
-                                <div class="ml-2">
+                                <div class="ml-2 flex flex-col items-start">
                                     <span :title="row.goods_name" class="multi-hidden leading-[1.4]">{{ row.goods_name }}</span>
                                     <span class="text-primary text-[12px]">{{ row.goods_type_name }}</span>
+                                    <span class="px-[4px]  text-[12px] text-[#fff] rounded-[4px] bg-primary leading-[18px]" v-if="row.is_gift == 1">赠品</span>
                                 </div>
                             </div>
                             <div class="w-[20%]">￥{{ row.goodsSku.price }}</div>
@@ -166,6 +167,10 @@ const prop = defineProps({
         type: String,
         default: '' // 选择方式，空：代表全部， single：单一
     },
+    isGift: {
+        type: [String,Number],
+        default: 0 // 查询是否赠品，0：不查赠品，1：查询赠品
+    },
 })
 
 const emit = defineEmits(['update:modelValue','goodsSelect'])
@@ -211,9 +216,12 @@ const goodsTable = reactive({
         goods_ids: '',
         verify_goods_ids: '',
         verify_sku_ids: '',
-        goods_type: ''
+        goods_type: '',
+        is_gift: 0
     }
 })
+
+goodsTable.searchParam.is_gift = prop.isGift ? prop.isGift : 0;
 
 const searchFormRef = ref()
 
@@ -367,7 +375,7 @@ const secondLevelHandleCheckAllChange = (isSelect,row)=>{
             if(index < len){
                 let indent = selectGoodsId.indexOf(item)
                 delete selectGoods[replacePrefix+selectGoodsId[indent]]
-                selectGoodsId.splice(indent,1) 
+                selectGoodsId.splice(indent,1)
             }
         });
         setGoodsSelected();
@@ -392,11 +400,11 @@ const subChildHandleCheckAllChange  = (selected: any,parentData: any,data: any)=
         parentData.isSecondLevelIndeterminate = false;
         parentData.secondLevelCheckAll = false;
     }
-    
+
     detectionAllSelect();
 
     let currSku = deepClone(data)
-    
+
     if(selected){
         selectGoodsId.push(currSku.sku_id);
 
@@ -478,7 +486,7 @@ const loadGoodsList = (page: number = 1, callback: any = null) => {
         }
         if (callback) callback(prop.mode == "spu" ? res.data.verify_goods_ids : res.data.verify_sku_ids, res.data.select_goods_list)
         setGoodsSelected();
-        
+
         goodsTable.data = goodsTableData
         goodsTable.total = res.data.total
         goodsTable.loading = false
@@ -503,9 +511,9 @@ const setGoodsSelected = () => {
             let isAllSelectSku = true;
             for (let i = 0; i < goodsTable.data.length; i++) {
                 goodsTable.data[i].secondLevelCheckAll = false;
-                
+
                 isAllSelectSku = true;
-                
+
                 goodsTable.data[i].isSecondLevelIndeterminate = false;
                 goodsTable.data[i].skuList.forEach((item,index) => {
                     item.threeLevelCheckAll = false;
@@ -537,7 +545,7 @@ const show = () => {
     for (let k in selectGoods) {
         delete selectGoods[k];
     }
-    
+
     replacePrefix = prop.mode == "sku" ? 'sku_' : 'goods_';
 
     // 检测商品id集合是否存在，移除不存在的商品id，纠正数据准确性
@@ -548,9 +556,9 @@ const show = () => {
     }
 
     getGoodsSkuNoPageListFn();
-    
+
     loadGoodsList(1, (verify_ids: any) => {
-        
+
         // 第一次打开弹出框时，纠正数据，并且赋值已选商品
         if (goodsIds.value && goodsIds.value.length) {
             goodsIds.value.splice(0, goodsIds.value.length, ...verify_ids)
@@ -602,7 +610,7 @@ const getGoodsSkuNoPageListFn = () =>{
             }
         }
 
-        
+
         setGoodsSelected();
     })
 }
@@ -631,7 +639,7 @@ const save = () => {
         });
         return;
     }
-    
+
     if(prop.way == 'single'){
         let realTypeNum = 0;
         let virtualTypeNum = 0;
@@ -642,7 +650,7 @@ const save = () => {
                 realTypeNum++;
             }
         }
-        
+
         if (realTypeNum != Object.keys(selectGoods).length && virtualTypeNum != Object.keys(selectGoods).length) {
             ElMessage({
                 type: 'warning',

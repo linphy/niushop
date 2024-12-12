@@ -2,7 +2,7 @@
     <div class="main-container" v-loading="loading">
 
         <el-card class="card !border-none" shadow="never">
-            <el-page-header :content="pageName" :icon="ArrowLeft" @back="$router.back()" />
+            <el-page-header :content="pageName" :icon="ArrowLeft" @back="back()" />
         </el-card>
 
         <!-- 表单 -->
@@ -753,7 +753,7 @@ const onSave = async (formEl: FormInstance | undefined) => {
     })
 }
 const back = () => {
-    history.back()
+    router.push('/shop/marketing/exchange/goods_list')
 }
 </script>
 

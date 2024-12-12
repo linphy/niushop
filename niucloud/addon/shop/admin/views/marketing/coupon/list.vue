@@ -52,7 +52,7 @@
 
                     <el-table-column  :label="t('sumCount')" min-width="160">
                         <template #default="{ row }">
-                            <span v-if="row.receive_type == 1 && row.sum_count != '-1'">{{ row.remain_count || '' }} / {{ row.sum_count || '' }}</span>
+                            <span v-if="row.receive_type == 1 && row.sum_count != '-1'">{{ row.remain_count || 0 }} / {{ row.sum_count || 0 }}</span>
                             <span v-else>不限量</span>
                         </template>
                     </el-table-column>
@@ -118,6 +118,7 @@ import { getCouponList, deleteCoupon, closeCoupon,getCouponStatusList } from '@/
 import { ElMessageBox, FormInstance } from 'element-plus'
 import { t } from '@/lang'
 import couponSpreadPopup from '@/addon/shop/views/marketing/coupon/components/coupon-spread-popup.vue'
+import { setTablePageStorage,getTablePageStorage } from "@/utils/common";
 
 const router = useRouter()
 const route = useRoute()
@@ -156,11 +157,12 @@ const loadCouponList = (page: number = 1) => {
         tableData.loading = false
         tableData.data = res.data.data
         tableData.total = res.data.total
+        setTablePageStorage(tableData.page, tableData.limit, tableData.searchParam);
     }).catch(() => {
         tableData.loading = false
     })
 }
-loadCouponList()
+loadCouponList(getTablePageStorage(tableData.searchParam).page);
 
 // 商品推广
 const couponSpreadPopupRef: any = ref(null)

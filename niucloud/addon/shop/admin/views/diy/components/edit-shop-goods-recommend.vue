@@ -88,7 +88,7 @@ import Sortable from 'sortablejs'
 import { range } from 'lodash-es'
 
 const diyStore:any = useDiyStore()
-diyStore.editComponent.ignore = [] // 忽略公共属性
+diyStore.editComponent.ignore = ['componentBgUrl'] // 忽略公共属性
 
 // 组件验证
 diyStore.editComponent.verify = (index: number) => {
@@ -110,7 +110,7 @@ diyStore.editComponent.verify = (index: number) => {
             return res
         }
     })
-    
+
     if (diyStore.value[index].source == 'custom' && diyStore.value[index].goods_ids.length < diyStore.value[index].list.length) {
         res.code = false
         res.message = t('goodsPlaceholder')
@@ -141,7 +141,7 @@ onMounted(() => {
                 )
             }
         })
-        
+
         let listNum = diyStore.editComponent.list.length;
         let goodsIdNum = diyStore.editComponent.goods_ids.length;
         diyStore.editComponent.goods_ids.splice(listNum, goodsIdNum);

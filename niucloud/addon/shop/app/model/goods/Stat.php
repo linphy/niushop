@@ -11,6 +11,7 @@
 
 namespace addon\shop\app\model\goods;
 
+use app\dict\sys\FileDict;
 use core\base\BaseModel;
 
 /**
@@ -47,4 +48,16 @@ class Stat extends BaseModel
     {
         return $this->hasOne(Goods::class, 'goods_id', 'goods_id');
     }
+
+    /**
+     * 获取封面缩略图（小）
+     */
+    public function getGoodsCoverThumbSmallAttr($value, $data)
+    {
+        if (isset($data[ 'goods_cover' ]) && $data[ 'goods_cover' ] != '') {
+            return get_thumb_images($data[ 'goods_cover' ], FileDict::SMALL);
+        }
+        return [];
+    }
+
 }

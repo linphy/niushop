@@ -81,7 +81,7 @@ import { ref } from 'vue'
 import useDiyStore from '@/stores/modules/diy'
 
 const diyStore = useDiyStore()
-diyStore.editComponent.ignore = [] // 忽略公共属性
+diyStore.editComponent.ignore = ['componentBgUrl'] // 忽略公共属性
 
 const showDialog = ref(false)
 

@@ -31,7 +31,7 @@
 			</view>
 			<scroll-view scroll-x="true" class="content">
 				<view class="flex">
-					<view class="inline-flex bg-[#fff] p-[16rpx] rounded-[var(--goods-rounded-big)] box-border" @click="toDetail(list[0])">
+					<view class="inline-flex bg-[#fff] p-[16rpx] box-border" :style="commonTempCss()" @click="toDetail(list[0])">
 						<view class="w-[150rpx] h-[150rpx] flex items-center justify-center">
 							<u--image radius="var(--goods-rounded-big)" width="150rpx" height="150rpx" :src="img(list[0].sku_image || '')" model="aspectFill">
 								<template #error>
@@ -51,7 +51,7 @@
 						</view>
 					</view>
 					<block v-for="(item,index) in list" :key="index">
-						<view v-if="index > 0" class="ml-[10rpx] inline-flex flex-col items-center p-[16rpx] bg-[#fff] rounded-[var(--goods-rounded-big)] box-border" @click="toDetail(item)">
+						<view v-if="index > 0" class="ml-[10rpx] inline-flex flex-col items-center p-[16rpx] bg-[#fff] box-border" :style="commonTempCss()" @click="toDetail(item)">
 							<view class="w-[110rpx] h-[110rpx] flex items-center justify-center">
 								<u--image radius="var(--goods-rounded-big)" width="110rpx" height="110rpx" :src="img(item.sku_image || '')" model="aspectFill">
 									<template #error>
@@ -100,7 +100,7 @@
 			</view>
 			<scroll-view scroll-x="true" class="content">
 				<view class="flex">
-					<view v-for="(item,index) in list" :key="index" class="item-bg mr-[10rpx] inline-flex flex-col items-center p-[6rpx] bg-[#fff] rounded-[var(--rounded-small)] box-border" @click="toDetail(item)">
+					<view v-for="(item,index) in list" :key="index" class="item-bg mr-[10rpx] inline-flex flex-col items-center p-[6rpx] bg-[#fff] box-border" :style="commonTempCss()" @click="toDetail(item)">
 						<view class="flex items-center justify-center w-[146rpx] h-[146rpx]">
 							<u--image radius="var(--goods-rounded-small)" width="146rpx" height="146rpx" :src="img(item.sku_image || '')" model="aspectFill">
 								<template #error>
@@ -149,7 +149,7 @@
 			</view>
 			<scroll-view scroll-x="true" class="content bg-[#fff] box-border p-[16rpx] rounded-[var(--rounded-small)]">
 				<view class="flex">
-					<view v-for="(item,index) in list" :key="index" class="item-bg inline-flex flex-col items-center box-border" :class="{'mr-[16rpx]': index != (list.length-1)}" @click="toDetail(item)">
+					<view v-for="(item,index) in list" :key="index" class="item-bg inline-flex flex-col items-center box-border" :class="{'mr-[16rpx]': index != (list.length-1)}" :style="commonTempCss()" @click="toDetail(item)">
 						<view class="bg-[#f8f8f8] flex items-center justify-center w-[152rpx] h-[152rpx]">
 							<u--image radius="var(--goods-rounded-small)" width="152rpx" height="152rpx" :src="img(item.sku_image || '')" model="aspectFill">
 								<template #error>
@@ -197,7 +197,7 @@
 			</view>
 			<scroll-view scroll-x="true" class="content">
 				<view class="flex">
-					<view v-for="(item,index) in list" :key="index" class="item-bg inline-flex flex-col items-center box-border" :class="{'mr-[20rpx]': index != (list.length-1)}" @click="toDetail(item)">
+					<view v-for="(item,index) in list" :key="index" class="item-bg inline-flex flex-col items-center box-border" :class="{'mr-[20rpx]': index != (list.length-1)}" :style="commonTempCss()" @click="toDetail(item)">
 						<view class="relative flex items-center justify-center w-[100%] h-[130rpx] pt-[40rpx] mb-[10rpx]">
 							<u--image radius="var(--goods-rounded-small)" width="130rpx" height="130rpx" :src="img(item.sku_image || '')" model="aspectFill">
 								<template #error>
@@ -239,17 +239,17 @@
 			return props.component;
 		}
 	})
-	
+
 	/********* 倒计时 - start ***********/
-	// 使用 reactive 创建响应式对象  
+	// 使用 reactive 创建响应式对象
 	const timeData = ref({});
-	// 定义 onChange 方法  
-	const onChange = (e) => {  
-	  timeData.value = e;  
+	// 定义 onChange 方法
+	const onChange = (e) => {
+	  timeData.value = e;
 	};
 	const newcomerTime: any = ref('');
 	/********* 倒计时 - end ***********/
-	
+
 	const goodsPrice = (data: any)=> {
 		let price: any = 0;
 		if (data && data.newcomer_price) {
@@ -257,7 +257,7 @@
 		}
 		return price;
 	}
-	
+
 	// 将天转换成时
 	const dayTransitionHours = ()=>{
 		let num = timeData.value.days * 24 + timeData.value.hours;
@@ -265,7 +265,7 @@
 		num = num >=10 ? num : '0' + num;
 		return num;
 	}
-	
+
 	// 活动状态
 	const activeState = ()=>{
 		let bool = true;
@@ -274,7 +274,7 @@
 		}
 		return bool;
 	}
-	
+
 	const warpCss = computed(() => {
 		var style = '';
         style += 'position:relative;';
@@ -283,18 +283,13 @@
             else style += 'background-color:' + diyComponent.value.componentStartBgColor + ';';
         }
 
-        if(diyComponent.value.componentBgUrl) {
-            style += `background-image:url('${ img(diyComponent.value.componentBgUrl) }');`;
-            style += 'background-size: cover;background-repeat: no-repeat;';
-        }
-
 		if (diyComponent.value.topRounded) style += 'border-top-left-radius:' + diyComponent.value.topRounded * 2 + 'rpx;';
 		if (diyComponent.value.topRounded) style += 'border-top-right-radius:' + diyComponent.value.topRounded * 2 + 'rpx;';
 		if (diyComponent.value.bottomRounded) style += 'border-bottom-left-radius:' + diyComponent.value.bottomRounded * 2 + 'rpx;';
 		if (diyComponent.value.bottomRounded) style += 'border-bottom-right-radius:' + diyComponent.value.bottomRounded * 2 + 'rpx;';
 		return style;
 	})
-	
+
 	// 倒计时样式
 	const countDownTextCss = computed(() => {
 		var style = '';
@@ -308,6 +303,17 @@
 		return style;
 	})
 	
+	
+	// 公共模块颜色
+	const commonTempCss = ()=>{
+		var style = '';
+		if (diyComponent.value.topElementRounded) style += 'border-top-left-radius:' + diyComponent.value.topElementRounded * 2 + 'rpx;';
+		if (diyComponent.value.topElementRounded) style += 'border-top-right-radius:' + diyComponent.value.topElementRounded * 2 + 'rpx;';
+		if (diyComponent.value.bottomElementRounded) style += 'border-bottom-left-radius:' + diyComponent.value.bottomElementRounded * 2 + 'rpx;';
+		if (diyComponent.value.bottomElementRounded) style += 'border-bottom-right-radius:' + diyComponent.value.bottomElementRounded * 2 + 'rpx;';
+		return style;
+	}
+
 	// 副标题样式
 	const subTitleCss = computed(() => {
 		var style = '';
@@ -320,7 +326,7 @@
 		if (diyComponent.value.subTitle.textColor) style += 'color:' + diyComponent.value.subTitle.textColor + ';';
 		return style;
 	})
-	
+
 	const list: any = ref([])
 	const getNewcomerListFn = () => {
 		let data = {
@@ -444,7 +450,6 @@
 			}
 			.item-bg{
 				background: linear-gradient(#FFFFFF 60%, #f7f7f7 100%);
-				border-radius: 20rpx;
 			}
 			.btn-bg{
 				background: linear-gradient( 140deg, #FE2B2B 0%, #FF7236 100%);

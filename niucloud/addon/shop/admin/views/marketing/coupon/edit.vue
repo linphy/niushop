@@ -2,7 +2,7 @@
     <div class="main-container">
 
         <el-card class="card !border-none" shadow="never">
-            <el-page-header :content="pageName" :icon="ArrowLeft" @back="$router.back()" />
+            <el-page-header :content="pageName" :icon="ArrowLeft" @back="back()" />
         </el-card>
 
         <!-- 表单 -->
@@ -370,7 +370,7 @@ const goodsCategoryFormatting = (data: any) => {
 }
 
 const back = () => {
-    history.back()
+    router.push('/shop/marketing/coupon/list')
 }
 </script>
 

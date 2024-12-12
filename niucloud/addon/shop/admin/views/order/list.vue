@@ -99,14 +99,15 @@
 													<img class="w-[50px] h-[50px]" v-if="row.goods_image" :src="img(row.goods_image)" alt="">
 													<img class="w-[50px] h-[50px]" v-else src="" alt="">
 												</div>
-												<div class="flex flex-col">
+												<div class="flex flex-col items-start">
                                                     <el-tooltip class="box-item" effect="light" placement="top">
                                                         <template #content>
                                                             <div class="max-w-[250px]">{{row.goods_name}}</div>
                                                         </template>
-													    <p class="multi-hidden text-[14px]">{{ row.goods_name }}</p>
+                                                        <p class="multi-hidden text-[14px]">{{ row.goods_name }}</p>
                                                     </el-tooltip>
 													<span class="text-[12px] text-[#999] truncate">{{ row.sku_name }}</span>
+                                                    <span class="px-[4px]  text-[12px] text-[#fff] rounded-[4px] bg-primary leading-[18px]" v-if="row.is_gift == 1">赠品</span>
 												</div>
 											</div>
 										</template>
@@ -210,9 +211,10 @@ import AdjustMoney from '@/addon/shop/views/order/components/adjust-money.vue'
 import ShopActiveRefund from '@/addon/shop/views/order/components/shop-active-refund.vue'
 import electronicSheetPrint from '@/addon/shop/views/order/components/electronic-sheet-print.vue'
 import { img } from '@/utils/common'
-import { ElMessage,ElMessageBox, FormInstance } from 'element-plus'
+import { ElMessage, ElMessageBox, FormInstance } from 'element-plus'
 import { useRouter, useRoute } from 'vue-router'
 import { cloneDeep } from 'lodash-es'
+import { setTablePageStorage,getTablePageStorage } from '@/utils/common'
 
 const route = useRoute()
 const router = useRouter()
@@ -237,45 +239,43 @@ const selectAllCheck = () => {
     if (!isSelectAll.value) {
         isSelectAll.value = true
         for (const i in orderTable.data) {
-            let isAdd = false;
+            let isAdd = false
             for (const j in orderTable.data[i].order_goods) {
                 // 存在一个没有退款的订单项就设为选中状态
                 if (orderTable.data[i].order_goods[j].status == 1) {
                     multipleTable.value[i].toggleRowSelection(orderTable.data[i].order_goods[j], true)
-                    isAdd = true;
+                    isAdd = true
                 }
             }
             if (isAdd) {
-                multipleSelection['order_' + orderTable.data[i].order_id] = cloneDeep(orderTable.data[i]);
+                multipleSelection['order_' + orderTable.data[i].order_id] = cloneDeep(orderTable.data[i])
             }
         }
     } else {
         isSelectAll.value = false
         for (const v in orderTable.data) {
             multipleTable.value[v].clearSelection()
-            delete multipleSelection['order_' + orderTable.data[v].order_id];
+            delete multipleSelection['order_' + orderTable.data[v].order_id]
         }
     }
-
 }
 
 // 监听表格复选框
-const handleSelectChange = (selection: any, row: any)=> {
-
+const handleSelectChange = (selection: any, row: any) => {
     // 是否选中
     let isSelected = false
-    let item: any = null;
+    let item: any = null
 
     for (let i = 0; i < orderTable.data.length; i++) {
         if (orderTable.data[i].order_id == row.order_id) {
-            item = orderTable.data[i];
-            break;
+            item = orderTable.data[i]
+            break
         }
     }
 
     for (let i = 0; i < selection.length; i++) {
         if (selection[i].order_id == row.order_id) {
-            isSelected = true;
+            isSelected = true
             break
         }
     }
@@ -320,49 +320,50 @@ const loadOrderList = (page: number = 1) => {
         limit: orderTable.limit,
         ...orderTable.searchParam
     }).then(res => {
-        orderTable.loading = false;
+        orderTable.loading = false
         orderTable.data = res.data.data.map((el: any) => {
-            el.isSupportElectronicSheet = false; // 是否支持打印电子面单
-            el.isSupportPrintTicket = false; // 是否支持打印小票
+            el.isSupportElectronicSheet = false // 是否支持打印电子面单
+            el.isSupportPrintTicket = false // 是否支持打印小票
 
             // 只有待发货、待收货，物流配送的情况下才能打印电子面单
             if (el.delivery_type == 'express' && el.status == 3) {
-                el.isSupportElectronicSheet = true;
+                el.isSupportElectronicSheet = true
             }
 
             //  待发货、待收货、已完成状态下可以打印小票
-            if (el.delivery_type != 'virtual' &&  (el.status == 2 || el.status == 3 || el.status == 5)) {
-                el.isSupportPrintTicket = true;
+            if (el.delivery_type != 'virtual' && (el.status == 2 || el.status == 3 || el.status == 5)) {
+                el.isSupportPrintTicket = true
             }
             el.order_goods.forEach((v: any) => {
                 v.rowNum = el.order_goods.length
-            });
+            })
             return el
-        });
+        })
 
         // 处理主力退款按钮是否出现
-        orderTable.data.forEach((item,index,arr) => {
-            let refundOrderNum = 0;
-            item.order_goods.forEach((orderItem,orderIndex) => {
-                if(orderItem.status == 1){
-                    refundOrderNum++;
+        orderTable.data.forEach((item: any, index: number, arr: any) => {
+            let refundOrderNum = 0
+            item.order_goods.forEach((orderItem: any, orderIndex:number) => {
+                if (orderItem.status == 1) {
+                    refundOrderNum++
                 }
-            });
+            })
             arr[index].is_refund_show = refundOrderNum > 0 ? true : false;
-        });
+        })
         orderTable.total = res.data.total
+	    setTablePageStorage(orderTable.page,orderTable.limit,orderTable.searchParam);
     }).catch(() => {
         orderTable.loading = false
     })
 }
 
-loadOrderList();
+loadOrderList(getTablePageStorage(orderTable.searchParam).page)
 
 const handleClick = (event: any) => {
-    orderTable.searchParam.status = event;
-    isSelectAll.value = false;
-    for(let key in multipleSelection){
-	    delete multipleSelection[key];
+    orderTable.searchParam.status = event
+    isSelectAll.value = false
+    for (let key in multipleSelection) {
+        delete multipleSelection[key]
     }
     loadOrderList()
 }
@@ -493,7 +494,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
  * 修改地址
  */
 const orderEditAddressDialog :Record<string, any> | null = ref(null)
-const orderEditAddressFn = async (data:any) =>{
+const orderEditAddressFn = async (data:any) => {
     orderEditAddressDialog.value.showDialog = true
     orderEditAddressDialog.value.setFormData(data)
 }
@@ -504,28 +505,27 @@ const electronicSheetPrintDialog: Record<string, any> | null = ref(null)
 // 单个订单打印电子面单
 const openElectronicSheetPrintDialog = (data: any) => {
     let formData = cloneDeep(data)
-    formData.print_type = 'single';
+    formData.print_type = 'single'
     electronicSheetPrintDialog.value.setFormData(formData)
     electronicSheetPrintDialog.value.showDialog = true
 }
 
 // 批量打印电子面单
 const batchPrintElectronicSheet = () => {
-
-    let noSupportCount = 0;
-    let order_ids = [];
+    let noSupportCount = 0
+    let order_ids = []
     for (let key in multipleSelection) {
         if (multipleSelection[key].isSupportElectronicSheet) {
-            order_ids.push(multipleSelection[key].order_id);
+            order_ids.push(multipleSelection[key].order_id)
         } else {
-            noSupportCount++;
+            noSupportCount++
         }
     }
 
     if (noSupportCount && order_ids.length == 0) {
         ElMessage({
             type: 'warning',
-            message: `${ t('notSupportPrintElectronicSheetTips') }`
+            message: `${t('notSupportPrintElectronicSheetTips')}`
         })
         return
     }
@@ -533,7 +533,7 @@ const batchPrintElectronicSheet = () => {
     if (order_ids.length == 0) {
         ElMessage({
             type: 'warning',
-            message: `${ t('batchEmptySelectedOrderTips') }`
+            message: `${t('batchEmptySelectedOrderTips')}`
         })
         return
     }
@@ -547,7 +547,7 @@ const batchPrintElectronicSheet = () => {
 
 // 电子面单完成事件
 const electronicSheetPrintComplete = () => {
-    isSelectAll.value = false;
+    isSelectAll.value = false
     for (const v in orderTable.data) {
         multipleTable.value[v].clearSelection()
         delete multipleSelection['order_' + orderTable.data[v].order_id];
@@ -580,7 +580,7 @@ const printTicketEvent = (data: any) => {
 /**
  * 商家主动退款
  */
- const shopActiveRefundDialog: Record<string, any> | null = ref(null)
+const shopActiveRefundDialog: Record<string, any> | null = ref(null)
 const refundEvent = (data: any) => {
     shopActiveRefundDialog.value.setFormData(data)
     shopActiveRefundDialog.value.showDialog = true

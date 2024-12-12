@@ -78,7 +78,7 @@ import { t } from '@/lang'
 import { ref, reactive, computed, nextTick } from 'vue'
 import { cloneDeep } from 'lodash-es'
 import { ElMessage } from 'element-plus'
-import { getCouponList } from '@/addon/shop/api/marketing'
+import { getCouponSelectList } from '@/addon/shop/api/marketing'
 
 const prop = defineProps({
     modelValue: {
@@ -182,7 +182,7 @@ const loadCouponList = (page: number = 1, callback: any = null) => {
     couponTable.page = page
 
     const searchData: any = cloneDeep(couponTable.searchParam);
-    getCouponList({
+    getCouponSelectList({
         page: couponTable.page,
         limit: couponTable.limit,
         ...searchData
@@ -227,7 +227,13 @@ const show = () => {
         // 第一次打开弹出框时，纠正数据，并且赋值已选优惠券
         if (couponIds.value) {
             couponIds.value.splice(0, couponIds.value.length, ...verify_coupon_ids)
-            
+            // 先删除 selectCoupon 中已经不再存在于 couponIds 中的优惠券
+            for (let key in selectCoupon) {
+                const couponId = key.replace('coupon_', '');
+                if (!couponIds.value.includes(Number(couponId))) {
+                    delete selectCoupon[key]; // 删除不存在的优惠券
+                }
+            }
             couponIds.value.forEach((item: any) => {
                 if (!selectCoupon['coupon_' + item]) {
                     selectCoupon['coupon_' + item] = {};

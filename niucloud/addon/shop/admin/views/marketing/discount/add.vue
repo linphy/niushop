@@ -2,7 +2,7 @@
     <div class="main-container">
 
         <el-card class="card !border-none" shadow="never">
-            <el-page-header :content="pageName" :icon="ArrowLeft" @back="$router.back()" />
+            <el-page-header :content="pageName" :icon="ArrowLeft" @back="back()" />
         </el-card>
 
         <!-- 表单 -->
@@ -210,164 +210,164 @@
 </template>
 
 <script lang="ts" setup>
-    import {ref, computed, reactive, nextTick} from 'vue'
-    import {t} from '@/lang'
-    import {useRoute, useRouter} from 'vue-router'
-    import {addActiveDiscount} from "@/addon/shop/api/marketing";
-    import {FormInstance, ElMessage} from 'element-plus'
-    import { ArrowLeft } from '@element-plus/icons-vue'
-    import {deepClone, img} from '@/utils/common'
-    import goodsSelectPopup from '@/addon/shop/views/goods/components/goods-select-popup.vue'
-    import goodsSkuPopup from '@/addon/shop/views/marketing/discount/components/goods-sku-popup.vue'
+import {ref, computed, reactive, nextTick} from 'vue'
+import {t} from '@/lang'
+import {useRoute, useRouter} from 'vue-router'
+import {addActiveDiscount} from "@/addon/shop/api/marketing";
+import {FormInstance, ElMessage} from 'element-plus'
+import { ArrowLeft } from '@element-plus/icons-vue'
+import {deepClone, img} from '@/utils/common'
+import goodsSelectPopup from '@/addon/shop/views/goods/components/goods-select-popup.vue'
+import goodsSkuPopup from '@/addon/shop/views/marketing/discount/components/goods-sku-popup.vue'
 
-    const router = useRouter()
-    const route = useRoute()
-    const pageName = route.meta.title
+const router = useRouter()
+const route = useRoute()
+const pageName = route.meta.title
 
-    const loading = ref(false)
-    const start_time = new Date()
-    const end_time = new Date()
-    const goodsSelectPopupRef: any = ref(null)
-    end_time.setTime(end_time.getTime() + 3600 * 1000 * 2 * 360) // 设置结束默认时间为当前时间30天后
+const loading = ref(false)
+const start_time = new Date()
+const end_time = new Date()
+const goodsSelectPopupRef: any = ref(null)
+end_time.setTime(end_time.getTime() + 3600 * 1000 * 2 * 360) // 设置结束默认时间为当前时间30天后
 
-    const initialFormData = {
-        active_name: '', // 名称
-        active_desc: '', // 标题
-        active_status: '',
-        start_time: '',
-        end_time: '',
-        goods_data: '',
-        goods_ids: [],
-        goods_list: [],
-        discount_time: [start_time, end_time],
+const initialFormData = {
+    active_name: '', // 名称
+    active_desc: '', // 标题
+    active_status: '',
+    start_time: '',
+    end_time: '',
+    goods_data: '',
+    goods_ids: [],
+    goods_list: [],
+    discount_time: [start_time, end_time],
+}
+const formData: Record<string, any> = ref({...initialFormData})
+const formRef = ref<FormInstance>()
+
+// 表单验证规则
+// 正则表达式
+const regExp = {
+    number: /^\d{0,10}(.?\d{0,1})$/,
+    digit: /^\d{0,10}(.?\d{0,2})$/
+}
+
+const formRules = computed(() => {
+    return {
+        active_name: [
+            {required: true, message: t('namePlaceholder'), trigger: 'blur'},
+            { validator: noSpaceValidator, trigger: 'blur' }
+        ],
+        active_desc: [
+            {required: true, message: t('titlePlaceholder'), trigger: 'blur'},
+            { validator: noSpaceValidator, trigger: 'blur' }
+        ],
+        goods_list: [
+            {required: true, message: t('selectProductPlaceholder'), trigger: 'change'}
+        ],
+        discount_time: [
+            {required: true, validator: receiveTime, trigger: 'change'}
+        ],
     }
-    const formData: Record<string, any> = ref({...initialFormData})
-    const formRef = ref<FormInstance>()
+})
 
-    // 表单验证规则
-    // 正则表达式
-    const regExp = {
-        number: /^\d{0,10}(.?\d{0,1})$/,
-        digit: /^\d{0,10}(.?\d{0,2})$/
+const noSpaceValidator = (rule: any, value: any, callback: any)=>{
+    if (value.trim() === '') {
+        return callback(new Error(t('noSpaceAllowed')));
     }
+    callback(); // 通过验证
+}
 
-    const formRules = computed(() => {
-        return {
-            active_name: [
-                {required: true, message: t('namePlaceholder'), trigger: 'blur'},
-                { validator: noSpaceValidator, trigger: 'blur' }
-            ],
-            active_desc: [
-                {required: true, message: t('titlePlaceholder'), trigger: 'blur'},
-                { validator: noSpaceValidator, trigger: 'blur' }
-            ],
-            goods_list: [
-                {required: true, message: t('selectProductPlaceholder'), trigger: 'change'}
-            ],
-            discount_time: [
-                {required: true, validator: receiveTime, trigger: 'change'}
-            ],
-        }
-    })
-
-    const noSpaceValidator = (rule: any, value: any, callback: any)=>{
-        if (value.trim() === '') {
-            return callback(new Error(t('noSpaceAllowed')));
-        }
-        callback(); // 通过验证
+const receiveTime = (rule: any, value: any, callback: any) => {
+    if (!formData.value.discount_time || (formData.value.discount_time && !formData.value.discount_time[0] && !formData.value.discount_time[1])) {
+        callback(new Error(t('请选择活动时间')))
+    } else if (!formData.value.discount_time[0]) {
+        callback(new Error(t('请选择活动开始时间')))
+    } else if (!formData.value.discount_time[1]) {
+        callback(new Error(t('请选择活动结束时间')))
+    } else if (formData.value.discount_time[1] <= formData.value.discount_time[0]) {
+        callback(new Error(t('活动结束时间不能小于等于活动开始时间')))
     }
+    callback()
+}
 
-    const receiveTime = (rule: any, value: any, callback: any) => {
-        if (!formData.value.discount_time || (formData.value.discount_time && !formData.value.discount_time[0] && !formData.value.discount_time[1])) {
-            callback(new Error(t('请选择活动时间')))
-        } else if (!formData.value.discount_time[0]) {
-            callback(new Error(t('请选择活动开始时间')))
-        } else if (!formData.value.discount_time[1]) {
-            callback(new Error(t('请选择活动结束时间')))
-        } else if (formData.value.discount_time[1] <= formData.value.discount_time[0]) {
-            callback(new Error(t('活动结束时间不能小于等于活动开始时间')))
-        }
-        callback()
+const validFn = (row: any) => {
+    if (row.discount_rate.length == 0) {
+        return false
+    } else if (isNaN(row.discount_rate) || !regExp.number.test(row.discount_rate)) {
+        return false
+    } else if (row.discount_rate <= 0) {
+        return false
+    } else if (row.discount_rate > 9.9) {
+        return false
+    } else if (row.reduce_money.length == 0) {
+        return false
+    } else if (isNaN(row.reduce_money) || !regExp.digit.test(row.reduce_money)) {
+        return false
+    } else if (row.reduce_money <= 0) {
+        return false
+    } else if (row.reduce_money >= parseFloat(row.goodsSku.price)) {
+        return false
+    } else if (row.specify_price.length == 0) {
+        return false
+    } else if (isNaN(row.specify_price) || !regExp.digit.test(row.specify_price)) {
+        return false
+    } else if (row.specify_price <= 0) {
+        return false
+    } else if (row.specify_price >= parseFloat(row.goodsSku.price)) {
+        return false
+    } else {
+        return true
     }
+}
 
-    const validFn = (row: any) => {
-        if (row.discount_rate.length == 0) {
-            return false
-        } else if (isNaN(row.discount_rate) || !regExp.number.test(row.discount_rate)) {
-            return false
-        } else if (row.discount_rate <= 0) {
-            return false
-        } else if (row.discount_rate > 9.9) {
-            return false
-        } else if (row.reduce_money.length == 0) {
-            return false
-        } else if (isNaN(row.reduce_money) || !regExp.digit.test(row.reduce_money)) {
-            return false
-        } else if (row.reduce_money <= 0) {
-            return false
-        } else if (row.reduce_money >= parseFloat(row.goodsSku.price)) {
-            return false
-        } else if (row.specify_price.length == 0) {
-            return false
-        } else if (isNaN(row.specify_price) || !regExp.digit.test(row.specify_price)) {
-            return false
-        } else if (row.specify_price <= 0) {
-            return false
-        } else if (row.specify_price >= parseFloat(row.goodsSku.price)) {
-            return false
-        } else {
-            return true
-        }
-    }
-
-    const onSave = (formEl: FormInstance | undefined) => {
-        if (loading.value || !formEl) return
-        for (var i = 0; i < formData.value.goods_list.length; i++) {
-            let el = formData.value.goods_list[i]
-            if (el.goodsSku.sku_spec_format) {
-                if (!el.valid) {
-                    let page = Math.ceil(i + 1 <= goodsTable.limit ? 1 : (i + 1) / goodsTable.limit)
-                    goodsTable.list = goodsTable.data[page - 1]
-                    goodsTable.page = page
-                    break;
-                } else {
-                    el.sku_list = el.skuList
-                }
+const onSave = (formEl: FormInstance | undefined) => {
+    if (loading.value || !formEl) return
+    for (var i = 0; i < formData.value.goods_list.length; i++) {
+        let el = formData.value.goods_list[i]
+        if (el.goodsSku.sku_spec_format) {
+            if (!el.valid) {
+                let page = Math.ceil(i + 1 <= goodsTable.limit ? 1 : (i + 1) / goodsTable.limit)
+                goodsTable.list = goodsTable.data[page - 1]
+                goodsTable.page = page
+                break;
             } else {
-                if (!validFn(el)) {
-                    let page = Math.ceil(i + 1 <= goodsTable.limit ? 1 : (i + 1) / goodsTable.limit)
-                    goodsTable.list = goodsTable.data[page - 1]
-                    goodsTable.page = page
-                    break;
-                } else {
-                    el.skuList[0].discount_rate = el.discount_rate
-                    el.skuList[0].reduce_money = el.reduce_money
-                    el.skuList[0].specify_price = el.specify_price
-                    el.skuList[0].discount_price = el.discount_price
-                    el.skuList[0].discount_type = el.discount_type
-                    el.skuList[0].is_enabled = el.is_enabled
-                    el.sku_list = el.skuList
-                }
+                el.sku_list = el.skuList
+            }
+        } else {
+            if (!validFn(el)) {
+                let page = Math.ceil(i + 1 <= goodsTable.limit ? 1 : (i + 1) / goodsTable.limit)
+                goodsTable.list = goodsTable.data[page - 1]
+                goodsTable.page = page
+                break;
+            } else {
+                el.skuList[0].discount_rate = el.discount_rate
+                el.skuList[0].reduce_money = el.reduce_money
+                el.skuList[0].specify_price = el.specify_price
+                el.skuList[0].discount_price = el.discount_price
+                el.skuList[0].discount_type = el.discount_type
+                el.skuList[0].is_enabled = el.is_enabled
+                el.sku_list = el.skuList
             }
         }
-        nextTick(async () => {
-            await formEl.validate((valid) => {
-                if (valid) {
-                    loading.value = true
-                    formData.value.start_time = formData.value.discount_time[0]
-                    formData.value.end_time = formData.value.discount_time[1]
-                    formData.value.goods_data = JSON.stringify(formData.value.goods_list)
-                    addActiveDiscount(formData.value).then(res => {
-                        loading.value = false
-                        history.back()
-                    }).catch(() => {
-                        loading.value = false
-                    })
-                }
-            })
-        })
-
     }
+    nextTick(async () => {
+        await formEl.validate((valid) => {
+            if (valid) {
+                loading.value = true
+                formData.value.start_time = formData.value.discount_time[0]
+                formData.value.end_time = formData.value.discount_time[1]
+                formData.value.goods_data = JSON.stringify(formData.value.goods_list)
+                addActiveDiscount(formData.value).then(res => {
+                    loading.value = false
+                    history.back()
+                }).catch(() => {
+                    loading.value = false
+                })
+            }
+        })
+    })
+
+}
 
     interface goodsTableInterface {
         page: number,
@@ -377,118 +377,118 @@
         list: Array<any>,
     }
 
-    const goodsTable = reactive<goodsTableInterface>({
-        page: 1,
-        limit: 5,
-        total: 0,
-        data: [],
-        list: []
-    })
+const goodsTable = reactive<goodsTableInterface>({
+    page: 1,
+    limit: 5,
+    total: 0,
+    data: [],
+    list: []
+})
 
-    const goodsSelect = (value: any) => {
-        if (formData.value.goods_list.length) {
-            let goods_list = deepClone(Object.values(value)).map((el: any, index: number) => {
-                if (!el.goodsSku.sku_spec_format) {
-                    el.discount_type = 'discount'
-                    el.discount_rate = ''
-                    el.reduce_money = ''
-                    el.specify_price = ''
-                    el.is_enabled = 1
-                } else {
-                    el.skuList = setSku(el.skuList)
-                }
-                el.index = index
-                el.valid = false
-                formData.value.goods_list.forEach((v: any) => {
-                    if (v.goods_id == el.goods_id){
-                       el = Object.assign(el, v)//合并已填写数据及新选择的数据 
-                       el.index = index
-                    } 
-                    
-                })
-                return el
-            })
-            formData.value.goods_list = goods_list
-        } else {
-            formData.value.goods_list = deepClone(Object.values(value)).map((el: any, index: number) => {
-                if (!el.goodsSku.sku_spec_format) {
-                    el.discount_type = 'discount'
-                    el.discount_rate = ''
-                    el.reduce_money = ''
-                    el.specify_price = ''
-                    el.is_enabled = 1
-                } else {
-                    el.skuList = setSku(el.skuList)
-                }
-                el.index = index
-                el.valid = false
-                return el
-            })
-        }
-        setGoodsList()
-        if(formRef.value) formRef.value.validateField('goods_list').catch(()=>{})
-        // getGoodsSkuNoPageListFn(value.join(','))
-    }
-
-    //设置sku初始数据
-    const setSku = (sku: []) => {
-        return sku.map((el: any) => {
-            if (!el.discount_rate) {
+const goodsSelect = (value: any) => {
+    if (formData.value.goods_list.length) {
+        let goods_list = deepClone(Object.values(value)).map((el: any, index: number) => {
+            if (!el.goodsSku.sku_spec_format) {
                 el.discount_type = 'discount'
                 el.discount_rate = ''
                 el.reduce_money = ''
                 el.specify_price = ''
                 el.is_enabled = 1
+            } else {
+                el.skuList = setSku(el.skuList)
             }
+            el.index = index
+            el.valid = false
+            formData.value.goods_list.forEach((v: any) => {
+                if (v.goods_id == el.goods_id){
+                    el = Object.assign(el, v)//合并已填写数据及新选择的数据 
+                    el.index = index
+                } 
+                    
+            })
+            return el
+        })
+        formData.value.goods_list = goods_list
+    } else {
+        formData.value.goods_list = deepClone(Object.values(value)).map((el: any, index: number) => {
+            if (!el.goodsSku.sku_spec_format) {
+                el.discount_type = 'discount'
+                el.discount_rate = ''
+                el.reduce_money = ''
+                el.specify_price = ''
+                el.is_enabled = 1
+            } else {
+                el.skuList = setSku(el.skuList)
+            }
+            el.index = index
+            el.valid = false
             return el
         })
     }
+    setGoodsList()
+    if(formRef.value) formRef.value.validateField('goods_list').catch(()=>{})
+    // getGoodsSkuNoPageListFn(value.join(','))
+}
 
-    //设置展示商品
-    const setGoodsList = (page = 1) => {
-        if (formData.value.goods_list.length) {
-            goodsTable.data = splitArray(formData.value.goods_list, goodsTable.limit)
-            goodsTable.list = goodsTable.data[page - 1]
-            goodsTable.total = parseInt(formData.value.goods_list.length.toString())
-        } else {
-            goodsTable.data = []
-            goodsTable.list = []
-            goodsTable.total = 0
-            goodsTable.page = 1
+//设置sku初始数据
+const setSku = (sku: []) => {
+    return sku.map((el: any) => {
+        if (!el.discount_rate) {
+            el.discount_type = 'discount'
+            el.discount_rate = ''
+            el.reduce_money = ''
+            el.specify_price = ''
+            el.is_enabled = 1
         }
-    }
+        return el
+    })
+}
 
-    //完整数据转分页数据
-    const splitArray = (array: [], size: number) => {
-        var result = [];
-        for (var i = 0; i < array.length; i += size) {
-            result.push(array.slice(i, i + size));
-        }
-        return result;
+//设置展示商品
+const setGoodsList = (page = 1) => {
+    if (formData.value.goods_list.length) {
+        goodsTable.data = splitArray(formData.value.goods_list, goodsTable.limit)
+        goodsTable.list = goodsTable.data[page - 1]
+        goodsTable.total = parseInt(formData.value.goods_list.length.toString())
+    } else {
+        goodsTable.data = []
+        goodsTable.list = []
+        goodsTable.total = 0
+        goodsTable.page = 1
     }
+}
 
-    //删除商品
-    const deleteEvent = (index: number) => {
-        formData.value.goods_list.splice(index, 1)
-        formData.value.goods_list.forEach((el: any, index: number) => {
-            el.index = index
-        })
-        formData.value.goods_ids.splice(index, 1)
-        setGoodsList(goodsTable.page)
-        if(formRef.value) formRef.value.validateField('goods_list').catch(()=>{})
+//完整数据转分页数据
+const splitArray = (array: [], size: number) => {
+    var result = [];
+    for (var i = 0; i < array.length; i += size) {
+        result.push(array.slice(i, i + size));
     }
+    return result;
+}
 
-    //设置sku折扣
-    const goodsSkuPopupRef = ref()
-    const skuDiscountSettingsEvent = (row: any) => {
-        goodsSkuPopupRef.value?.show(row)
-    }
+//删除商品
+const deleteEvent = (index: number) => {
+    formData.value.goods_list.splice(index, 1)
+    formData.value.goods_list.forEach((el: any, index: number) => {
+        el.index = index
+    })
+    formData.value.goods_ids.splice(index, 1)
+    setGoodsList(goodsTable.page)
+    if(formRef.value) formRef.value.validateField('goods_list').catch(()=>{})
+}
 
-    const skuSave = (row: any) => {
-        formData.value.goods_list.forEach((el: any) => {
-            if (el.goods_id == row.goods_id) el = deepClone(Object.assign(el, row))
-        })
-    }
+//设置sku折扣
+const goodsSkuPopupRef = ref()
+const skuDiscountSettingsEvent = (row: any) => {
+    goodsSkuPopupRef.value?.show(row)
+}
+
+const skuSave = (row: any) => {
+    formData.value.goods_list.forEach((el: any) => {
+        if (el.goods_id == row.goods_id) el = deepClone(Object.assign(el, row))
+    })
+}
 
     /*****批量设置 ****/
     interface batchOperationInterface {
@@ -496,149 +496,149 @@
         discountNumber: any,
     }
 
-    const batchOperation = ref<batchOperationInterface>({
-        discount_type: 'discount',
-        discountNumber: ''
-    })
+const batchOperation = ref<batchOperationInterface>({
+    discount_type: 'discount',
+    discountNumber: ''
+})
 
-    // 批量复选框
-    const toggleCheckbox = ref()
+// 批量复选框
+const toggleCheckbox = ref()
 
-    // 复选框中间状态
-    const isIndeterminate = ref(false)
+// 复选框中间状态
+const isIndeterminate = ref(false)
 
-    // 监听批量复选框事件
-    const toggleChange = (value: any) => {
+// 监听批量复选框事件
+const toggleChange = (value: any) => {
+    isIndeterminate.value = false
+    goods_listTableRef.value.toggleAllSelection()
+}
+const goods_listTableRef = ref()
+
+// 选中数据
+const multipleSelection: any = ref([])
+
+// 监听表格单行选中
+const handleSelectionChange = (val: []) => {
+    multipleSelection.value = val
+
+    toggleCheckbox.value = false
+    if (multipleSelection.value.length > 0 && multipleSelection.value.length < goodsTable.list.length) {
+        isIndeterminate.value = true
+    } else {
         isIndeterminate.value = false
-        goods_listTableRef.value.toggleAllSelection()
-    }
-    const goods_listTableRef = ref()
-
-    // 选中数据
-    const multipleSelection: any = ref([])
-
-    // 监听表格单行选中
-    const handleSelectionChange = (val: []) => {
-        multipleSelection.value = val
-
-        toggleCheckbox.value = false
-        if (multipleSelection.value.length > 0 && multipleSelection.value.length < goodsTable.list.length) {
-            isIndeterminate.value = true
-        } else {
-            isIndeterminate.value = false
-        }
-
-        if (multipleSelection.value.length == goodsTable.list.length) {
-            toggleCheckbox.value = true
-        }
     }
 
-    const saveBatch = () => {
-        if (!multipleSelection.value.length) {
+    if (multipleSelection.value.length == goodsTable.list.length) {
+        toggleCheckbox.value = true
+    }
+}
+
+const saveBatch = () => {
+    if (!multipleSelection.value.length) {
+        ElMessage({
+            type: 'warning',
+            message: `${t('batchEmptySelectedGoodsTips')}`
+        })
+        return
+    }
+    if (batchOperation.value.discount_type == 'discount') {
+        if (batchOperation.value.discountNumber.length == 0) {
             ElMessage({
                 type: 'warning',
-                message: `${t('batchEmptySelectedGoodsTips')}`
+                message: `${t('discountsPlaceholder')}`
+            })
+            return
+        } else if (isNaN(batchOperation.value.discountNumber) || !regExp.number.test(batchOperation.value.discountNumber)) {
+            ElMessage({
+                type: 'warning',
+                message: `${t('discountsTips')}`
+            })
+            return
+        } else if (batchOperation.value.discountNumber <= 0) {
+            ElMessage({
+                type: 'warning',
+                message: `${t('discountsTipsTwo')}`
+            })
+            return
+        } else if (batchOperation.value.discountNumber > 9.9) {
+            ElMessage({
+                type: 'warning',
+                message: `${t('discountsTipsThree')}`
             })
             return
         }
-        if (batchOperation.value.discount_type == 'discount') {
-            if (batchOperation.value.discountNumber.length == 0) {
-                ElMessage({
-                    type: 'warning',
-                    message: `${t('discountsPlaceholder')}`
-                })
-                return
-            } else if (isNaN(batchOperation.value.discountNumber) || !regExp.number.test(batchOperation.value.discountNumber)) {
-                ElMessage({
-                    type: 'warning',
-                    message: `${t('discountsTips')}`
-                })
-                return
-            } else if (batchOperation.value.discountNumber <= 0) {
-                ElMessage({
-                    type: 'warning',
-                    message: `${t('discountsTipsTwo')}`
-                })
-                return
-            } else if (batchOperation.value.discountNumber > 9.9) {
-                ElMessage({
-                    type: 'warning',
-                    message: `${t('discountsTipsThree')}`
-                })
-                return
-            }
-        } else if (batchOperation.value.discount_type == 'reduce') {
-            if (batchOperation.value.discountNumber.length == 0) {
-                ElMessage({
-                    type: 'warning',
-                    message: `${t('reduceMoneyPlaceholder')}`
-                })
-                return
-            } else if (isNaN(batchOperation.value.discountNumber) || !regExp.digit.test(batchOperation.value.discountNumber)) {
-                ElMessage({
-                    type: 'warning',
-                    message: `${t('reduceMoneyTips')}`
-                })
-                return
-            } else if (batchOperation.value.discountNumber <= 0) {
-                ElMessage({
-                    type: 'warning',
-                    message: `${t('reduceMoneyTipsTwo')}`
-                })
-                return
-            }
-
-        } else {
-            if (batchOperation.value.discountNumber.length == 0) {
-                ElMessage({
-                    type: 'warning',
-                    message: `${t('promotionalPlaceholder')}`
-                })
-                return
-            } else if (isNaN(batchOperation.value.discountNumber) || !regExp.digit.test(batchOperation.value.discountNumber)) {
-                ElMessage({
-                    type: 'warning',
-                    message: `${t('promotionalTips')}`
-                })
-                return
-            } else if (batchOperation.value.discountNumber <= 0) {
-                ElMessage({
-                    type: 'warning',
-                    message: `${t('promotionalTipsTwo')}`
-                })
-                return
-            }
+    } else if (batchOperation.value.discount_type == 'reduce') {
+        if (batchOperation.value.discountNumber.length == 0) {
+            ElMessage({
+                type: 'warning',
+                message: `${t('reduceMoneyPlaceholder')}`
+            })
+            return
+        } else if (isNaN(batchOperation.value.discountNumber) || !regExp.digit.test(batchOperation.value.discountNumber)) {
+            ElMessage({
+                type: 'warning',
+                message: `${t('reduceMoneyTips')}`
+            })
+            return
+        } else if (batchOperation.value.discountNumber <= 0) {
+            ElMessage({
+                type: 'warning',
+                message: `${t('reduceMoneyTipsTwo')}`
+            })
+            return
         }
-        formData.value.goods_list.forEach((el: any, index: number) => {
-            multipleSelection.value.forEach((v: any) => {
 
-                if (v.goods_id === el.goods_id) {
-                    if (!el.goodsSku.sku_spec_format) {
-                        if (batchOperation.value.discount_type == 'discount') {
-                            //折扣
-                            el.discount_rate = batchOperation.value.discountNumber + ''
-                            //实际
-                            el.specify_price = (el.goodsSku.price * (batchOperation.value.discountNumber / 10)).toFixed(2)
-                            el.discount_price = (el.goodsSku.price * (batchOperation.value.discountNumber / 10)).toFixed(2)
-                            //减价
-                            el.reduce_money = (el.goodsSku.price - el.specify_price).toFixed(2)
-                        } else if (batchOperation.value.discount_type == 'reduce') {//减价
-                            el.reduce_money = batchOperation.value.discountNumber + ''
-                            el.specify_price = el.goodsSku.price - el.reduce_money.toFixed(2)
-                            el.discount_price = (el.goodsSku.price - el.reduce_money).toFixed(2)
-                            el.discount_rate = (el.specify_price / el.goodsSku.price * 10).toFixed(1)
+    } else {
+        if (batchOperation.value.discountNumber.length == 0) {
+            ElMessage({
+                type: 'warning',
+                message: `${t('promotionalPlaceholder')}`
+            })
+            return
+        } else if (isNaN(batchOperation.value.discountNumber) || !regExp.digit.test(batchOperation.value.discountNumber)) {
+            ElMessage({
+                type: 'warning',
+                message: `${t('promotionalTips')}`
+            })
+            return
+        } else if (batchOperation.value.discountNumber <= 0) {
+            ElMessage({
+                type: 'warning',
+                message: `${t('promotionalTipsTwo')}`
+            })
+            return
+        }
+    }
+    formData.value.goods_list.forEach((el: any, index: number) => {
+        multipleSelection.value.forEach((v: any) => {
 
-                        } else {//实际
-                            el.specify_price = batchOperation.value.discountNumber + ''
-                            el.discount_price = batchOperation.value.discountNumber + ''
-                            el.reduce_money = (el.goodsSku.price - el.specify_price).toFixed(2)
-                            el.discount_rate = (el.specify_price / el.goodsSku.price * 10).toFixed(1)
-                        }
-                        el.discount_type = batchOperation.value.discount_type + ''
-                    } else {
-                        el.skuList.forEach((sku: any) => {
-                            if(sku.is_enabled===1){
-                                if (batchOperation.value.discount_type == 'discount') {
+            if (v.goods_id === el.goods_id) {
+                if (!el.goodsSku.sku_spec_format) {
+                    if (batchOperation.value.discount_type == 'discount') {
+                        //折扣
+                        el.discount_rate = batchOperation.value.discountNumber + ''
+                        //实际
+                        el.specify_price = (el.goodsSku.price * (batchOperation.value.discountNumber / 10)).toFixed(2)
+                        el.discount_price = (el.goodsSku.price * (batchOperation.value.discountNumber / 10)).toFixed(2)
+                        //减价
+                        el.reduce_money = (el.goodsSku.price - el.specify_price).toFixed(2)
+                    } else if (batchOperation.value.discount_type == 'reduce') {//减价
+                        el.reduce_money = batchOperation.value.discountNumber + ''
+                        el.specify_price = el.goodsSku.price - el.reduce_money.toFixed(2)
+                        el.discount_price = (el.goodsSku.price - el.reduce_money).toFixed(2)
+                        el.discount_rate = (el.specify_price / el.goodsSku.price * 10).toFixed(1)
+
+                    } else {//实际
+                        el.specify_price = batchOperation.value.discountNumber + ''
+                        el.discount_price = batchOperation.value.discountNumber + ''
+                        el.reduce_money = (el.goodsSku.price - el.specify_price).toFixed(2)
+                        el.discount_rate = (el.specify_price / el.goodsSku.price * 10).toFixed(1)
+                    }
+                    el.discount_type = batchOperation.value.discount_type + ''
+                } else {
+                    el.skuList.forEach((sku: any) => {
+                        if(sku.is_enabled===1){
+                            if (batchOperation.value.discount_type == 'discount') {
                                 //折扣
                                 sku.discount_rate = batchOperation.value.discountNumber + ''
                                 //实际
@@ -659,88 +659,88 @@
                                 sku.discount_rate = (sku.specify_price / sku.price * 10).toFixed(1)
                             }
                             sku.discount_type = batchOperation.value.discount_type + ''
-                            }
-                        })
-                        let discount_rate_list = el.skuList.filter((sku:any)=>sku.is_enabled===1).map((sku:any)=>Number(sku.discount_rate))
-                        let reduce_money_list = el.skuList.filter((sku:any)=>sku.is_enabled===1).map((sku:any)=>Number(sku.reduce_money))
-                        let specify_price_list = el.skuList.filter((sku:any)=>sku.is_enabled===1).map((sku:any)=>Number(sku.specify_price))
-                        el.max_discount_rate = Math.max(...discount_rate_list)
-                        el.min_discount_rate = Math.min(...discount_rate_list)
-                        el.max_reduce_money = Math.max(...reduce_money_list)
-                        el.min_reduce_money = Math.min(...reduce_money_list)
-                        el.max_specify_price = Math.max(...specify_price_list)
-                        el.min_specify_price = Math.min(...specify_price_list)
-                    }
-                    el.valid = true
+                        }
+                    })
+                    let discount_rate_list = el.skuList.filter((sku:any)=>sku.is_enabled===1).map((sku:any)=>Number(sku.discount_rate))
+                    let reduce_money_list = el.skuList.filter((sku:any)=>sku.is_enabled===1).map((sku:any)=>Number(sku.reduce_money))
+                    let specify_price_list = el.skuList.filter((sku:any)=>sku.is_enabled===1).map((sku:any)=>Number(sku.specify_price))
+                    el.max_discount_rate = Math.max(...discount_rate_list)
+                    el.min_discount_rate = Math.min(...discount_rate_list)
+                    el.max_reduce_money = Math.max(...reduce_money_list)
+                    el.min_reduce_money = Math.min(...reduce_money_list)
+                    el.max_specify_price = Math.max(...specify_price_list)
+                    el.min_specify_price = Math.min(...specify_price_list)
                 }
-            })
+                el.valid = true
+            }
         })
-        // isIndeterminate.value = false
-        // toggleCheckbox.value = false
-        // batchOperation.value.discountNumber = ''
-        // goods_listTableRef.value.clearSelection()
-    }
+    })
+    // isIndeterminate.value = false
+    // toggleCheckbox.value = false
+    // batchOperation.value.discountNumber = ''
+    // goods_listTableRef.value.clearSelection()
+}
 
-    /**** 修改单行 *****/
-    const inputBlur = (row: any, discount_type: string, index: number) => {
-        if (discount_type == 'discount') {
-            if (row.discount_rate.length) {
-                //实际
-                row.specify_price = (row.goodsSku.price * (row.discount_rate / 10)).toFixed(2)
-                row.discount_price = (row.goodsSku.price * (row.discount_rate / 10)).toFixed(2)
-                //减价
-                row.reduce_money = (row.goodsSku.price - row.specify_price).toFixed(2)
-                if (formRef.value) {
-                    formRef.value.validateField('goods_list.' + index + '.specify_price').catch(() => {})
-                    formRef.value.validateField('goods_list.' + index + '.reduce_money').catch(() => {})
-                }
+/**** 修改单行 *****/
+const inputBlur = (row: any, discount_type: string, index: number) => {
+    if (discount_type == 'discount') {
+        if (row.discount_rate.length) {
+            //实际
+            row.specify_price = (row.goodsSku.price * (row.discount_rate / 10)).toFixed(2)
+            row.discount_price = (row.goodsSku.price * (row.discount_rate / 10)).toFixed(2)
+            //减价
+            row.reduce_money = (row.goodsSku.price - row.specify_price).toFixed(2)
+            if (formRef.value) {
+                formRef.value.validateField('goods_list.' + index + '.specify_price').catch(() => {})
+                formRef.value.validateField('goods_list.' + index + '.reduce_money').catch(() => {})
             }
-        } else if (discount_type == 'reduce') {//减价
-            if (row.reduce_money.length) {
-                row.specify_price = (row.goodsSku.price - row.reduce_money).toFixed(2)
-                row.discount_price = (row.goodsSku.price - row.reduce_money).toFixed(2)
-                row.discount_rate = (row.specify_price / row.goodsSku.price * 10).toFixed(1)
-                if (formRef.value) {
-                    formRef.value.validateField('goods_list.' + index + '.discount_rate').catch(() => {})
-                    formRef.value.validateField('goods_list.' + index + '.specify_price').catch(() => {})
-                }
-            }
-
-        } else {//实际
-            if (row.specify_price.length) {
-                row.discount_price = row.specify_price + ''
-                row.reduce_money = (row.goodsSku.price - row.specify_price).toFixed(2)
-                row.discount_rate = (row.specify_price / row.goodsSku.price * 10).toFixed(1)
-                if (formRef.value) {
-                    formRef.value.validateField('goods_list.' + index + '.discount_rate').catch(() => {})
-                    formRef.value.validateField('goods_list.' + index + '.reduce_money').catch(() => {})
-                }
-            }
-
         }
-        row.discount_type = discount_type + ''
+    } else if (discount_type == 'reduce') {//减价
+        if (row.reduce_money.length) {
+            row.specify_price = (row.goodsSku.price - row.reduce_money).toFixed(2)
+            row.discount_price = (row.goodsSku.price - row.reduce_money).toFixed(2)
+            row.discount_rate = (row.specify_price / row.goodsSku.price * 10).toFixed(1)
+            if (formRef.value) {
+                formRef.value.validateField('goods_list.' + index + '.discount_rate').catch(() => {})
+                formRef.value.validateField('goods_list.' + index + '.specify_price').catch(() => {})
+            }
+        }
 
-    }
-
-    //sku状态
-    const enabledEvent = (row: any) => {
-        row.is_enabled = row.is_enabled ? 0 : 1
-        if (row.is_enabled) {
-            row.discount_type = 'discount'
-            row.discount_rate = ''
-            row.reduce_money = ''
-            row.specify_price = ''
-        } else {
-            row.discount_type = 'discount'
-            row.discount_rate = '10'
-            row.reduce_money = '0'
-            row.specify_price = row.goodsSku.price + ''
+    } else {//实际
+        if (row.specify_price.length) {
+            row.discount_price = row.specify_price + ''
+            row.reduce_money = (row.goodsSku.price - row.specify_price).toFixed(2)
+            row.discount_rate = (row.specify_price / row.goodsSku.price * 10).toFixed(1)
+            if (formRef.value) {
+                formRef.value.validateField('goods_list.' + index + '.discount_rate').catch(() => {})
+                formRef.value.validateField('goods_list.' + index + '.reduce_money').catch(() => {})
+            }
         }
 
     }
-    const back = () => {
-        history.back()
+    row.discount_type = discount_type + ''
+
+}
+
+//sku状态
+const enabledEvent = (row: any) => {
+    row.is_enabled = row.is_enabled ? 0 : 1
+    if (row.is_enabled) {
+        row.discount_type = 'discount'
+        row.discount_rate = ''
+        row.reduce_money = ''
+        row.specify_price = ''
+    } else {
+        row.discount_type = 'discount'
+        row.discount_rate = '10'
+        row.reduce_money = '0'
+        row.specify_price = row.goodsSku.price + ''
     }
+
+}
+const back = () => {
+    router.push('/shop/marketing/discount/list')
+}
 </script>
 
 <style lang="scss" scoped>

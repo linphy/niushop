@@ -158,4 +158,13 @@ class Invoice extends BaseModel
     {
         return $this->hasOne(Order::class, 'order_id', 'trade_id');
     }
+
+    /**
+     * 订单
+     * @return HasOne
+     */
+    public function orderData()
+    {
+        return $this->hasOne(Order::class, 'order_id', 'trade_id')->with(['orderGoods', 'pay'])->append(['status_name']);
+    }
 }

@@ -11,7 +11,7 @@
 									<view class="w-[68rpx] h-[34rpx] text-[22rpx] text-center leading-[34rpx] text-[#fff] rounded-[17rpx]" :style="moreTitleStyle(item)">{{item.moreTitle.text}}</view>
 								</view>
 							</view>
-							<view class="mt-[-71rpx] h-[278rpx] w-full px-[20rpx] pt-[18rpx] box-border bg-white rounded-[var(--rounded-mid)]" :style="itemCss">
+							<view class="mt-[-71rpx] h-[278rpx] w-full px-[20rpx] pt-[18rpx] box-border bg-white" :style="itemCss">
 								<view class="flex items-center justify-center w-[184rpx] h-[184rpx]">
 									<u--image width="184rpx" height="184rpx" :radius="'var(--goods-rounded-small)'" :src="img(item.info.goods_cover_thumb_mid || '')" model="aspectFill">
 										<template #error>
@@ -37,7 +37,7 @@
 						</view>
 					</block>
 				</scroll-view>
-			
+
 			</view>
 		</view>
 	</x-skeleton>
@@ -50,12 +50,12 @@
 	import useDiyStore from '@/app/stores/diy';
 	import { getGoodsComponents } from '@/addon/shop/api/goods';
 	import {useGoods} from '@/addon/shop/hooks/useGoods'
-	
+
 	const diyGoods = useGoods();
 	const props = defineProps(['component', 'index', 'pullDownRefreshCount','value']);
 	const diyStore = useDiyStore();
 	const emits = defineEmits(['loadingFn']); //商品数据加载完成之后触发
-	
+
 	const goodsNum = ref(0);
 
     const skeleton = reactive({
@@ -81,11 +81,6 @@
         if(diyComponent.value.componentStartBgColor) {
             if (diyComponent.value.componentStartBgColor && diyComponent.value.componentEndBgColor) style += `background:linear-gradient(${diyComponent.value.componentGradientAngle},${diyComponent.value.componentStartBgColor},${diyComponent.value.componentEndBgColor});`;
             else style += 'background-color:' + diyComponent.value.componentStartBgColor + ';';
-        }
-
-        if(diyComponent.value.componentBgUrl) {
-            style += `background-image:url('${ img(diyComponent.value.componentBgUrl) }');`;
-            style += 'background-size: cover;background-repeat: no-repeat;';
         }
 
 		if (diyComponent.value.topRounded) style += 'border-top-left-radius:' + diyComponent.value.topRounded * 2 + 'rpx;';
@@ -139,7 +134,7 @@
 		if(diyComponent.value.margin && diyComponent.value.margin.both) itemStyle.value = 'width: calc((100vw - ' + (diyComponent.value.margin.both*4) + 'rpx - 40rpx) / 3);'
 		else itemStyle.value = 'width: calc((100vw - 40rpx) / 3 );'
 	}
-	
+
 	setItemStyle();
 
 	watch(
@@ -206,7 +201,7 @@
 	const toLink = (data: any) => {
 		redirect({ url: '/addon/shop/pages/goods/detail', param: { goods_id: data.info.goods_id } })
 	}
-	
+
 </script>
 
 <style lang="scss" scoped>

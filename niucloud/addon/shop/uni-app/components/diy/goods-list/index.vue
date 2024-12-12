@@ -1,6 +1,6 @@
 <template>
 	<x-skeleton :type="skeleton.type" :loading="skeleton.loading" :config="skeleton.config">
-		<view :style="warpCss">
+		<view :style="warpCss" class="overflow-hidden">
 			<view :style="maskLayer"></view>
 			<view :class="{'diy-shop-goods-list relative flex flex-wrap justify-between': diyComponent.style != 'style-2', 'biserial-goods-list': diyComponent.style == 'style-2'}">
 				<block v-if="diyComponent.style == 'style-1'">
@@ -51,7 +51,7 @@
 				<block v-if="diyComponent.style == 'style-2'">
 					<view>
 						<template v-for="(item,index) in goodsList">
-							<view v-if="(index%2) == 0" class="flex flex-col bg-[#fff] box-border rounded-[var(--rounded-mid)] overflow-hidden" :class="{'mt-[24rpx]': index > 1}" :style="itemCss" @click="toLink(item)">
+							<view v-if="(index%2) == 0" class="flex flex-col bg-[#fff] box-border overflow-hidden" :class="{'mt-[24rpx]': index > 1}" :style="itemCss" @click="toLink(item)">
 								<u--image :width="style2Width" :height="style2Width" :src="img(item.goods_cover_thumb_mid || '')" model="aspectFill">
 									<template #error>
 										<image :style="{'width': style2Width,'height': style2Width}" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
@@ -99,7 +99,7 @@
 					</view>
 					<view>
 						<template v-for="(item,index) in goodsList">
-							<view v-if="(index%2) == 1" class="flex flex-col bg-[#fff] box-border rounded-[var(--rounded-mid)] overflow-hidden" :class="{'mt-[24rpx]': index > 1}" :style="itemCss" @click="toLink(item)">
+							<view v-if="(index%2) == 1" class="flex flex-col bg-[#fff] box-border overflow-hidden" :class="{'mt-[24rpx]': index > 1}" :style="itemCss" @click="toLink(item)">
 								<u--image :width="style2Width" :height="style2Width" :src="img(item.goods_cover_thumb_mid || '')" model="aspectFill">
 									<template #error>
 										<image :style="{'width': style2Width,'height': style2Width}" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
@@ -149,7 +149,7 @@
 				<block v-if="diyComponent.style == 'style-3'">
 					<view :style="style3Css" v-if="goodsList.length">
 						<scroll-view :id="'warpStyle3-'+diyComponent.id" class="whitespace-nowrap min-h-[290rpx]" :scroll-x="true">
-							<view :id="'item'+index+diyComponent.id" class="w-[214rpx] mb-[6rpx] rounded-[var(--rounded-mid)] inline-block bg-[#fff] box-border overflow-hidden" :class="{'!mr-[0rpx]' : index == (goodsList.length-1)}" :style="itemCss+itemStyle3" v-for="(item,index) in goodsList" :key="item.goods_id" @click="toLink(item)">
+							<view :id="'item'+index+diyComponent.id" class="w-[214rpx] mb-[6rpx] inline-block bg-[#fff] box-border overflow-hidden" :class="{'!mr-[0rpx]' : index == (goodsList.length-1)}" :style="itemCss+itemStyle3" v-for="(item,index) in goodsList" :key="item.goods_id" @click="toLink(item)">
 								<u--image width="214rpx" height="160rpx" :src="img(item.goods_cover_thumb_mid || '')" model="aspectFill">
 									<template #error>
 										<image class="w-[214rpx] h-[160rpx]" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>

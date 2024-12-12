@@ -171,7 +171,8 @@ class CoreRefundService extends BaseCoreService
         //查询最大可退款总额
         $refund_money_array = $this->getOrderRefundMoney($order_goods_ids);
         $refund_money = $refund_money_array[ 'refund_money' ];
-        if ($apply_refund_money > $refund_money) throw new CommonException('SHOP_ORDER_REFUND_MONEY_GT_ORDER_MONEY');//退款金额不能大于可退款总额
+        $comparison = bccomp(bcsub($apply_refund_money, $refund_money), 0);//浮点数直接进行比较会出现精度问题
+        if ($comparison > 0) throw new CommonException('SHOP_ORDER_REFUND_MONEY_GT_ORDER_MONEY');//退款金额不能大于可退款总额
         return $refund_money_array;
     }
 
@@ -193,7 +194,7 @@ class CoreRefundService extends BaseCoreService
         if ($order->isEmpty()) throw new CommonException('SHOP_ORDER_IS_INVALID');//订单已失效
         if (!in_array($order['status'], [OrderDict::WAIT_DELIVERY, OrderDict::WAIT_TAKE, OrderDict::FINISH])) throw new CommonException('SHOP_ORDER_REFUND_WAIT_PAY_OR_CLOSE');
         //查询是否是最后一笔退款且还没有退运费
-        $order_goods_count = $order_goods_model->where([['order_id', '=', $order_id]])->count();
+        $order_goods_count = $order_goods_model->where([['order_id', '=', $order_id], ['is_gift', '=', 0]])->count();
         $refund_count = $this->model->where([['order_id', '=', $order_id], ['status', '<>', OrderRefundDict::CLOSE]])->count();
         //是否包含运费
         $is_refund_delivery = 0;

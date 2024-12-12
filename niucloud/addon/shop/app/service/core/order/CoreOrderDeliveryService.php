@@ -65,6 +65,18 @@ class CoreOrderDeliveryService extends BaseCoreService
 
         if ($order[ 'status' ] != OrderDict::WAIT_DELIVERY) throw new CommonException('SHOP_ONLY_WAIT_DELIVERY_CAN_BE_DELIVERY');//只有待收货的订单才可以收货
 
+        //赠品跟随下单商品一起发货
+        $gift_order_goods_ids = ( new OrderGoods() )->where([
+            [ 'order_id', '=', $order_id ],
+            [ 'is_gift', '=', 1 ],
+            [ 'status', '=', OrderGoodsDict::NORMAL ],
+            [ 'delivery_status', '=', OrderDeliveryDict::WAIT_DELIVERY ]
+        ])->column('order_goods_id');
+        if (!empty($gift_order_goods_ids)) {
+            $order_goods_ids = array_merge($order_goods_ids, $gift_order_goods_ids);
+            $data[ 'order_goods_ids' ] = $order_goods_ids;
+        }
+
         //配送
         $delivery_type = $data[ 'delivery_type' ];
         //不用的订单项针对的发货方式不同
@@ -86,6 +98,9 @@ class CoreOrderDeliveryService extends BaseCoreService
         if ($order_goods_data->count() != count($order_goods_ids)) throw new CommonException('SHOP_ORDER_DELIVERY_NOT_ALLOW_REFUND_OR_DELIVERY_FINISH');//存在退款的商品不能发货
         $has_goods_type_array = [];
         foreach ($order_goods_data as $v) {
+
+            if($v['is_gift'] == 1) continue;
+
             if (!in_array($v[ 'goods_type' ], $has_goods_type_array)) {
                 $has_goods_type_array[] = $v[ 'goods_type' ];
             }

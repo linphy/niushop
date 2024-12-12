@@ -76,6 +76,7 @@ import { ElMessageBox, FormInstance } from 'element-plus'
 import { getActiveDiscountPageList,getActiveDiscountStatusList,closeActiveDiscount,deleteActiveDiscount } from "@/addon/shop/api/marketing";
 import { t } from '@/lang'
 import discountDetail from '@/addon/shop/views/marketing/discount/components/discount-detail.vue'
+import { setTablePageStorage,getTablePageStorage } from "@/utils/common";
 
 const router = useRouter()
 const route = useRoute()
@@ -106,11 +107,12 @@ const loadDiscountList = (page: number = 1) => {
         tableData.loading = false
         tableData.data = res.data.data
         tableData.total = res.data.total
+        setTablePageStorage(tableData.page, tableData.limit, tableData.searchParam);
     }).catch(() => {
         tableData.loading = false
     })
 }
-loadDiscountList()
+loadDiscountList(getTablePageStorage(tableData.searchParam).page);
 const resetForm = (formEl: FormInstance | undefined) => {
     if (!formEl) return
     formEl.resetFields()

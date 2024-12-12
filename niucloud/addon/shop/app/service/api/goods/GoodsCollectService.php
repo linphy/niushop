@@ -11,10 +11,13 @@
 
 namespace addon\shop\app\service\api\goods;
 
+use addon\shop\app\model\goods\Goods;
 use addon\shop\app\model\goods\GoodsCollect;
+use addon\shop\app\model\goods\Stat;
 use addon\shop\app\service\core\goods\CoreGoodsCollectNumService;
 use addon\shop\app\service\core\goods\CoreGoodsStatService;
 use core\base\BaseApiService;
+use core\exception\ApiException;
 use core\exception\CommonException;
 
 /**
@@ -33,7 +36,11 @@ class GoodsCollectService extends BaseApiService
      */
     public function getMemberGoodsCollectList()
     {
-        $search_model = $this->model->where([ [ 'member_id', '=', $this->member_id ] ])->with('goods')->order('id desc');
+        $search_model = $this->model->where([ [ 'member_id', '=', $this->member_id ],['goods.delete_time','=',0] ])
+            ->withJoin(['goods'=> [ 'goods_id', 'goods_name', 'goods_cover', 'status']])
+            ->with(['goodsSku' ])
+            ->append([ 'goods_cover_thumb_mid' ])
+            ->order('create_time desc');
         $list = $this->pageQuery($search_model);
         return $list;
     }
@@ -49,6 +56,11 @@ class GoodsCollectService extends BaseApiService
             [ 'goods_id', '=', $data[ 'goods_id' ] ],
         ])->findOrEmpty()->toArray();
 
+        $goods_info = ( new Goods() )->where([
+            [ 'goods_id', '=', $data[ 'goods_id' ] ],
+        ])->findOrEmpty()->toArray();
+        if (empty($goods_info)) throw new ApiException("SHOP_GOODS_NOT_EXIST");
+
         if (!empty($info)) {
             throw new CommonException('MEMBER_ALREADY_COLLECT');//已收藏
         } else {
@@ -57,8 +69,8 @@ class GoodsCollectService extends BaseApiService
             $res = $this->model->create($data);
 
             // 商品收藏统计
-            CoreGoodsStatService::addStat(['goods_id' => $data[ 'goods_id' ], 'collect_num' => 1]);
-            (new CoreGoodsCollectNumService())->inc(['goods_id' => $data[ 'goods_id' ], 'collect_num' => 1]);
+            CoreGoodsStatService::addStat([ 'goods_id' => $data[ 'goods_id' ], 'collect_num' => 1 ]);
+            ( new CoreGoodsCollectNumService() )->inc([ 'goods_id' => $data[ 'goods_id' ], 'collect_num' => 1 ]);
             return $res->id;
         }
     }
@@ -68,11 +80,25 @@ class GoodsCollectService extends BaseApiService
      */
     public function cancelGoodsCollect($data)
     {
-        $res = $this->model->where([ [ 'goods_id', '=', $data[ 'goods_id' ] ], [ 'member_id', '=', $this->member_id ] ])->delete();
-
+        $res = $this->model->where([ [ 'goods_id', 'in', $data[ 'goods_ids' ] ], [ 'member_id', '=', $this->member_id ] ])->delete();
         // 商品收藏统计
-        CoreGoodsStatService::addStat(['goods_id' => $data[ 'goods_id' ], 'collect_num' => -1]);
-        (new CoreGoodsCollectNumService())->inc(['goods_id' => $data[ 'goods_id' ], 'collect_num' => -1]);
+        foreach ($data[ 'goods_ids' ] as $value) {
+            $goods_info = ( new Goods() )->where([
+                [ 'goods_id', '=', $value ],
+            ])->findOrEmpty()->toArray();
+            if (empty($goods_info)) continue;
+
+            $stat_data = [
+                'date' => date('Y-m-d', time()),
+                'date_time' => strtotime(date('Y-m-d', time())),
+                'goods_id' => $value,
+            ];
+            $collect_num = ( new Stat() )->where($stat_data)->value('collect_num');
+            if ($collect_num > 0) {
+                CoreGoodsStatService::addStat([ 'goods_id' => $value, 'collect_num' => -1 ]);
+            }
+            ( new CoreGoodsCollectNumService() )->inc([ 'goods_id' => $value, 'collect_num' => -1 ]);
+        }
         return $res;
     }
 }

@@ -9,6 +9,7 @@ use addon\shop\app\dict\order\OrderRefundLogDict;
 use addon\shop\app\model\order\Order;
 use addon\shop\app\service\core\CoreStatService;
 use addon\shop\app\service\core\goods\CoreGoodsStatService;
+use addon\shop\app\service\core\marketing\CoreManjianService;
 use addon\shop\app\service\core\order\CoreOrderCloseService;
 use addon\shop\app\service\core\order\CoreOrderDeliveryService;
 use addon\shop\app\service\core\refund\CoreRefundLogService;
@@ -24,6 +25,10 @@ class AfterShopOrderRefundFinish
         $refund_data = $data['refund_data'];
 
         $order = (new Order())->where([['order_id', '=', $refund_data['order_id']]])->findOrEmpty();
+
+        //满减送订单退款完成后退还赠品
+        ( new CoreManjianService() )->refundGift($refund_data);
+
         if(!$order->isEmpty()){
             if($order['status'] == OrderDict::WAIT_DELIVERY) {
                 //校验一下订单项是否全部发货

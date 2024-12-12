@@ -2,7 +2,7 @@
     <div class="main-container">
 
         <el-card class="box-card !border-none" shadow="never">
-            <el-page-header :content="goodsEdit.formData.goods_id ? t('updateGoods') : t('addGoods')" :icon="ArrowLeft" @back="$router.back()" />
+            <el-page-header :content="goodsEdit.formData.goods_id ? t('updateGoods') : t('addGoods')" :icon="ArrowLeft" @back="goodsEdit.back()" />
         </el-card>
 
         <el-card class="box-card mt-[15px] !border-none" shadow="never">
@@ -108,6 +108,15 @@
                                 <el-radio label="1">{{ t('statusOn') }}</el-radio>
                                 <el-radio label="0">{{ t('statusOff') }}</el-radio>
                             </el-radio-group>
+                        </el-form-item>
+                        <el-form-item :label="t('isGive')">
+                            <div>
+                                <el-radio-group v-model="goodsEdit.formData.is_gift">
+                                    <el-radio :label= "1">{{ t('yes') }}</el-radio>
+                                    <el-radio :label= "0">{{ t('no') }}</el-radio>
+                                </el-radio-group>
+                                <div class="mt-[10px] text-[12px] text-[#999] leading-[20px]">{{ t('giftTips') }}</div>
+                            </div>
                         </el-form-item>
                         <el-form-item :label="t('unit')" prop="unit">
                             <el-input v-model.trim="goodsEdit.formData.unit" clearable :placeholder="t('unitPlaceholder')" class="input-width" show-word-limit maxlength="6" />

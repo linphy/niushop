@@ -86,6 +86,15 @@ return [
 					}
 				},
 				{
+					"path": "shop/pages/goods/rank",
+					"style": {
+						// #ifndef H5
+						"navigationStyle": "custom",
+						// #endif
+						"navigationBarTitleText": "%shop.pages.goods.rank%"
+					}
+				},
+				{
 					"path": "shop/pages/newcomer/list",
 					"style": {
 						// #ifndef H5
@@ -105,6 +114,18 @@ return [
 					"path": "shop/pages/goods/cart",
 					"style": {
 						"navigationBarTitleText": "%shop.pages.goods.cart%"
+					}
+				},
+				{
+					"path": "shop/pages/goods/collect",
+					"style": {
+						"navigationBarTitleText": "%shop.pages.goods.collect%"
+					}
+				},
+				{
+					"path": "shop/pages/goods/browse",
+					"style": {
+						"navigationBarTitleText": "%shop.pages.goods.browse%"
 					}
 				},
 				{

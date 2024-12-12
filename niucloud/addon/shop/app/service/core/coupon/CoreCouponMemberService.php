@@ -101,11 +101,20 @@ class CoreCouponMemberService extends BaseCoreService
 
     /**
      * 失效
+     * @param $ids
      * @return void
      */
-    public function invalid()
+    public function invalid($ids)
     {
-
+        $where = [
+            [ 'id', 'in', $ids ],
+            [ 'status', '=', CouponMemberDict::WAIT_USE ]
+        ];
+        $data = [
+            'status' => CouponMemberDict::INVALID
+        ];
+        $this->model->where($where)->update($data);
+        return true;
     }
 
     /**
@@ -148,7 +157,6 @@ class CoreCouponMemberService extends BaseCoreService
         );
         return true;
     }
-
 
     /**
      * 发放优惠券

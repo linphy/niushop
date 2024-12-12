@@ -167,7 +167,7 @@
 				</el-form-item>
 				<el-form-item :label="t('goodsPriceColor')">
 					<el-color-picker v-model="diyStore.editComponent.priceStyle.mainColor" show-alpha :predefine="diyStore.predefineColors" />
-				</el-form-item> 
+				</el-form-item>
 				<el-form-item :label="t('goodsBtnColor')">
 					<el-color-picker v-model="diyStore.editComponent.saleStyle.color" show-alpha :predefine="diyStore.predefineColors" />
 				</el-form-item>
@@ -195,7 +195,7 @@ import { ElTable } from 'element-plus'
 import goodsSelectPopup from '@/addon/shop/views/goods/components/goods-select-popup.vue'
 
 const diyStore:any = useDiyStore()
-diyStore.editComponent.ignore = [] // 忽略公共属性
+diyStore.editComponent.ignore = ['componentBgUrl'] // 忽略公共属性
 
 const selectTitleStyle = reactive({
     title: diyStore.editComponent.titleStyle.title,

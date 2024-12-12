@@ -60,7 +60,7 @@
 				</view>
 			</view>
 			
-			<view v-else-if="diyComponent.style == 'style-3'" class="coupon-wrap style-3 relative" :style="{'background-image':'url(' + img('addon/shop/diy/goods_coupon/style3_bg.png') + ')','background-size':'100% 204rpx','background-repeat':'no-repeat'}">
+			<view v-else-if="diyComponent.style == 'style-3'" class="coupon-wrap style-3 relative" :style="{'background-image':'url(' + img('addon/shop/diy/goods_coupon/style3_bg.jpg') + ')','background-size':'100% 204rpx','background-repeat':'no-repeat'}">
 				<view class="desc flex flex-col">
 					<text class="text-[30rpx] text-[#fff] font-500">{{ diyComponent.couponTitle }}</text>
 					<text class="text-[22rpx] text-[rgba(255,255,255,.8)] mt-[10rpx]">{{ diyComponent.couponSubTitle }}</text>
@@ -264,7 +264,6 @@
 				white-space: nowrap;
 				padding: 20rpx 0 20rpx 20rpx;
 				box-sizing: border-box;
-				border-radius: 12rpx;
 				overflow: hidden;
 				background: linear-gradient(#EE3928, #EF3F30);
 			}
@@ -287,7 +286,6 @@
 				position: relative;
 				white-space: nowrap;
 				box-sizing: border-box;
-				border-radius: 12rpx;
 				overflow: hidden;
 				.coupon-item-content{
 					position: relative;
@@ -310,7 +308,7 @@
 						border-radius: 50%;
 						top: 50%;
 						transform: rotate(45deg) translateY(-50%);
-						right: -4rpx;
+						right: -5rpx;
 					}
 					&::before{
 						content: "";

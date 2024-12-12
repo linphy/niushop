@@ -119,6 +119,15 @@ class Order extends BaseModel
     }
 
     /**
+     * 优惠表
+     * @return hasMany
+     */
+    public function orderDiscount()
+    {
+        return $this->hasMany(OrderDiscounts::class, 'order_id', 'order_id');
+    }
+
+    /**
      * 发票
      * @return HasOne
      */

@@ -56,6 +56,7 @@ class Statistics extends BaseAdminController
             [ "category_ids", []],
             [ "type", "access_num"],
             [ "date", "" ],
+            [ "goods_name", "" ],
         ]);
         return success(( new StatisticsService() )->getRank($data));
     }
@@ -69,6 +70,18 @@ class Statistics extends BaseAdminController
         $data = $this->request->params([
         ]);
         return success(( new StatisticsService() )->getType($data));
+    }
+
+    /**
+     * 同步商品统计信息
+     * @return \think\Response
+     */
+    public function syncStatGoods()
+    {
+        $data = $this->request->params([
+            [ "date", [] ],
+        ]);
+        return success(( new StatisticsService() )->syncStatGoods($data['date']));
     }
 
 

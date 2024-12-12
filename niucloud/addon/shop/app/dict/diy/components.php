@@ -66,8 +66,8 @@ return [
                     "topRounded" => 0, // 组件上圆角
                     "bottomRounded" => 0, // 组件下圆角
                     "elementBgColor" => '', // 元素背景颜色
-                    "topElementRounded" => 0,// 元素上圆角
-                    "bottomElementRounded" => 0, // 元素下圆角
+                    "topElementRounded" => 10,// 元素上圆角
+                    "bottomElementRounded" => 10, // 元素下圆角
                     "margin" => [
                         "top" => 0, // 上边距
                         "bottom" => 0, // 下边距
@@ -484,7 +484,7 @@ return [
                             "link" => [
                                 "name" => ""
                             ],
-                            "imageUrl" => "addon/shop/diy/index/style3/single_recommend_banner1.png",
+                            "imageUrl" => "addon/shop/diy/index/style3/single_recommend_banner1.jpg",
                             "imgWidth" => 345,
                             "imgHeight" => 495
                         ],
@@ -492,7 +492,7 @@ return [
                             "link" => [
                                 "name" => ""
                             ],
-                            "imageUrl" => "addon/shop/diy/index/style3/single_recommend_banner2.png",
+                            "imageUrl" => "addon/shop/diy/index/style3/single_recommend_banner2.jpg",
                             "imgWidth" => 345,
                             "imgHeight" => 495
                         ]
@@ -575,8 +575,93 @@ return [
                     'goods_category' => '',
                     "goods_category_name" => "请选择",
                     'goods_ids' => []
+                ],
+                 // 组件属性
+                 'template' => [
+                    "topElementRounded" => 10,// 元素上圆角
+                    "bottomElementRounded" => 10 // 元素下圆角
                 ]
-            ]
+            ],
+            'ShopGoodsRanking' => [
+                'title' => '排行榜',
+                'icon' => 'iconfont icona-paihangbangpc30',
+                'path' => 'edit-shop-goods-ranking',
+                'support_page' => [],
+                'uses' => 0,
+                'sort' => 10021,
+                'value' => [
+                    "list" => [
+                        [
+                            'bgUrl' => 'addon/shop/rank/rank_bg_01.jpg', // 榜单背景图
+                            'text' => '热销排行榜',
+                            "textColor" => "#FFFFFF",
+                            "imgUrl" => "addon/shop/rank/rank_trophy.png", // 图标
+                            'subTitle' => [
+                                'text' => '查看更多',
+                                'textColor' => '#FFFFFF',
+                                'link' => [
+                                    'name' => 'SHOP_GOODS_RANK',
+                                    "parent" => "SHOP_LINK",
+                                    'title' => '商品排行榜',
+                                    'url' => '/addon/shop/pages/goods/rank',
+                                    'action' => '',
+                                ]
+                            ],
+                            'listFrame' => [
+                                'startColor' => '#FEA715',
+                                'endColor' => '#FE1E00',
+                            ],
+                            'source' => 'default',
+                            'rankIds' => []
+                        ],
+                        [
+                            'bgUrl' => 'addon/shop/rank/rank_bg_02.jpg', // 榜单背景图
+                            'text' => '人气排行榜',
+                            "textColor" => "#FFFFFF",
+                            "imgUrl" => "addon/shop/rank/rank_top.png", // 图标
+                            'subTitle' => [
+                                'text' => '查看更多',
+                                'textColor' => '#FFFFFF',
+                                'link' => [
+                                    'name' => 'SHOP_GOODS_RANK',
+                                    "parent" => "SHOP_LINK",
+                                    'title' => '商品排行榜',
+                                    'url' => '/addon/shop/pages/goods/rank',
+                                    'action' => '',
+                                ]
+                            ],
+                            'listFrame' => [
+                                'startColor' => '#FEA715',
+                                'endColor' => '#FE1E00',
+                            ],
+                            'source' => 'default',
+                            'rankIds' => []
+                        ]
+                    ],
+                ],
+                // 组件属性
+                'template' => [
+                    "textColor" => "#303133", // 文字颜色
+                    'pageStartBgColor' => '', // 底部背景颜色（开始）
+                    'pageEndBgColor' => '', // 底部背景颜色（结束）
+                    'pageGradientAngle' => 'to bottom', // 渐变角度，从上到下（to bottom）、从左到右（to right）
+                    'componentBgUrl' => '', // 组件背景图片
+                    'componentBgAlpha' => 2, // 组件背景图片的透明度，0~10
+                    "componentStartBgColor" => '', // 组件背景颜色（开始）
+                    "componentEndBgColor" => '', // 组件背景颜色（结束）
+                    "componentGradientAngle" => 'to bottom', // 渐变角度，上下（to bottom）、左右（to right）
+                    "topRounded" => 0, // 组件上圆角
+                    "bottomRounded" => 0, // 组件下圆角
+                    "elementBgColor" => '', // 元素背景颜色
+                    "topElementRounded" => 10,// 元素上圆角
+                    "bottomElementRounded" => 10, // 元素下圆角
+                    "margin" => [
+                        "top" => 10, // 上边距
+                        "bottom" => 10, // 下边距
+                        "both" => 10 // 左右边距
+                    ]
+                ]
+            ],
         ]
     ],
 

@@ -89,6 +89,7 @@ class Goods extends BaseAdminController
             [ "sort", 0 ],
             [ 'attr_id', 0 ],
             [ 'attr_format', '' ],
+            [ 'is_gift', 0 ],
 
             // 规格类型，single：单规格，multi：多规格
             [ 'spec_type', '' ],
@@ -154,6 +155,7 @@ class Goods extends BaseAdminController
             [ "sort", 0 ],
             [ 'attr_id', 0 ],
             [ 'attr_format', '' ],
+            [ 'is_gift', 0 ],
 
             // 规格类型，single：单规格，multi：多规格
             [ 'spec_type', '' ],
@@ -302,7 +304,7 @@ class Goods extends BaseAdminController
             [ 'sku_ids', [] ], // 已选商品规格id集合
             [ 'verify_goods_ids', [] ], // 检测商品id集合是否存在，移除不存在的商品id，纠正数据准确性
             [ 'verify_sku_ids', [] ], // 检测商品规格id集合是否存在，移除不存在的商品规格id，纠正数据准确性
-            [ 'is_gift', 0 ] // 商品是否赠品(0:否 1:是)
+            [ 'is_gift', 0 ] // 是否查询赠品(0:不查赠品 1:查询赠品)
         ]);
 
         return success(( new GoodsService() )->getSelectPage($data));
@@ -320,7 +322,8 @@ class Goods extends BaseAdminController
             [ "goods_type", "" ], // 商品分类
             [ 'goods_ids', '' ], // 已选商品id集合
             [ 'verify_goods_ids', '' ], // 检测商品id集合是否存在，移除不存在的商品id，纠正数据准确性
-            [ 'verify_sku_ids', [] ] // 检测商品规格id集合是否存在，移除不存在的商品规格id，纠正数据准确性
+            [ 'verify_sku_ids', [] ], // 检测商品规格id集合是否存在，移除不存在的商品规格id，纠正数据准确性
+            [ 'is_gift', 0 ] // 是否查询赠品(0:不查赠品 1:查询赠品)
         ]);
 
         return success(( new GoodsService() )->getSelectSku($data));

@@ -46,7 +46,7 @@ class ExchangeService extends BaseApiService
         } else {
             $order = 'total_order_num desc,sort desc';
         }
-        $search_model = $this->model->where([ [ 'id', '>', 0 ] ])->withSearch([ 'names', 'status', 'create_time' ], $where)->append([ 'type_name', 'status_name', 'goods_cover_thumb_big', 'goods_cover_thumb_small', 'goods_cover_thumb_mid' ])->field($field)->order($order);
+        $search_model = $this->model->where([ [ 'id', '>', 0 ] ])->withSearch([ 'names', 'status', 'create_time' ], $where)->append([ 'type_name', 'status_name', 'goods_cover_thumb_mid' ])->field($field)->order($order);
         $list = $this->pageQuery($search_model);
         return $list;
     }
@@ -60,7 +60,7 @@ class ExchangeService extends BaseApiService
     {
 
         $field = 'total_exchange_num,id,type,names,title,image,status,product_detail,point,price,limit_num,content,sort,total_point_num,total_price_num,total_order_num,total_member_num,update_time,create_time';
-        $info = $this->model->where([ [ 'id', '=', $id ] ])->append([ 'type_name', 'goods_cover_thumb_big', 'goods_cover_thumb_small', 'goods_cover_thumb_mid', 'goods_image_thumb_small', 'goods_image_thumb_mid', 'goods_image_thumb_big' ])->field($field)->findOrEmpty()->toArray();
+        $info = $this->model->where([ [ 'id', '=', $id ] ])->append([ 'type_name', 'goods_cover_thumb_mid', 'goods_image_thumb_small', 'goods_image_thumb_mid', 'goods_image_thumb_big' ])->field($field)->findOrEmpty()->toArray();
         if (!empty($info)) {
             $goods_id = 0;
             foreach ($info[ 'product_detail' ] as $k => $v) {
@@ -129,13 +129,14 @@ class ExchangeService extends BaseApiService
     public function getGoodsComponents(array $where = [])
     {
         $field = 'status,total_exchange_num,stock,id,type,names,title,image,status,product_detail,point,price,limit_num,content,sort,total_point_num,total_price_num,total_order_num,total_member_num,update_time,create_time';
-        $goods_where[] = [ 'stock', '>', 0 ];
+//        $goods_where[] = [ 'stock', '>', 0 ];
+        $goods_where = [];
         if (!empty($where[ 'order' ]) && in_array($where[ 'order' ], [ 'total_order_num', 'total_exchange_num', 'price' ])) {
             $order = $where[ 'order' ] . ' ' . $where[ 'sort' ];
         } else {
             $order = 'total_order_num desc,sort desc';
         }
-        $list = $this->model->where($goods_where)->withSearch([ 'names', 'status', 'ids' ], $where)->append([ 'type_name', 'status_name', 'goods_cover_thumb_big', 'goods_cover_thumb_small', 'goods_cover_thumb_mid' ])->field($field)->order($order)->limit($where[ 'num' ])->select()->toArray();
+        $list = $this->model->where($goods_where)->withSearch([ 'names', 'status', 'ids' ], $where)->append([ 'type_name', 'status_name', 'goods_cover_thumb_mid' ])->field($field)->order($order)->limit($where[ 'num' ])->select()->toArray();
         return $list;
     }
 
