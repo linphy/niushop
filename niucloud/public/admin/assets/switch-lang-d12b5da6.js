@@ -1,1 +1,0 @@
-import{_ as o}from"./switch-lang.vue_vue_type_script_setup_true_lang-ff0c0ad5.js";import"./index-6aea3257.js";/* empty css                  *//* empty css                         *//* empty css                  *//* empty css                     */import"./index.vue_vue_type_script_setup_true_lang-eb6ce45d.js";export{o as default};
