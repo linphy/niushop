@@ -131,6 +131,8 @@ return [
     'NOTICE_SMS_NOT_OPEN' => '短信未启用',
     'NOTICE_TEMPLATE_IS_NOT_EXIST' => '消息不存在',
 
+    'WEB_ADV_POSITION_NOT_EXIST' => '广告位不存在',
+
     //会员相关
     'MOBILE_IS_EXIST' => '当前手机号已绑定账号',
     'ACCOUNT_INSUFFICIENT' => '账户余额不足',
@@ -238,6 +240,8 @@ return [
     'REFUND_HAD_APPLIED' => '订单已申请退款',
     'ORDER_UNPAID_NOT_ALLOW_APPLY_REFUND' => '订单尚未支付不能进行退款',
 
+    //会员套餐
+    'RECHARGE_NOT_EXIST' => '充值套餐不存在',
 
     // 缓存相关
     'CLEAR_MYSQL_CACHE_SUCCESS' => '数据表缓存清除成功',

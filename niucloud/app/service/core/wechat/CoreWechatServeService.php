@@ -138,7 +138,7 @@ class CoreWechatServeService extends BaseCoreService
         }
         $scene = [ $sceneKey => $key ];
         $param = [
-            'expire_seconds' => $expire_seconds,
+            'expire_seconds' => $expire_seconds, // 二维码的有效时间
             'action_name' => $type,
             'action_info' => [
                 'scene' => $scene

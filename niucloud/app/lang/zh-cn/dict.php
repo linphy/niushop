@@ -227,6 +227,11 @@ return [
         'member_verify_index' => '核销台',
         'member_contact' => '客服',
 
+        'system_web_index' => '系统首页',
+        'auth_login' => '登录',
+        'auth_register' => '注册',
+        'auth_bind' => '手机号绑定',
+
         'diy_page' => '自定义页面',
         'diy_link' => '自定义链接',
         'diy_jump_other_applet' => '小程序跳转',

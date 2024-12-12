@@ -61,4 +61,5 @@ class WechatConfigService extends BaseAdminService
     public function getWechatStaticInfo(){
         return (new CoreWechatConfigService())->getWechatStaticInfo();
     }
+    
 }

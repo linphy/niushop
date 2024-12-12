@@ -15,9 +15,7 @@ use app\service\api\diy\DiyConfigService;
 use app\service\api\member\MemberConfigService;
 use app\service\api\member\MemberLevelService;
 use app\service\api\member\MemberService;
-use app\service\api\site\SiteService;
 use app\service\api\sys\ConfigService;
-use app\service\api\wechat\WechatAuthService;
 use core\base\BaseApiController;
 use think\Response;
 
@@ -90,6 +88,8 @@ class Config extends BaseApiController
         $res[ 'login_config' ] = ( new MemberConfigService() )->getLoginConfig($data[ 'url' ]);
 
         ( new MemberService() )->initMemberData();
+
+        event('initWap');
         return success($res);
     }
 }

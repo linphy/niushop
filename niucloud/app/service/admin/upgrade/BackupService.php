@@ -87,7 +87,7 @@ class BackupService extends UpgradeService
         $prefix = config('database.connections.' . config('database.default'))[ 'prefix' ];
         if ($this->upgrade_task[ 'upgrade' ][ 'app_key' ] == AddonDict::FRAMEWORK_KEY) {
             // 不需要备份的表
-            $noot_need_backup = [ "{$prefix}sys_user_log", "{$prefix}jobs", "{$prefix}jobs_failed" ];
+            $noot_need_backup = [ "{$prefix}sys_schedule_log", "{$prefix}sys_user_log", "{$prefix}jobs", "{$prefix}jobs_failed" ];
             $sys_models = ( new GenerateService() )->getModels([ 'addon' => 'system' ]);
             foreach ($sys_models as $model) {
                 $name = "\\$model";
@@ -101,9 +101,14 @@ class BackupService extends UpgradeService
             $addon_models = ( new GenerateService() )->getModels([ 'addon' => $this->upgrade_task[ 'upgrade' ][ 'app_key' ] ]);
             foreach ($addon_models as $model) {
                 try {
+                    // 不需要备份的表
+                    $noot_need_backup = [ "{$prefix}shop_stat", "{$prefix}shop_goods_stat", "{$prefix}shop_goods_browse" ];
                     $name = "\\$model";
                     $class = new $name();
-                    $tables[] = $class->getTable();
+
+                    if (!in_array($class->getTable(), $noot_need_backup)) {
+                        $tables[] = $class->getTable();
+                    }
                 } catch (\Exception $e) {
                 }
             }

@@ -46,6 +46,8 @@ Route::group(function() {
     Route::get('wechat/user', 'wechat.Wechat/getWechatUser');
     //公众号通过授权信息登录
     Route::post('wechat/userlogin', 'wechat.Wechat/wechatLogin');
+    //检查微信公众号是否配置
+    Route::get('wechat/check', 'wechat.Wechat/checkWechatConfig');
 
     //公众号通过code登录
     Route::post('wechat/login', 'wechat.Wechat/login');
@@ -132,7 +134,7 @@ Route::group(function() {
     //核销详情
     Route::get('verify_detail/:code', 'sys.Verify/detail');
     //通过code码获取核销信息
-    Route::get('get_verify_by_code/:code', 'sys.Verify/getInfoByCode');
+    Route::get('get_verify_by_code', 'sys.Verify/getInfoByCode');
     //核销操作
     Route::post('verify/:code', 'sys.Verify/verify');
 

@@ -75,7 +75,6 @@ class CoreMemberCashOutService extends BaseCoreService
 
     /**
      * 审核通过
-
      * @param MemberCashOut $cash_out
      * @param array $data
      * @return true
@@ -98,7 +97,6 @@ class CoreMemberCashOutService extends BaseCoreService
 
     /**
      * 拒绝
-
      * @param MemberCashOut $cash_out
      * @param array $data
      * @return true
@@ -143,7 +141,15 @@ class CoreMemberCashOutService extends BaseCoreService
             $data['transfer_account'] = $cash_out['transfer_account'];
             $transfer_type = $cash_out['transfer_type'];
             if($transfer_type == TransferDict::WECHAT){
+                //根据转账方式和会员的授权信息来判断可以使用的转账方式
                 $member = (new CoreMemberService())->find($cash_out['member_id']);
+                if(!empty($member['wx_openid'])){
+                    $data['openid'] = $member['wx_openid'];
+                } else if(!empty($member['weapp_openid'])){
+                    $data['openid'] = $member['wweapp_openid'];
+                }else{
+                    $data['openid'] = '';
+                }
                 $data['openid'] = $member['wx_openid'];
             }
         }else{
@@ -263,7 +269,6 @@ class CoreMemberCashOutService extends BaseCoreService
 
     /**
      * 返还用户的对应账户
-
      * @param MemberCashOut $cash_out
      * @return true
      */

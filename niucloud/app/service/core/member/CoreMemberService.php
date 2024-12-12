@@ -171,7 +171,7 @@ class CoreMemberService extends BaseCoreService
      */
     public static function sendGrowth(int $member_id, string $key, array $param = []) {
         $config = (new CoreMemberConfigService())->getGrowthRuleConfig();
-        if (!isset($config[$key]) || empty($config[$key]) || !$config[$key]['is_use']) return true;
+        if (!isset($config[$key]) || empty($config[$key]) || empty($config[$key]['is_use'])) return true;
 
         $config = $config[$key];
 
@@ -204,7 +204,7 @@ class CoreMemberService extends BaseCoreService
      */
     public static function sendPoint(int $member_id, string $key, array $param = []) {
         $config = (new CoreMemberConfigService())->getPointRuleConfig()['grant'] ?? [];
-        if (!isset($config[$key]) || empty($config[$key]) || !$config[$key]['is_use']) return true;
+        if (!isset($config[$key]) || empty($config[$key]) || empty($config[$key]['is_use'])) return true;
 
         $config = $config[$key];
 

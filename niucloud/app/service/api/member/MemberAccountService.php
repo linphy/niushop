@@ -112,7 +112,7 @@ class MemberAccountService extends BaseApiService
         $where[ 'member_id' ] = $this->member_id;
         $where[ 'create_time' ] = $data[ 'create_time' ];
         $field = 'id, member_id, account_type, account_data, account_sum, from_type, related_id, create_time, memo';
-        $search_model = $this->model->where([ [ 'id', '>', 0 ] ])->where($type_where)->withSearch([ 'member_id', 'create_time' ], $where)->field($field)->order('create_time desc')->append([ 'from_type_name', 'account_type_name' ]);
+        $search_model = $this->model->where([ [ 'id', '>', 0 ] ])->where($type_where)->withSearch([ 'member_id', 'create_time' ], $where)->field($field)->order('id desc')->append([ 'from_type_name', 'account_type_name' ]);
         return $this->pageQuery($search_model);
     }
 
