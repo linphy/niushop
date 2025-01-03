@@ -40,7 +40,8 @@ class CorePayChannelService extends BaseCoreService
      * @param array $where
      * @return PayChannel|array|mixed|Model
      */
-    public function find(array $where){
+    public function find(array $where)
+    {
         return $this->model->where($where)->findOrEmpty();
     }
 
@@ -53,21 +54,35 @@ class CorePayChannelService extends BaseCoreService
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public function getAllowPayTypeByChannel(string $channel, string $trade_type = ''){
-        $channel_pay_list = $this->model->where([['channel', '=', $channel], ['status', '=', 1]])->field('type,config')->order('sort asc')->select()->toArray();
+    public function getAllowPayTypeByChannel(string $channel, string $trade_type = '')
+    {
+        $channel_pay_list = $this->model->where([ [ 'channel', '=', $channel ], [ 'status', '=', 1 ] ])->field('type,config')->order('sort asc')->select()->toArray();
 
-        if(!empty($channel_pay_list)){
+        if (!empty($channel_pay_list)) {
             $temp_channel_pay_list = array_column($channel_pay_list, 'type');
-            $pay_type_list = PayDict::getPayType($temp_channel_pay_list);
+            $pay_type_arr = PayDict::getPayType($temp_channel_pay_list);
+            foreach ($temp_channel_pay_list as $key) {
+                if (isset($pay_type_arr[$key])) {
+                    $pay_type_list[$key] = $pay_type_arr[$key];
+                }
+            }
         }
-        //充值订单不支持余额支付
-        if(!empty($pay_type_list) &&  $trade_type == 'recharge'){
-            unset($pay_type_list[PayDict::BALANCEPAY]);
+        //充值订单不支持余额支付和找朋友帮忙付
+        if (!empty($pay_type_list) && $trade_type == 'recharge') {
+            unset($pay_type_list[ PayDict::BALANCEPAY ], $pay_type_list[ PayDict::FRIENDSPAY ]);
         }
         // 线下支付做处理
-        if (!empty($pay_type_list) && isset($pay_type_list[PayDict::OFFLINEPAY])) {
+        if (!empty($pay_type_list) && isset($pay_type_list[ PayDict::OFFLINEPAY ])) {
             $temp_channel_pay_list = array_column($channel_pay_list, null, 'type');
-            $pay_type_list[PayDict::OFFLINEPAY]['config'] = $temp_channel_pay_list[PayDict::OFFLINEPAY]['config'];
+            $pay_type_list[ PayDict::OFFLINEPAY ][ 'config' ] = $temp_channel_pay_list[ PayDict::OFFLINEPAY ][ 'config' ];
+        }
+        // 找朋友帮忙付做处理
+        if (!empty($pay_type_list) && isset($pay_type_list[ PayDict::FRIENDSPAY ])) {
+            $temp_channel_pay_list = array_column($channel_pay_list, null, 'type');
+            $pay_type_list[ PayDict::FRIENDSPAY ][ 'config' ] = $temp_channel_pay_list[ PayDict::FRIENDSPAY ][ 'config' ];
+            if (!empty($temp_channel_pay_list[ PayDict::FRIENDSPAY ][ 'config' ])) {
+                $pay_type_list[ PayDict::FRIENDSPAY ][ 'name' ] = $temp_channel_pay_list[ PayDict::FRIENDSPAY ][ 'config' ][ 'pay_type_name' ];
+            }
         }
         return $pay_type_list ?? [];
 
@@ -79,10 +94,11 @@ class CorePayChannelService extends BaseCoreService
      * @param string $type
      * @return array|mixed
      */
-    public function getConfigByChannelAndType(string $channel, string $type){
-        $pay_channel = $this->model->where([ ['channel', '=', $channel], ['type', '=', $type]])->field('config')->findOrEmpty();
-        if(!$pay_channel->isEmpty()){
-            if($type == PayDict::WECHATPAY){
+    public function getConfigByChannelAndType(string $channel, string $type)
+    {
+        $pay_channel = $this->model->where([ [ 'channel', '=', $channel ], [ 'type', '=', $type ] ])->field('config')->findOrEmpty();
+        if (!$pay_channel->isEmpty()) {
+            if ($type == PayDict::WECHATPAY) {
                 $pay_channel->config = array_merge($pay_channel->config, $this->getWechatPayFullConfig());
             }
             return $pay_channel->config;
@@ -90,19 +106,19 @@ class CorePayChannelService extends BaseCoreService
         return [];
     }
 
-
     /**
      * 获取完整的微信支付配置(根据场景)
      * @return array
      */
-    public function getWechatPayFullConfig(){
+    public function getWechatPayFullConfig()
+    {
         //TODO 先判断是否是开放平台授权,然后再决定使用什么appid
         //查询公众号配置
         $core_wechat_config_service = new CoreWechatConfigService();
-        $mp_app_id = $core_wechat_config_service->getWechatConfig()['app_id'];//公众号appid
+        $mp_app_id = $core_wechat_config_service->getWechatConfig()[ 'app_id' ];//公众号appid
         //查询公众号配置
         $core_weapp_config_service = new CoreWeappConfigService();
-        $mini_app_id = $core_weapp_config_service->getWeappConfig()['app_id'];//小程序appid
+        $mini_app_id = $core_weapp_config_service->getWeappConfig()[ 'app_id' ];//小程序appid
         //todo  查询微信小程序 appid  .  应用appid.....
         return [
             'mp_app_id' => $mp_app_id,

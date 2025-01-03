@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的多应用管理平台
+// | Niucloud-admin 企业快速开发的saas管理平台
 // +----------------------------------------------------------------------
 // | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
@@ -254,5 +254,18 @@ class Diy extends BaseAdminController
     public function getApps()
     {
         return success(( new DiyService() )->getApps());
+    }
+
+    /**
+     * 复制模版
+     * @return Response
+     */
+    public function copy()
+    {
+        $params = $this->request->params([
+            [ 'id', '' ],
+        ]);
+        $id = ( new DiyService() )->copy($params);
+        return success('ADD_SUCCESS', [ 'id' => $id ]);
     }
 }

@@ -23,7 +23,6 @@ use think\Response;
 use Yansongda\Pay\Exception\ContainerException;
 use Yansongda\Pay\Exception\InvalidParamsException;
 use Yansongda\Pay\Exception\ServiceNotFoundException;
-use Yansongda\Supports\Collection;
 
 /**
  * 支付服务层
@@ -41,7 +40,6 @@ class CorePayEventService extends BaseCoreService
     {
         parent::__construct();
     }
-
 
     /**
      * 支付引擎外置触点初始化
@@ -69,7 +67,6 @@ class CorePayEventService extends BaseCoreService
         $this->config[ 'notify_url' ] = $notify_url;
         return new PayLoader($this->type, $this->config);
     }
-
 
     /**
      * 去支付

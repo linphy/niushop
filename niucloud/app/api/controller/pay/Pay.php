@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的多应用管理平台
+// | Niucloud-admin 企业快速开发的saas管理平台
 // +----------------------------------------------------------------------
 // | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
@@ -56,7 +56,19 @@ class Pay extends BaseApiController
 
     public function info($trade_type, $trade_id)
     {
-        return success((new PayService())->getInfoByTrade($trade_type, $trade_id));
+        $data = $this->request->params([
+            ['scene', '']
+        ]);
+        return success((new PayService())->getInfoByTrade($trade_type, $trade_id, $data));
+    }
+
+    /**
+     * 获取找朋友帮忙付支付信息
+     * @return Response
+     */
+    public function friendspayInfo($trade_type, $trade_id)
+    {
+        return success((new PayService())->getFriendspayInfoByTrade($trade_type, $trade_id));
     }
 
     /**

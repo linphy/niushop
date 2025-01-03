@@ -3,11 +3,13 @@
 namespace app\install\controller;
 
 
+use app\model\sys\Poster;
 use app\model\sys\SysUser;
 use app\service\admin\auth\LoginService;
 use app\service\admin\install\InstallSystemService;
 use app\service\core\addon\CoreAddonInstallService;
 use app\service\core\addon\CoreAddonService;
+use app\service\core\poster\CorePosterService;
 use app\service\core\schedule\CoreScheduleInstallService;
 use Exception;
 use think\facade\Cache;
@@ -324,6 +326,23 @@ class Index extends BaseInstall
                 $user->save([
                     'username' => $username,
                     'password' => create_password($password),
+                ]);
+            }
+
+            // 创建默认找朋友帮忙付海报
+            $poster_model = new Poster();
+            $poster_count = $poster_model->where([
+                [ 'type', '=', 'friendspay' ]
+            ])->count();
+            if ($poster_count == 0) {
+                $poster = new CorePosterService();
+                $template = $poster->getTemplateList('', 'friendspay')[ 0 ];
+                $poster->add('', [
+                    'name' => $template[ 'name' ],
+                    'type' => $template[ 'type' ],
+                    'value' => $template[ 'data' ],
+                    'status' => 1,
+                    'is_default' => 1
                 ]);
             }
 

@@ -92,7 +92,8 @@ $system_event = [
         'StatField' => [],
 
         // 获取海报数据
-        'GetPosterData' => [ 'app\listener\system\Poster' ]
+        'GetPosterType' => [ 'app\listener\system\PosterType' ],
+        'GetPosterData' => [ 'app\listener\system\Poster' ],
     ],
     'subscribe' => [
     ],

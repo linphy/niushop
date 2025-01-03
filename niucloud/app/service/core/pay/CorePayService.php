@@ -13,6 +13,7 @@ namespace app\service\core\pay;
 
 use app\dict\pay\OnlinePayDict;
 use app\dict\pay\PayDict;
+use app\dict\pay\PaySceneDict;
 use app\job\pay\PayReturnTo;
 use app\model\pay\Pay;
 use core\base\BaseCoreService;
@@ -21,7 +22,6 @@ use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
 use think\facade\Db;
-use think\facade\Log;
 use think\Model;
 use Throwable;
 
@@ -61,6 +61,7 @@ class CorePayService extends BaseCoreService
             'body' => $body,
             'out_trade_no' => $out_trade_no,
             'main_id' => $main_id,
+            'from_main_id' => $main_id,
             'main_type' => $main_type
         );
         $this->model->create($data);
@@ -120,6 +121,30 @@ class CorePayService extends BaseCoreService
     }
 
     /**
+     * 通过业务类型和id查询支付状态
+     * @param string $trade_type
+     * @param int $trade_id
+     * @return bool
+     */
+    public function getPayStatusByTrade(string $trade_type, int $trade_id)
+    {
+        $where = array(
+            [ 'trade_type', '=', $trade_type ],
+            [ 'trade_id', '=', $trade_id ],
+        );
+        $pay_info = $this->model->field('status')->where($where)->findOrEmpty();
+        if ($pay_info->isEmpty()) {
+            throw new PayException('TRADE_NOT_EXIST');//支付单据不存在
+        } else {
+            if ($pay_info[ 'status' ] == PayDict::STATUS_FINISH) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    /**
      * 通过交易信息获取支付单据
      * @param string $trade_type
      * @param string $trade_id
@@ -129,7 +154,7 @@ class CorePayService extends BaseCoreService
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public function getInfoByTrade(string $trade_type, string $trade_id, string $channel)
+    public function getInfoByTrade(string $trade_type, string $trade_id, string $channel, string $scene = '')
     {
         $pay = $this->findPayInfoByTrade($trade_type, $trade_id);
         if ($pay->isEmpty()) {
@@ -141,7 +166,13 @@ class CorePayService extends BaseCoreService
         }
         if (!empty($pay)) {
             //todo  校验场景控制支付方式
-            $pay[ 'pay_type_list' ] = array_values(( new CorePayChannelService() )->getAllowPayTypeByChannel($channel, $pay[ 'trade_type' ]));
+            $pay_type_list = ( new CorePayChannelService() )->getAllowPayTypeByChannel($channel, $pay[ 'trade_type' ]);
+            //找朋友帮忙付时不支持找朋友帮忙付
+            if(!empty($pay_type_list) && !empty($pay_type_list[PayDict::FRIENDSPAY]) && $scene == PaySceneDict::FRIENDSPAY){
+                $pay[ 'config' ] = $pay_type_list[PayDict::FRIENDSPAY]['config'];
+                unset($pay_type_list[PayDict::FRIENDSPAY]);
+            }
+            $pay[ 'pay_type_list' ] = array_values($pay_type_list);
         }
         return $pay;
     }
@@ -176,7 +207,7 @@ class CorePayService extends BaseCoreService
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public function pay($trade_type, $trade_id, $type, $channel, string $openid, string $return_url = '', string $quit_url = '', string $buyer_id = '', string $voucher = '')
+    public function pay($trade_type, $trade_id, $type, $channel, string $openid, string $return_url = '', string $quit_url = '', string $buyer_id = '', string $voucher = '', $member_id = 0)
     {
         //检测并创建支付单据
         $pay = $this->checkOrCreate($trade_type, $trade_id);
@@ -185,10 +216,19 @@ class CorePayService extends BaseCoreService
         $body = $pay[ 'body' ];
         $trade_type = $pay[ 'trade_type' ];
         if (!in_array($type, array_column(( new CorePayChannelService() )->getAllowPayTypeByChannel($channel, $trade_type), 'key'))) throw new PayException('PAYMENT_METHOD_NOT_SCENE');//场景不支持
+        if ($member_id != 0) {
+            //更新付款人id
+            $pay_info = $this->findPayInfoByTrade($trade_type, $trade_id);
+            $pay_info->save([
+                'main_id' => $member_id
+            ]);
+        }
         $pay_result = $this->pay_event->init($channel, $type)->pay($out_trade_no, $money, $body, $return_url, $quit_url, $buyer_id, $openid ?? '', $voucher);
         //todo  特殊支付方式会直接返回支付状态,状态如果为已支付会直接支付
         if (!empty($pay_result[ 'status' ]) && $pay_result[ 'status' ] == PayDict::STATUS_FINISH) {
-            $pay->save([ 'channel' => $channel ]);
+            $pay->save([
+                'channel' => $channel
+            ]);
             $this->paySuccess([
                 'status' => PayDict::STATUS_FINISH,
                 'type' => $type,
@@ -488,6 +528,7 @@ class CorePayService extends BaseCoreService
         $type = $params[ 'type' ];
         $trade_type = $pay->trade_type;
         $trade_id = $pay->trade_id;
+        $main_id = $pay->main_id;
         $data = array(
             'pay_time' => time(),
             'status' => PayDict::STATUS_FINISH,
@@ -503,7 +544,7 @@ class CorePayService extends BaseCoreService
         Db::startTrans();
         try {
             $pay->allowField($allow_field)->save($data);
-            $result = event('PaySuccess', [ 'out_trade_no' => $out_trade_no, 'trade_type' => $trade_type, 'trade_id' => $trade_id ]);
+            $result = event('PaySuccess', [ 'out_trade_no' => $out_trade_no, 'trade_type' => $trade_type, 'trade_id' => $trade_id, 'main_id' => $main_id ]);
 //            if (!check_event_result($result)) {
 //                Db::rollback();
 //                return false;

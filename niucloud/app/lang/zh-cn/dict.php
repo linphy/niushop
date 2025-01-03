@@ -38,6 +38,18 @@ return [
         'status_off' => '停用'
     ],
     // 站点
+    'dict_site' => [
+        //站点类型
+        'type_cms' => 'cms',
+        'status_on' => '正常',
+        'status_experience' => '体验期',
+        'status_expire' => '已到期',
+        'status_close' => '已停止',
+        'pay' => '支付',
+        'refund' => '退款',
+        'transfer' => '转账',
+    ],
+    // 站点
     'dict_site_index' => [
         //站点类型
         'system' => '框架首页',
@@ -165,6 +177,7 @@ return [
         'type_unipay' => '银联支付',
         'type_offline' => '线下支付',
         'type_balancepay' => '余额支付',
+        'type_friendspay' => '找朋友帮忙付',
 
         'status_wait' => '待支付',
         'status_ing' => '支付中',
@@ -174,6 +187,14 @@ return [
         'pay' => '收款',
         'refund' => '退款',
         'transfer' => '转账',
+    ],
+    //支付配置相关
+    'dict_pay_config' => [
+        'pay_leave_message' => '帮我付一下这笔订单吧，谢谢啦~',
+        'pay_button_name' => '慷慨付款',
+        'pay_page_name' => '帮我付款',
+        'pay_explain_title' => '帮付说明',
+        'pay_explain_content' => "1.付款前请务必和好友进行确认，以避免给你造成损失。\n2.当帮付订单退款成功后，实付金额将原路退还到帮付人账户。\n3.帮付订单信息中显示的金额为单价，但因优惠活动等因素，实付金额可能会发生变化，具体金额以页面显示为准。",
     ],
     //转账相关
     'dict_transfer' => [
@@ -226,11 +247,6 @@ return [
         'member_my_sign_in' => '我的签到',
         'member_verify_index' => '核销台',
         'member_contact' => '客服',
-
-        'system_web_index' => '系统首页',
-        'auth_login' => '登录',
-        'auth_register' => '注册',
-        'auth_bind' => '手机号绑定',
 
         'diy_page' => '自定义页面',
         'diy_link' => '自定义链接',
