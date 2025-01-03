@@ -134,7 +134,7 @@
                                             <!-- 文本 -->
                                             <template v-if="posterStore.editComponent.type == 'text'">
                                                 <el-form-item :label="t('textFontSize')">
-                                                    <el-slider v-model="posterStore.editComponent.fontSize" show-input size="small" class="ml-[10px]" :min="14" :max="50" />
+                                                    <el-slider v-model="posterStore.editComponent.fontSize" show-input size="small" class="ml-[10px]" :min="14" :max="100" />
                                                 </el-form-item>
                                                 <el-form-item :label="t('textColor')">
                                                     <el-color-picker v-model="posterStore.editComponent.fontColor" />
@@ -284,7 +284,7 @@ const previewIframeStyle = (data: any)=>{
             break;
         default:
             style.top = data.y + 'px';
-    } 
+    }
     switch(data.x) {
         case 'left':
             style.left = 0;
