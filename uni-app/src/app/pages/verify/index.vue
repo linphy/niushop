@@ -178,13 +178,13 @@
 
 	const changeOperationType = (type: string) => {
 		// #ifdef H5
-		// if (type == 'sweepCode' && !isWeixinBrowser()) {
-		// 	uni.showToast({
-		// 		title: 'H5端不支持扫码核销',
-		// 		icon: 'none'
-		// 	});
-		// 	return;
-		// }
+		if (type == 'sweepCode' && !isWeixinBrowser()) {
+			uni.showToast({
+				title: 'H5端不支持扫码核销',
+				icon: 'none'
+			});
+			return;
+		}
 		// #endif
 		operationType.value = type;
 	}

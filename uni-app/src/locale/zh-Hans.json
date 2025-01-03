@@ -36,6 +36,8 @@
 	"pages.verify.verify": "核销",
 	"pages.verify.detail": "核销详情",
 	"pages.verify.record": "核销记录",
+    "pages.friendspay.share": "找朋友帮忙付",
+    "pages.friendspay.money":"",
     "pages.webview.index": "",
     "tourism.pages.way.list": "线路列表",
     "tourism.pages.way.detail": "线路详情",

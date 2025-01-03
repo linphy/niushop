@@ -93,6 +93,7 @@ export const useShare = () => {
                 route: '/' + currRoute(),
                 params: JSON.stringify(currShareRoute().params)
             }).then((res: any) => {
+
                 let data = res.data;
 
                 // #ifdef H5
@@ -132,6 +133,7 @@ export const useShare = () => {
                 ...options
             }
         })
+
     }
 
     // 小程序分享，分享到朋友圈

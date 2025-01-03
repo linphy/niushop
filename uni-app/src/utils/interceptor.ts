@@ -106,6 +106,8 @@ const loadShare = () => {
         'addon/shop_giftcard/pages/detail',
         'addon/shop_giftcard/pages/give',
         'app/pages/index/diy',
+        'app/pages/friendspay/share',
+        'app/pages/friendspay/money'
     ]
     if (currRoute()) {
         if (!shareWhiteList.includes(currRoute() || '')) setShare()

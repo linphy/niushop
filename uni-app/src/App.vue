@@ -77,12 +77,6 @@
 
             const configStore = useConfigStore()
 
-            try {
-                uni.hideTabBar() // 隐藏tabbar
-            } catch (e) {
-
-            }
-
             let loginConfig = uni.getStorageSync('login_config')
             if (!loginConfig) {
                 loginConfig = deepClone(configStore.login)
