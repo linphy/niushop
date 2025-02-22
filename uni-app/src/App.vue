@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import { onLaunch, onShow, onHide } from '@dcloudio/uni-app'
     import { launchInterceptor } from '@/utils/interceptor'
-    import { getToken, isWeixinBrowser, currRoute, deepClone } from '@/utils/common'
+    import { getToken, isWeixinBrowser, currRoute, deepClone, setThemeColor } from '@/utils/common'
     import useMemberStore from '@/stores/member'
     import useConfigStore from '@/stores/config'
     import useSystemStore from '@/stores/system'
@@ -82,8 +82,11 @@
                 loginConfig = deepClone(configStore.login)
             }
 
-            // 判断在登录注册页面账号锁定后不进行请求三方登录注册
             let url: any = currRoute()
+            // 设置主色调
+            setThemeColor(url)
+
+            // 判断在登录注册页面账号锁定后不进行请求三方登录注册
             if ((['app/pages/auth/index', 'app/pages/auth/login', 'app/pages/auth/register', 'app/pages/auth/resetpwd'].indexOf(url) != -1) &&
                 (loginConfig.is_username || loginConfig.is_mobile || loginConfig.is_bind_mobile)) {
                 return false
@@ -165,6 +168,7 @@
                 // #ifdef H5
                 if (isWeixinBrowser()) {
                     if (uni.getStorageSync('autoLoginLock') && !uni.getStorageSync('wechat_login_back')) return;
+                    // 开启自动注册的情况下才能执行
                     if (loginConfig.is_auth_register || uni.getStorageSync('wechat_login_back')) {
                         uni.removeStorageSync('wechat_login_back') // 删除微信公众号手动授权登录回调标识
                         if (data.query.code) {
@@ -184,9 +188,10 @@
             }
         })
 
-    })
+    }) 
 
     onShow(() => {
+
     })
 
     onHide(() => {
