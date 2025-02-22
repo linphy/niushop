@@ -84,6 +84,9 @@ routers.forEach(item => {
     if (item.meta.addon) {
         addonRouters[item.meta.addon] = item
     }
+    if (item.meta.attr) {
+        addonRouters[item.meta.attr] = item
+    }
 })
 
 const addonsMenus = ref(null)
@@ -93,6 +96,8 @@ watch(route, () => {
 
     if (systemAddonKeys.value.includes(route.meta.addon) && addonRouters[route.meta.addon]) {
         addonsMenus.value = addonRouters[route.meta.addon]
+    } else if (route.meta.attr && addonRouters[route.meta.attr]) {
+        addonsMenus.value = addonRouters[route.meta.attr]
     } else {
         addonsMenus.value = null
     }

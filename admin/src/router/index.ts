@@ -17,7 +17,7 @@ const router = createRouter({
  */
 const originPush = router.push
 router.push = (to: RouteLocationRaw) => {
-    const route = typeof to == 'string' ? urlToRouteRaw(to) : to
+    const route: any = typeof to == 'string' ? urlToRouteRaw(to) : to
     if (route.path) {
         const paths = route.path.split('/').filter((item: string) => { return item })
         route.path = ['admin'].indexOf(paths[0]) == -1 ? `/${getAppType()}${route.path}` : route.path
@@ -30,7 +30,7 @@ router.push = (to: RouteLocationRaw) => {
  */
 const originResolve = router.resolve
 router.resolve = (to: RouteLocationRaw, currentLocation?: RouteLocationNormalizedLoaded) => {
-    const route = typeof to == 'string' ? urlToRouteRaw(to) : to
+    const route: any = typeof to == 'string' ? urlToRouteRaw(to) : to
     if (route.path) {
         const paths = route.path.split('/').filter((item: string) => { return item })
         route.path = ['admin'].indexOf(paths[0]) == -1 ? `/${getAppType()}${route.path}` : route.path
@@ -39,7 +39,7 @@ router.resolve = (to: RouteLocationRaw, currentLocation?: RouteLocationNormalize
 }
 
 // 全局前置守卫
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to: any, from, next) => {
     NProgress.configure({ showSpinner: false })
     NProgress.start()
 

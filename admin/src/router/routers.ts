@@ -73,7 +73,8 @@ interface Route {
     children?: [],
     is_show: boolean,
     app_type: string,
-    addon: string
+    addon: string,
+    menu_attr ?:  String
 }
 
 /**
@@ -94,6 +95,7 @@ const createRoute = function (route: Route, parentRoute: RouteRecordRaw | null =
             app: route.app_type,
             view: route.view_path,
             addon: route.addon,
+            attr: route.menu_attr,
             parent_route: parentRoute ? parentRoute.meta : parentRoute
         }
     }
