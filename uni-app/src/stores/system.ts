@@ -53,7 +53,8 @@ const useSystemStore = defineStore('system', {
             // #endif
 
             getInitInfo({
-                url
+                url,
+                openid: uni.getStorageSync('openid')
             }).then((res: any) => {
                 if (res.data) {
                     let data = res.data;
@@ -66,6 +67,9 @@ const useSystemStore = defineStore('system', {
                     this.mapConfig.is_open = data.map_config.is_open;
                     this.mapConfig.valid_time = data.map_config.valid_time;
                     uni.setStorageSync('mapConfig', this.mapConfig);
+					
+					// 主题色
+					uni.setStorageSync('theme_color_list', data.theme_list);
 
                     // 站点信息
                     this.site = data.site_info
@@ -92,6 +96,9 @@ const useSystemStore = defineStore('system', {
                     configStore.login.logo = data.login_config.logo //logo
                     configStore.login.desc = data.login_config.desc // 描述
                     uni.setStorageSync('login_config', configStore.login)
+
+                    // 如果会员已存在则小程序端快捷登录时不再弹出授权弹框
+                    uni.setStorageSync('member_exist',data.member_exist)
 
                     this.initStatus = 'finish'; // 初始化完成
                     if (callback) callback()

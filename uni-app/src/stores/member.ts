@@ -48,6 +48,8 @@ const useMemberStore = defineStore('member', {
                 if (callback) callback();
             }).catch(() => {
                 this.logout()
+                uni.removeStorageSync('wap_member_mobile');
+                uni.removeStorageSync('wap_member_id');
             })
         },
         logout(isRedirect: boolean = false) {
@@ -60,16 +62,20 @@ const useMemberStore = defineStore('member', {
             logout().then(() => {
                 removeToken()
                 uni.removeStorageSync('wap_member_info');
-                uni.removeStorageSync('openid');
+                // uni.removeStorageSync('openid');
                 uni.removeStorageSync('unionid');
                 uni.removeStorageSync('isbindmobile');
+                uni.removeStorageSync('nickname');
+                uni.removeStorageSync('avatar');
                 isRedirect && redirect({ url: '/app/pages/index/index', mode: 'switchTab' })
             }).catch(() => {
                 removeToken()
                 uni.removeStorageSync('wap_member_info');
-                uni.removeStorageSync('openid');
+                // uni.removeStorageSync('openid');
                 uni.removeStorageSync('unionid');
                 uni.removeStorageSync('isbindmobile');
+                uni.removeStorageSync('nickname');
+                uni.removeStorageSync('avatar');
                 isRedirect && redirect({ url: '/app/pages/index/index', mode: 'switchTab' })
             })
         },
