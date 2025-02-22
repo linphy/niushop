@@ -4,7 +4,7 @@
             <NuxtLink to="/">
                 <div class="w-[132px] mr-[10px]"><img src="@/assets/images/index/logo.jpg" /></div>
             </NuxtLink>
-            <div class="hidden text-[14px] text-[#A6B0C8] xl:block">|<span class="ml-[10px]">一款快速开发SAAS通用管理系统后台框架</span>
+            <div class="hidden text-[14px] text-[#A6B0C8] xl:block">|<span class="ml-[10px]">一款快速开发多应用管理系统后台框架</span>
             </div>
         </div>
 
