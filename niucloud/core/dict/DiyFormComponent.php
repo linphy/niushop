@@ -10,29 +10,29 @@
 // +----------------------------------------------------------------------
 namespace core\dict;
 
-
-class AdvPosition extends BaseDict
+class DiyFormComponent extends BaseDict
 {
     /**
-     * 广告位加载
+     * 万能表单组件配置
      * @param array $data
      * @return array|mixed
      */
     public function load(array $data)
     {
         $addons = $this->getLocalAddons();
-        $adv_position_files = [];
+        $components_files = [];
+
         foreach ($addons as $v) {
-            $adv_position_path = $this->getAddonDictPath($v) . "web" . DIRECTORY_SEPARATOR . "adv_position.php";
-            if (is_file($adv_position_path)) {
-                $adv_position_files[] = $adv_position_path;
+            $components_path = $this->getAddonDictPath($v) . "diy_form" . DIRECTORY_SEPARATOR . "components.php";
+            if (is_file($components_path)) {
+                $components_files[] = $components_path;
             }
         }
-        $adv_position_file_data = $this->loadFiles($adv_position_files);
-        $adv_position = $data;
-        foreach ($adv_position_file_data as $file_data) {
-            $adv_position = empty($adv_position) ? $file_data : array_merge($adv_position, $file_data);
+        $components_files_data = $this->loadFiles($components_files);
+        $components = $data;
+        foreach ($components_files_data as $file_data) {
+            $components = empty($components) ? $file_data : array_merge2($components, $file_data);
         }
-        return $adv_position;
+        return $components;
     }
 }
