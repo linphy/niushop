@@ -203,4 +203,61 @@ class AddonService extends BaseAdminService
     {
         return $this->model->where([ [ 'key', '=', $key ] ])->field('title, icon, key, desc, status, cover')->findOrEmpty()->toArray();
     }
+
+    /**
+     * 查询应用列表，todo 完善
+     * @return array
+     */
+    public function getShowAppTools()
+    {
+        $list = [
+            'addon' => [
+                'title' => '运营工具',
+                'list' => []
+            ],
+            'tool' => [
+                'title' => '系统工具',
+                'list' => []
+            ],
+//            'promotion' => [
+//                'title' => '营销活动',
+//                'list' => []
+//            ]
+        ];
+
+        $apps = event('ShowApp');
+
+        $keys = [];
+        foreach ($apps as $v) {
+            foreach ($v as $ck => $cv) {
+                if (!empty($cv)) {
+                    foreach ($cv as $addon_k => $addon_v) {
+                        if (in_array($addon_v[ 'key' ], $keys)) {
+                            continue;
+                        }
+                        $list[ $ck ][ 'list' ][] = $addon_v;
+                        $keys[] = $addon_v[ 'key' ];
+                    }
+                }
+
+            }
+
+        }
+
+        $addons = $this->model->where([['status', '=', AddonDict::ON]])->append(['status_name'])->column('title, icon, key, desc, status, type, support_app', 'key');
+        if (!empty($addons)) {
+            foreach ($addons as $k => $v) {
+                if (!in_array($v[ 'key' ], $keys) && $v[ 'type' ] == AddonDict::ADDON && $v[ 'status' ] == AddonDict::ON) {
+                    $list[ 'addon' ][ 'list' ][] = [
+                        'title' => $v[ 'title' ],
+                        'desc' => $v[ 'desc' ],
+                        'icon' => $v[ 'icon' ],
+                        'key' => $v[ 'key' ]
+                    ];
+                }
+            }
+        }
+
+        return $list;
+    }
 }

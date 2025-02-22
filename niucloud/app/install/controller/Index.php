@@ -7,6 +7,7 @@ use app\model\sys\Poster;
 use app\model\sys\SysUser;
 use app\service\admin\auth\LoginService;
 use app\service\admin\install\InstallSystemService;
+use app\service\admin\sys\ConfigService;
 use app\service\core\addon\CoreAddonInstallService;
 use app\service\core\addon\CoreAddonService;
 use app\service\core\poster\CorePosterService;
@@ -343,6 +344,29 @@ class Index extends BaseInstall
                     'value' => $template[ 'data' ],
                     'status' => 1,
                     'is_default' => 1
+                ]);
+            }
+
+            // 设置网站信息
+            if (!empty($admin_name)) {
+                (new ConfigService())->setWebSite([
+                    'site_name' => $admin_name,
+                    'logo' => config('install.admin_logo'),
+                    'keywords' => '',
+                    'desc' => '',
+                    'latitude' => '',
+                    'longitude' => '',
+                    'province_id' => 0,
+                    'city_id' => 0,
+                    'district_id' => 0,
+                    'address' => '',
+                    'full_address' => '',
+                    'phone' => '',
+                    'business_hours' => '',
+                    'front_end_name' => '',
+                    'front_end_logo' => '',
+                    'front_end_icon' => '',
+                    'icon' => ''
                 ]);
             }
 

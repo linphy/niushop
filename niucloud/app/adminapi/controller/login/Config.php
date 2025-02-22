@@ -19,7 +19,6 @@ use think\Response;
 class Config extends BaseAdminController
 {
 
-
     /**
      * 获取登录设置
      * @return Response

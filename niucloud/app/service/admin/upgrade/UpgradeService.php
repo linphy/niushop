@@ -150,9 +150,10 @@ class UpgradeService extends BaseAdminService
                 dir_mkdir($upgrade_dir);
             }
 
-            $upgrade_tsak = [
+            $upgrade_task = [
                 'key' => $key,
                 'upgrade' => $upgrade,
+                'steps' => $this->steps,
                 'step' => 'requestUpgrade',
                 'executed' => ['requestUpgrade'],
                 'log' => [ $this->steps['requestUpgrade']['title'] ],
@@ -160,8 +161,8 @@ class UpgradeService extends BaseAdminService
                 'upgrade_content' => $this->getUpgradeContent($addon)
             ];
 
-            Cache::set($this->cache_key, $upgrade_tsak);
-            return $upgrade_tsak;
+            Cache::set($this->cache_key, $upgrade_task);
+            return $upgrade_task;
         } catch (\Exception $e) {
             throw new CommonException($e->getMessage());
         }
@@ -174,7 +175,7 @@ class UpgradeService extends BaseAdminService
     public function execute() {
         if (!$this->upgrade_task) return true;
 
-        $steps = array_keys($this->steps);
+        $steps = isset($this->upgrade_task['steps']) ? array_keys($this->upgrade_task['steps']) : array_keys($this->steps);
         $index = array_search($this->upgrade_task['step'], $steps);
         $step = $steps[ $index + 1 ] ?? '';
         $params = $this->upgrade_task['params'] ?? [];
@@ -194,7 +195,8 @@ class UpgradeService extends BaseAdminService
                 Cache::set($this->cache_key, $this->upgrade_task);
             } catch (\Exception $e) {
                 $this->upgrade_task['step'] = $step;
-                $this->upgrade_task['error'] = $e->getMessage();
+                $this->upgrade_task['error'][] = '升级失败，失败原因：' . $e->getMessage().$e->getFile().$e->getLine();
+                Cache::set($this->cache_key, $this->upgrade_task);
                 $this->upgradeErrorHandle();
             }
             return true;
@@ -269,7 +271,9 @@ class UpgradeService extends BaseAdminService
 
         // 覆盖文件
         if (is_dir($code_dir . $version_no)) {
-            dir_copy($code_dir . $version_no, $to_dir);
+            // 忽略环境变量文件
+            $exclude_files = ['.env.development', '.env.production', '.env', '.env.dev', '.env.product'];
+            dir_copy($code_dir . $version_no, $to_dir, exclude_files:$exclude_files);
             if ($addon != AddonDict::FRAMEWORK_KEY) {
                 (new CoreAddonInstallService($addon))->installDir();
             }
@@ -367,7 +371,8 @@ class UpgradeService extends BaseAdminService
      */
     public function handleUniapp() {
         $code_dir = $this->upgrade_dir .$this->upgrade_task['key'] . DIRECTORY_SEPARATOR . 'download' . DIRECTORY_SEPARATOR . 'code' . DIRECTORY_SEPARATOR;
-        dir_copy($code_dir . 'uni-app', $this->root_path . 'uni-app');
+        $exclude_files = ['.env.development', '.env.production', 'manifest.json'];
+        dir_copy($code_dir . 'uni-app', $this->root_path . 'uni-app', exclude_files:$exclude_files);
 
         $addon_list = (new CoreAddonService())->getInstallAddonList();
         $depend_service = new CoreDependService();
@@ -379,9 +384,6 @@ class UpgradeService extends BaseAdminService
 
                 // 编译 diy-group 自定义组件代码文件
                 $this->compileDiyComponentsCode($this->root_path . 'uni-app' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR, $addon);
-
-                // 编译 fixed-group 固定模板组件代码文件
-                $this->compileFixedComponentsCode($this->root_path . 'uni-app' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR, $addon);
 
                 // 编译 pages.json 页面路由代码文件
                 $this->installPageCode($this->root_path . 'uni-app' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR);
@@ -481,18 +483,51 @@ class UpgradeService extends BaseAdminService
      * @return true|void
      */
     public function upgradeErrorHandle() {
+        $steps = [];
+        $steps[$this->upgrade_task['step']] = [];
+
+        if (isset($this->upgrade_task['is_cover'])) {
+            $steps['restoreCode'] = ['step' => 'restoreCode', 'title' => '恢复源码备份'];
+            $steps['restoreSql'] = ['step' => 'restoreSql', 'title' => '恢复数据库备份'];
+        }
+        $steps['restoreComplete'] = ['step' => 'restoreComplete', 'title' => '备份恢复完成'];
+        $this->upgrade_task['steps'] = $steps;
+        Cache::set($this->cache_key, $this->upgrade_task);
+    }
+
+    /**
+     * 恢复源码
+     * @return void
+     */
+    public function restoreCode() {
         try {
-            if (isset($this->upgrade_task['is_cover'])) {
-                $restore_service = (new RestoreService());
-                $restore_service->restoreCode();
-                $restore_service->restoreSql();
-            }
-            $this->clearUpgradeTask(5);
+            (new RestoreService())->restoreCode();
             return true;
         } catch (\Exception $e) {
-            $this->clearUpgradeTask(5);
+            $this->upgrade_task['error'][] = '源码备份恢复失败稍后请手动恢复，失败原因：' . $e->getMessage().$e->getFile().$e->getLine();
+            Cache::set($this->cache_key, $this->upgrade_task);
             return true;
         }
+    }
+
+    /**
+     * 恢复数据库
+     * @return void
+     */
+    public function restoreSql() {
+        try {
+            (new RestoreService())->restoreSql();
+            return true;
+        } catch (\Exception $e) {
+            $this->upgrade_task['error'][] = '数据库备份恢复失败稍后请手动恢复，失败原因：' . $e->getMessage().$e->getFile().$e->getLine();
+            Cache::set($this->cache_key, $this->upgrade_task);
+            return true;
+        }
+    }
+
+    public function restoreComplete() {
+        $this->clearUpgradeTask(5);
+        return true;
     }
 
     /**

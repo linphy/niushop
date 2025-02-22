@@ -22,7 +22,7 @@ class ExportJob extends BaseJob
     public function doJob($type, $where, $page)
     {
         //获取导出数据列
-        $data_column = (new CoreExportService())->getExportDataColumn($type);
+        $data_column = (new CoreExportService())->getExportDataColumn($type, $where);
         //获取导出数据源
         $data = (new CoreExportService())->getExportData($type, $where, $page);
         (new CoreExportService())->export($type, $data_column, $data);

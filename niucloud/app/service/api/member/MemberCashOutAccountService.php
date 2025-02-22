@@ -46,7 +46,7 @@ class MemberCashOutAccountService extends BaseApiService
      */
     public function getInfo(int $account_id)
     {
-        $field = 'account_id,member_id,account_type,bank_name,realname,account_no';
+        $field = 'account_id,member_id,account_type,bank_name,realname,account_no, transfer_payment_code';
         return $this->model->where([['account_id', '=', $account_id], ['member_id', '=', $this->member_id]])->field($field)->findOrEmpty()->toArray();
     }
 

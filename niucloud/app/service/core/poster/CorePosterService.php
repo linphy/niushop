@@ -47,7 +47,7 @@ class CorePosterService extends BaseCoreService
      */
     public function del($condition)
     {
-        ( new Poster() )->delete($condition);
+        ( new Poster() )->where($condition)->delete();
         return true;
     }
 

@@ -12,5 +12,15 @@ return [
         'class' => '',
         'function' => ''
     ],
+    [
+        'key' => 'transfer_check_finish',
+        'name' => '检验在线转账是否处理完毕',
+        'desc' => '',
+        'time' => [
+            'type' => 'min',
+            'min' => 5
+        ],
+        'class' => 'app\job\transfer\schedule\CheckFinish',
+        'function' => ''
+    ]
 ];
-

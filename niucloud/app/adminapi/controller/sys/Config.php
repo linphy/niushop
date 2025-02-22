@@ -33,32 +33,30 @@ class Config extends BaseAdminController
     public function setWebsite()
     {
         $data = $this->request->params([
-            ["site_name", ""],
-            ["logo", ""],
-            ["keywords", ""],
-            ["desc", ""],
-            ["latitude", ""],
-            ["longitude", ""],
-            ["province_id", 0],
-            ["city_id", 0],
-            ["district_id", 0],
-            ["address", ""],
-            ["full_address", ""],
-            ["phone", ""],
-            ["business_hours", ""],
-            ["site_name", ""],
-            ["logo", ""],
-            ["front_end_name", ""],
-            ["front_end_logo", ""],
-            ["front_end_icon", ""],
-            ["icon", ""]
+            [ "site_name", "" ],
+            [ "logo", "" ],
+            [ "keywords", "" ],
+            [ "desc", "" ],
+            [ "latitude", "" ],
+            [ "longitude", "" ],
+            [ "province_id", 0 ],
+            [ "city_id", 0 ],
+            [ "district_id", 0 ],
+            [ "address", "" ],
+            [ "full_address", "" ],
+            [ "phone", "" ],
+            [ "business_hours", "" ],
+            [ "front_end_name", "" ],
+            [ "front_end_logo", "" ],
+            [ "front_end_icon", "" ],
+            [ "icon", "" ]
         ]);
         (new ConfigService())->setWebSite($data);
 
         $service_data = $this->request->params([
-            ["wechat_code", ""],
-            ["enterprise_wechat", ""],
-            ["tel", ""],
+            [ "wechat_code", "" ],
+            [ "enterprise_wechat", "" ],
+            [ "tel", "" ],
         ]);
         (new ConfigService())->setService($service_data);
 

@@ -119,7 +119,7 @@ class RoleService extends BaseAdminService
     }
 
     /**
-     * 删除权限(saas应该不允许删除)
+     * 删除权限
      * @param int $role_id
      * @return mixed
      * @throws DbException

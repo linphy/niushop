@@ -15,6 +15,7 @@ use app\dict\sys\ExportDict;
 use app\model\sys\SysExport;
 use core\base\BaseCoreService;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use think\facade\Log;
 
@@ -79,11 +80,13 @@ class CoreExportService extends BaseCoreService
     /**
      * 获取导出数据列
      * @param string $type
+     * @param array $where
      * @return array|mixed
      */
-    public function getExportDataColumn($type = '')
+    public function getExportDataColumn($type = '', $where = [])
     {
-        $type_array = event("ExportDataType");
+        $param['where'] = $where;
+        $type_array = event("ExportDataType", $param);
         $type_list = [];
         foreach ($type_array as $v)
         {
@@ -95,6 +98,8 @@ class CoreExportService extends BaseCoreService
     /**
      * 获取导出数据源
      * @param string $type
+     * @param array $where
+     * @param array $page
      * @return array|mixed
      */
     public function getExportData($type = '', $where = [], $page = [])
@@ -165,21 +170,65 @@ class CoreExportService extends BaseCoreService
             $i ++;
         }
 
+        // 设置单元格的文本居中
+        $style_array = [
+            'alignment' => [
+//                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+            ],
+        ];
+
+        $merge_params = [];
         //设置excel文件表头
         foreach ($data_column as $k => $v)
         {
             $sheet->setCellValue($v['excel_column_name']. '1', $v['name']);
+            // 将样式应用到单元格
+            $sheet->getStyle($v['excel_column_name']. '1')->applyFromArray($style_array);
+            $merge_params[$k] = [
+                'start_merge_row' => null,// 用于记录开始合并的行号
+                'previous_value' => null// 用于记录上一行的值
+            ];
         }
 
         $row = 2; // 从第二行开始填充数据，第一行是表头
         foreach ($data as $item) {
-
             foreach ($data_column as $k => $v)
             {
                 $sheet->setCellValue($v['excel_column_name'] . $row, $item[$k]);
+                // 将样式应用到单元格
+                $sheet->getStyle($v['excel_column_name'] . $row)->applyFromArray($style_array);
+
+                // todo 合并行
+                if (isset($v['merge_type']) && $v['merge_type'] == 'column') {
+                    if ($item[$k] === $merge_params[$k]['previous_value']) {
+                        // 如果当前值等于上一个值，说明需要合并
+                        if ($merge_params[$k]['start_merge_row'] === null) {
+                            $merge_params[$k]['start_merge_row'] = $row - 1;
+                        }
+                    } else {
+                        // 当值变化时，合并之前相同的单元格
+                        if ($merge_params[$k]['start_merge_row'] !== null) {
+                            $sheet->mergeCells($v['excel_column_name'] . $merge_params[$k]['start_merge_row'] . ':' . $v['excel_column_name'] . ($row - 1));
+                            $merge_params[$k]['start_merge_row'] = null;
+                        }
+                        $merge_params[$k]['previous_value'] = $item[$k];
+                    }
+                }
             }
 
             $row++; // 移动到下一行
+        }
+
+        // 处理最后一组可能的合并
+        foreach ($data_column as $k => $v)
+        {
+            // todo 合并行
+            if (isset($v['merge_type']) && $v['merge_type'] == 'column') {
+                if ($merge_params[$k]['start_merge_row'] !== null) {
+                    $sheet->mergeCells($v['excel_column_name'] . $merge_params[$k]['start_merge_row'] . ':' . $v['excel_column_name'] . ($row - 1));
+                }
+            }
         }
 
         // 设置自动调整列宽
@@ -187,6 +236,7 @@ class CoreExportService extends BaseCoreService
         {
             $sheet->getColumnDimension($v['excel_column_name'])->setAutoSize(true);
         }
+
         // 保存Excel文件
         $writer = new Xlsx($spreadsheet);
         // 导出文件的路径

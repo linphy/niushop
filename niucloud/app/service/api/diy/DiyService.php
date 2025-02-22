@@ -14,6 +14,9 @@ namespace app\service\api\diy;
 use app\dict\diy\PagesDict;
 use app\dict\diy\TemplateDict;
 use app\model\diy\Diy;
+use app\model\diy\DiyTheme;
+use app\service\core\addon\CoreAddonService;
+use app\service\core\diy\CoreDiyService;
 use core\base\BaseApiService;
 
 /**
@@ -106,6 +109,70 @@ class DiyService extends BaseApiService
             return $page;
         }
         return [];
+    }
+
+    // todo 使用缩略图
+    public function handleThumbImgs($data)
+    {
+        $data = json_decode($data, true);
+
+        // todo $data['global']
+
+        foreach ($data[ 'value' ] as $k => $v) {
+
+            // 图片广告
+            if ($v[ 'componentName' ] == 'ImageAds') {
+                foreach ($v[ 'list' ] as $ck => $cv) {
+                    if (!empty($cv[ 'imageUrlThumbMid' ])) {
+                        $data[ 'value' ][ $k ][ 'list' ][ $ck ][ 'imageUrl' ] = $cv[ 'imageUrlThumbMid' ];
+                    }
+                }
+            }
+
+            // 图文导航
+            if ($v[ 'componentName' ] == 'GraphicNav') {
+
+                foreach ($v[ 'list' ] as $ck => $cv) {
+                    if (!empty($cv[ 'imageUrlThumbMid' ])) {
+                        $data[ 'value' ][ $k ][ 'list' ][ $ck ][ 'imageUrl' ] = $cv[ 'imageUrlThumbMid' ];
+                    }
+                }
+            }
+
+        }
+
+        $data = json_encode($data);
+        return $data;
+    }
+
+    /**
+     * 获取自定义主题配色
+     * @return array
+     */
+    public function getDiyTheme()
+    {
+        $addon_list = (new CoreAddonService())->getInstallAddonList();
+        $theme_data = (new DiyTheme())->where([ ['id', '>', 0] ])->column('id,color_name,color_mark,value,diy_value,title','addon');
+        $defaultColor = ( new CoreDiyService() )->getDefaultColor();
+        $app_theme['app'] = [
+            'color_name' => $theme_data['app']['color_name'] ?? $defaultColor['name'],
+            'color_mark' => $theme_data['app']['color_mark'] ?? $defaultColor['title'],
+            'value' => $theme_data['app']['value'] ?? $defaultColor['theme'],
+            'diy_value' => $theme_data['app']['diy_value'] ?? '',
+        ];
+        $data = [];
+        foreach ($addon_list as $key=>$value){
+            if (isset($value['support_app']) && empty($value['support_app']) && $value['type'] == 'addon'){
+                continue;
+            }
+            $default_theme_data = array_values(array_filter(event('ThemeColor', [ 'key' => $value['key']])))[0] ?? [];
+            $data[$value['key']]['color_mark'] = $theme_data[$value['key']]['color_mark'] ?? ($default_theme_data ? $default_theme_data[ 'name' ] : $defaultColor['name']);
+            $data[$value['key']]['color_name'] = $theme_data[$value['key']]['color_name'] ?? ($default_theme_data ? $default_theme_data[ 'title' ] : $defaultColor['title']);
+            $data[$value['key']]['value'] = $theme_data[$value['key']]['value'] ?? ($default_theme_data ? $default_theme_data[ 'theme' ] : $defaultColor['theme']);
+            $data[$value['key']]['diy_value'] = $theme_data[$value['key']]['diy_value'] ?? '';
+        }
+        $data = array_merge($app_theme,$data);
+        return $data;
     }
 
 }

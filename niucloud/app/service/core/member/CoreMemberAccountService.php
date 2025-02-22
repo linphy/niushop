@@ -43,7 +43,7 @@ class CoreMemberAccountService extends BaseCoreService
             throw new CommonException('ACCOUNT_INSUFFICIENT');
         }
 
-        $data = array(
+        $data = [
             'member_id' => $member_id,
             'account_type' => $account_type,
             'account_data' => $account_data,
@@ -54,7 +54,7 @@ class CoreMemberAccountService extends BaseCoreService
             'mobile' => $member_info[ 'mobile' ],
             'memo' => $memo,
             'related_id' => $related_id,
-        );
+        ];
 
         Db::startTrans();
         try {

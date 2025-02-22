@@ -185,4 +185,9 @@ class Addon extends BaseAdminController
     public function upgrade($addon = ''){
         return success('DOWNLOAD_SUCCESS', (new AddonService())->upgrade($addon));
     }
+
+    public function showApp()
+    {
+        return success(data:(new AddonService())->getShowAppTools());
+    }
 }
