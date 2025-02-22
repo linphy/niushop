@@ -4,6 +4,7 @@ import { login, getAuthMenus } from '@/app/api/auth'
 import storage from '@/utils/storage'
 import router from '@/router'
 import { formatRouters, findFirstValidRoute } from '@/router/routers'
+import useTabbarStore from './tabbar'
 
 interface User {
     token: string,
@@ -42,11 +43,15 @@ const useUserStore = defineStore('user', {
             this.routers = []
         },
         logout() {
+            if (!this.token) return
             this.token = ''
             this.userInfo = {}
             removeToken()
             storage.remove(['userinfo'])
             this.routers = []
+            this.rules = []
+            // 清除tabbar
+            useTabbarStore().clearTab()
             router.push('/login')
         },
         getAuthMenusFn() {
