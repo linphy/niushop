@@ -26,7 +26,7 @@
                 <view class="px-[20rpx] box-border">
                     <button class="bg-[#FFB4B1] !text-[#fff] h-[80rpx] leading-[80rpx] rounded-[100rpx] text-[26rpx] font-500" hover-class="none" v-if="friendsInfo.status == 2 ">{{ t('finish') }}</button>
                     <button class="bg-[#FFB4B1] !text-[#fff] h-[80rpx] leading-[80rpx] rounded-[100rpx] text-[26rpx] font-500" hover-class="none" v-else-if="friendsInfo.status == -1">{{ t('close') }}</button>
-                    <button class="primary-btn-bg !text-[#fff] h-[80rpx] leading-[80rpx] rounded-[100rpx] text-[26rpx] font-500" hover-class="none" v-else :loading="operateLoading" @click="save">{{ friendsInfo.config.pay_button_name ?  friendsInfo.config.pay_button_name : t('payGenerously') }}</button>
+                    <button class="botton-color !text-[#fff] h-[80rpx] leading-[80rpx] rounded-[100rpx] text-[26rpx] font-500" hover-class="none" v-else :loading="operateLoading" @click="save">{{ friendsInfo.config.pay_button_name ?  friendsInfo.config.pay_button_name : t('payGenerously') }}</button>
                 </view>
                 <view class="mt-[20rpx] flex items-baseline justify-center text-[var(--text-color-light9)]" @click="redirect({url: '/app/pages/index/index'})">
                     <text class="text-[24rpx] mr-[6rpx]">返回首页</text>
@@ -213,5 +213,8 @@ const save = () =>{
         top: 0;
         transform: translateX(-50%) translateY(-50%)  rotate(45deg);
     }
+}
+.botton-color{
+	background: linear-gradient( 94deg, #FB7939 0%, #FE120E 99%), #EF000C;
 }
 </style>
