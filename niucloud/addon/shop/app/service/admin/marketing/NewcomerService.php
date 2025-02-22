@@ -106,16 +106,21 @@ class NewcomerService extends BaseAdminService
                     }
                 ])
                 ->select()->toArray();
-            foreach ($active_goods as &$item) {
-                $item[ 'goods_name' ] = $item[ 'goods' ][ 'goods_name' ];
-                $item[ 'goods_type' ] = $item[ 'goods' ][ 'goods_type' ];
-                $item[ 'goods_type_name' ] = $item[ 'goods' ][ 'goods_type_name' ];
-                $item[ 'sku_name' ] = $item[ 'goodsSkuOne' ][ 'sku_name' ];
-                $item[ 'sku_image' ] = $item[ 'goodsSkuOne' ][ 'sku_image' ];
-                $item[ 'price' ] = $item[ 'goodsSkuOne' ][ 'price' ];
-                $item[ 'stock' ] = $item[ 'goodsSkuOne' ][ 'stock' ];
-                $item[ 'active_goods_value' ] = json_decode($item[ 'active_goods_value' ], true);
+            foreach ($active_goods as $k => &$item) {
+                if (!empty($item[ 'goods' ])) {
+                    $item[ 'goods_name' ] = $item[ 'goods' ][ 'goods_name' ];
+                    $item[ 'goods_type' ] = $item[ 'goods' ][ 'goods_type' ];
+                    $item[ 'goods_type_name' ] = $item[ 'goods' ][ 'goods_type_name' ];
+                    $item[ 'sku_name' ] = $item[ 'goodsSkuOne' ][ 'sku_name' ];
+                    $item[ 'sku_image' ] = $item[ 'goodsSkuOne' ][ 'sku_image' ];
+                    $item[ 'price' ] = $item[ 'goodsSkuOne' ][ 'price' ];
+                    $item[ 'stock' ] = $item[ 'goodsSkuOne' ][ 'stock' ];
+                    $item[ 'active_goods_value' ] = json_decode($item[ 'active_goods_value' ], true);
+                } else {
+                    unset($active_goods[ $k ]);
+                }
             }
+            $active_goods = array_values($active_goods);
             $value[ 'active_goods' ] = $active_goods;
         }
         return $value;
@@ -143,6 +148,7 @@ class NewcomerService extends BaseAdminService
     public function getSelectPage(array $where = [])
     {
         $goods_model = new Goods();
+        $goods_sku_model = new GoodsSku();
         $active_goods_model = new ActiveGoods();
         $active_goods = $active_goods_model->field('goods_id,sku_id,active_goods_value')->where([
             [ 'active_class', '=', ActiveDict::NEWCOMER_DISCOUNT ],
@@ -170,7 +176,10 @@ class NewcomerService extends BaseAdminService
             $sku_where[] = [ 'goods.goods_id', 'in', $active_goods_ids ];
         }
         if ($where[ 'select_type' ] == 'selected') {
-            $sku_where[] = [ 'goods.goods_id', 'in', $where[ 'goods_ids' ] ];
+            $goods_ids = $goods_sku_model->where([
+                [ 'sku_id', 'in', $where[ 'sku_ids' ] ]
+            ])->column('goods_id');
+            $sku_where[] = [ 'goods.goods_id', 'in', $goods_ids ];
         }
 
         $verify_goods_ids = [];
@@ -194,7 +203,6 @@ class NewcomerService extends BaseAdminService
 
         // 检测商品id集合是否存在，移除不存在的商品id，纠正数据准确性
         if (!empty($where[ 'verify_sku_ids' ]) && !empty($active_sku_ids)) {
-            $goods_sku_model = new GoodsSku();
             $verify_sku_ids = $goods_sku_model->where([
                 [ 'sku_id', 'in', $where[ 'verify_sku_ids' ] ]
             ])->field('sku_id')->select()->toArray();
@@ -262,7 +270,6 @@ class NewcomerService extends BaseAdminService
         $active_goods_ids = array_unique(array_column($active_goods, 'goods_id'));
         $active_sku_ids = array_column($active_goods, 'sku_id');
         $active_goods = array_column($active_goods, null, 'sku_id');
-
         $field = 'goods_id, goods_name, goods_type, goods_cover, stock';
         $order = 'sort desc,create_time desc';
 

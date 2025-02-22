@@ -130,7 +130,7 @@ const loadGoodsList = () => {
 
 const show = (data: any) => {
     Object.assign(goods, data)
-    getActiveGoodsCountFn();
+    // getActiveGoodsCountFn(); // 暂时不控制
     loadGoodsList()
     showDialog.value = true
 }

@@ -125,7 +125,8 @@ class Goods extends BaseAdminController
             [ "goods_desc", "", false ],
 
             [ 'member_discount', '' ], // 会员等级折扣，不参与：空，会员折扣：discount，指定会员价：fixed_price
-            [ 'poster_id', 0 ] // 海报id
+            [ 'poster_id', 0 ], // 海报id
+            [ 'form_id', 0 ] // 万能表单id
         ]);
 
         $this->validate($data, 'addon\shop\app\validate\goods\Goods.add');
@@ -192,7 +193,8 @@ class Goods extends BaseAdminController
 
             [ 'member_discount', '' ], // 会员等级折扣，不参与：空，会员折扣：discount，指定会员价：fixed_price
 
-            [ 'poster_id', 0 ] // 海报id
+            [ 'poster_id', 0 ], // 海报id
+            [ 'form_id', 0 ] // 万能表单id
         ]);
         $this->validate($data, 'addon\shop\app\validate\goods\Goods.edit');
         $res = ( new GoodsService() )->edit($id, $data);
@@ -330,6 +332,48 @@ class Goods extends BaseAdminController
     }
 
     /**
+     * 商品选择分页列表（代客下单专用）
+     * @return \think\Response
+     */
+    public function buyGoodsSelect()
+    {
+        $data = $this->request->params([
+            [ 'keyword', '' ], // 搜索关键词
+            [ "goods_category", "" ], // 商品分类
+            [ "goods_type", "" ], // 商品分类
+            [ "member_id", 0 ], // 会员id
+        ]);
+
+        return success(( new GoodsService() )->getBuyGoodsSelect($data));
+    }
+
+    /**
+     * 已选商品分页列表（代客下单专用）
+     * @return \think\Response
+     */
+    public function buyGoodsSelected()
+    {
+        $data = $this->request->params([
+            [ 'sku_ids', [] ],
+            [ 'member_id', 0 ],
+        ]);
+
+        return success(( new GoodsService() )->getBuyGoodsSelected($data));
+    }
+
+    /**
+     * 获取商品规格信息，切换规格（代客下单专用）
+     */
+    public function buySkuSelect()
+    {
+        $data = $this->request->params([
+            [ 'sku_id', 0 ],
+            [ 'member_id', 0 ],
+        ]);
+        return success(( new GoodsService() )->getBuySkuSelect($data));
+    }
+
+    /**
      * 查询商品SKU规格列表
      * @return \think\Response
      */
@@ -396,6 +440,30 @@ class Goods extends BaseAdminController
         ]);
 
         return success(data: ( new GoodsService() )->getActiveGoodsCount($data[ 'goods_id' ]));
+    }
+
+    /**
+     * 批量设置商品
+     * @return \think\Response
+     */
+    public function batchSet()
+    {
+        $data = $this->request->params([
+            [ 'goods_ids', [] ],
+            [ 'set_value', [] ],
+            [ 'set_type', '' ],
+        ]);
+        ( new GoodsService() )->batchSet($data);
+        return success('EDIT_SUCCESS');
+    }
+
+    /**
+     * 获取批量设置类型
+     * @return \think\Response
+     */
+    public function getBatchSetDict()
+    {
+        return success(( new GoodsService() )->getBatchSetDict());
     }
 
 }

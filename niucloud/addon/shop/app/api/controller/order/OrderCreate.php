@@ -63,6 +63,7 @@ class OrderCreate extends BaseApiController
 //            ['delivery', []],//配送参数
 //            ['discount', []],//优惠
             [ 'invoice', [] ],//发票
+            [ 'form_data', [] ] // 万能表单数据
         ]);
         return success('SUCCESS', ( new OrderCreateService() )->create($data));
     }

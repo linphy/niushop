@@ -255,6 +255,7 @@ CREATE TABLE `{{prefix}}shop_goods` (
   `is_discount` int(11) NOT NULL DEFAULT '0' COMMENT '是否参与限时折扣',
   `member_discount` varchar(255) NOT NULL DEFAULT '' COMMENT '会员等级折扣，不参与：空，会员折扣：discount，指定会员价：fixed_price',
   `poster_id` int(11) NOT NULL DEFAULT '0' COMMENT '海报id',
+  `form_id` INT(11) NOT NULL DEFAULT 0 COMMENT '万能表单id',
   `is_limit` TINYINT(4) NOT NULL DEFAULT 0 COMMENT '商品是否限购(0:否 1:是)',
   `limit_type` TINYINT(4) NOT NULL DEFAULT 1 COMMENT '限购类型，1：单次限购，2：单人限购',
   `max_buy` INT(11) NOT NULL DEFAULT 0 COMMENT '限购数',
@@ -299,6 +300,7 @@ CREATE TABLE `{{prefix}}shop_goods_brand` (
   `brand_name` varchar(100) NOT NULL DEFAULT '' COMMENT '品牌名称',
   `logo` varchar(255) NOT NULL DEFAULT '' COMMENT '品牌logo',
   `desc` text NOT NULL COMMENT '品牌介绍',
+  `color_json` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '自定义颜色（文字、背景、边框），json格式',
   `sort` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
@@ -628,6 +630,7 @@ CREATE TABLE `{{prefix}}shop_order` (
   `relate_id` int(11) NOT NULL DEFAULT '0' COMMENT '关联id',
   `point` int(11) NOT NULL DEFAULT '0' COMMENT '积分兑换',
   `activity_type` varchar(255) NOT NULL DEFAULT '' COMMENT '营销类型',
+  `form_record_id` INT(11) NOT NULL DEFAULT 0 COMMENT '万能表单记录id',
   PRIMARY KEY (`order_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci COMMENT='订单表';
 
@@ -708,7 +711,7 @@ CREATE TABLE `{{prefix}}shop_order_goods` (
   `goods_name` varchar(400) NOT NULL DEFAULT '' COMMENT '商品名称',
   `sku_name` varchar(400) NOT NULL DEFAULT '' COMMENT '商品规格名称',
   `goods_image` varchar(2000) NOT NULL DEFAULT '' COMMENT '商品图片',
-  `sku_image` varchar(1000) NOT NULL COMMENT 'sku规格图片',
+  `sku_image` varchar(1000) NOT NULL DEFAULT '' COMMENT 'sku规格图片',
   `price` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '商品单价',
   `num` int(11) NOT NULL DEFAULT '0' COMMENT '购买数量',
   `goods_money` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '商品总价',
@@ -728,6 +731,7 @@ CREATE TABLE `{{prefix}}shop_order_goods` (
   `shop_active_refund` TINYINT(4) NOT NULL DEFAULT 0 COMMENT '商家主动退款（0否  1是）',
   `shop_active_refund_money` DECIMAL(10, 2) NOT NULL DEFAULT 0.00 COMMENT '商家主动退款金额',
   `is_gift` TINYINT(4) NOT NULL DEFAULT 0 COMMENT '是否是赠品（0否  1是）',
+  `form_record_id` INT(11) NOT NULL DEFAULT 0 COMMENT '万能表单记录id',
   PRIMARY KEY (`order_goods_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci COMMENT='订单项表';
 

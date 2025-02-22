@@ -26,6 +26,18 @@ class GoodsDict
     const IS_GIFT = 1;
     const NOT_IS_GIFT = 0;
 
+    //批量设置类型
+    const LABEL = 'label';
+    const SERVICE = 'service';
+    const VIRTUAL_SALE_NUM = 'virtual_sale_num';
+    const CATEGORY = 'category';
+    const BRAND = 'brand';
+    const POSTER = 'poster';
+    const DIY_FORM = 'diy_form';
+    const GIFT = 'gift';
+    const DELIVERY = 'delivery';
+    const STOCK = 'stock';
+
     /**
      * 商品类型
      * @param $type
@@ -49,5 +61,30 @@ class GoodsDict
         ];
         if ($type == '') return $list;
         return $list[ $type ];
+    }
+
+    /**
+     * 批量设置
+     * @param $type
+     * @return array|mixed|string
+     */
+    public static function getBatchSetDict($type = '')
+    {
+        $data = [
+            self::LABEL => get_lang('dict_shop_goods_batch_set.label'),
+            self::SERVICE => get_lang('dict_shop_goods_batch_set.service'),
+            self::VIRTUAL_SALE_NUM => get_lang('dict_shop_goods_batch_set.virtual_sale_num'),
+            self::CATEGORY => get_lang('dict_shop_goods_batch_set.category'),
+            self::BRAND => get_lang('dict_shop_goods_batch_set.brand'),
+            self::POSTER => get_lang('dict_shop_goods_batch_set.poster'),
+            self::GIFT => get_lang('dict_shop_goods_batch_set.gift'),
+            self::DELIVERY => get_lang('dict_shop_goods_batch_set.delivery'),
+            self::STOCK => get_lang('dict_shop_goods_batch_set.stock'),
+            self::DIY_FORM => get_lang('dict_shop_goods_batch_set.diy_form'),
+        ];
+        if (!$type) {
+            return $data;
+        }
+        return $data[ $type ] ?? '';
     }
 }

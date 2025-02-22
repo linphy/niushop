@@ -139,6 +139,7 @@
 		</el-card>
 		<order-notes ref="orderNotesDialog" @complete="loadOrderList"></order-notes>
 		<export-sure ref="exportSureDialog" :show="flag" type="shop_order_refund" :searchParam="orderTable.searchParam" @close="handleClose" />
+		<refund-detail ref="refundDetailDialog" @load="loadOrderList"></refund-detail>
 	</div>
 </template>
 
@@ -149,11 +150,14 @@ import { orderRefund } from '@/addon/shop/api/order'
 import { img, filterNumber,setTablePageStorage,getTablePageStorage } from '@/utils/common'
 import type { FormInstance } from 'element-plus'
 import { useRouter, useRoute } from 'vue-router'
+import refundDetail from '@/addon/shop/views/order/components/refund-detail.vue'
+
 
 const route = useRoute()
 const router = useRouter()
 const pageName = route.meta.title
 const activeName = ref('')
+const refundDetailDialog: Record<string, any> | null = ref(null)
 
 const multipleTable: Record<string, any> | null = ref(null)
 const isSelectAll = ref(false)
@@ -245,7 +249,9 @@ const exportEvent = (data: any) => {
 
 // 订单详情
 const detailEvent = (data: any) => {
-	router.push('/shop/order/refund/detail?refund_id=' + data.refund_id)
+    let parameter = {id: data.refund_id};
+    refundDetailDialog.value.setFormData(parameter);
+    refundDetailDialog.value.showDialog = true;
 }
 
 const memberEvent = (id: number) => {

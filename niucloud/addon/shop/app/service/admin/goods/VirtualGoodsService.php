@@ -18,6 +18,7 @@ use addon\shop\app\model\goods\GoodsSku;
 use addon\shop\app\model\goods\GoodsSpec;
 use addon\shop\app\model\goods\Stat;
 use addon\shop\app\model\order\OrderGoods;
+use app\model\diy_form\DiyForm;
 use app\service\admin\addon\AddonService;
 use core\base\BaseAdminService;
 use core\exception\AdminException;
@@ -53,7 +54,7 @@ class VirtualGoodsService extends BaseAdminService
 
         if (!empty($params[ 'goods_id' ])) {
             // 查询商品信息，用于编辑
-            $field = 'goods_id,goods_name,sub_title,goods_type,goods_cover,goods_image,goods_video,goods_desc,brand_id,goods_category,label_ids,service_ids,unit,stock,virtual_sale_num,is_limit,limit_type,max_buy,min_buy,status,sort,supplier_id,attr_id,attr_format,virtual_auto_delivery,virtual_receive_type,virtual_verify_type,virtual_indate,member_discount,poster_id,is_gift';
+            $field = 'goods_id,goods_name,sub_title,goods_type,goods_cover,goods_image,goods_video,goods_desc,brand_id,goods_category,label_ids,service_ids,unit,stock,virtual_sale_num,is_limit,limit_type,max_buy,min_buy,status,sort,supplier_id,attr_id,attr_format,virtual_auto_delivery,virtual_receive_type,virtual_verify_type,virtual_indate,member_discount,poster_id,is_gift,form_id';
             $goods_info = $this->model->field($field)->where([ [ 'goods_id', '=', $params[ 'goods_id' ] ] ])->findOrEmpty()->toArray();
             if (!empty($goods_info)) {
 
@@ -99,6 +100,19 @@ class VirtualGoodsService extends BaseAdminService
                 // 商品海报id，处理数据类型
                 if (empty($goods_info[ 'poster_id' ])) {
                     $goods_info[ 'poster_id' ] = '';
+                }
+
+                // 万能表单id，处理数据类型
+                if (!empty($goods_info[ 'form_id' ])) {
+                    $diy_form_model = new DiyForm();
+                    $diy_form_count = $diy_form_model->where([
+                        [ 'form_id', '=', $goods_info[ 'form_id' ] ]
+                    ])->count();
+                    if ($diy_form_count == 0) {
+                        $goods_info[ 'form_id' ] = '';
+                    }
+                } else {
+                    $goods_info[ 'form_id' ] = '';
                 }
 
                 $goods_info[ 'status' ] = (string) $goods_info[ 'status' ];
@@ -196,6 +210,7 @@ class VirtualGoodsService extends BaseAdminService
                 'virtual_indate' => $data[ 'virtual_indate' ] ?? 0,
                 'member_discount' => $data[ 'member_discount' ],
                 'poster_id' => $data[ 'poster_id' ],
+                'form_id' => $data[ 'form_id' ],
                 'create_time' => time()
             ];
             $res = $this->model->create($goods_data);
@@ -343,6 +358,7 @@ class VirtualGoodsService extends BaseAdminService
                 'virtual_indate' => $data[ 'virtual_indate' ] ?? 0,
                 'member_discount' => $data[ 'member_discount' ],
                 'poster_id' => $data[ 'poster_id' ],
+                'form_id' => $data[ 'form_id' ],
                 'update_time' => time()
             ];
 

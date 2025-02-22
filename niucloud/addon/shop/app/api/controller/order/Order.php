@@ -35,10 +35,10 @@ class Order extends BaseApiController
 
     /**
      * 订单详情
-     * @param int $order_id
+     * @param $order_id
      * @return Response
      */
-    public function detail(int $order_id)
+    public function detail($order_id)
     {
         return success(( new OrderService() )->getDetail($order_id));
     }

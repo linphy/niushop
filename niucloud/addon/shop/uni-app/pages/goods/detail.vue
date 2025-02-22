@@ -151,6 +151,8 @@
 					</view>
 				</view>
 
+				<sow-show v-if="goodsDetail.sow_show_list" :items="goodsDetail.sow_show_list" class="sidebar-margin"></sow-show>
+
 				<view v-if="goodsDetail.evaluate_is_show" class="mt-[var(--top-m)] sidebar-margin card-template">
 					<view class="flex items-center justify-between min-h-[40rpx]" :class="{'mb-[30rpx]': evaluate && evaluate.list && evaluate.list.length}">
 						<text class="title !mb-[0]">宝贝评价({{ evaluate.count }})</text>
@@ -186,7 +188,7 @@
 						<block v-for="(item,index) in goodsDetail.goods.attr_format" :key="index">
 							<view v-if="index < 4 || isAttrFormatShow" class="card-template-item">
 								<text class="text-[26rpx] leading-[30rpx] w-[160rpx] font-400 shrink-0 text-[var(--text-color-light9)]">{{item.attr_value_name}}</text>
-								<view class="text-[#333] box-border value-wid text-[26rpx] leading-[30rpx] font-400 truncate pl-[20rpx]">
+								<view class="text-[#333] box-border value-wid text-[26rpx] leading-[30rpx] font-400 pl-[20rpx]">
 									{{Array.isArray(item.attr_child_value_name) ? item.attr_child_value_name.join(',') : item.attr_child_value_name }}
 								</view>
 								<!-- <text class="nc-iconfont nc-icon-youV6xx text-[26rpx] text-[var(--text-color-light6)] ml-[8rpx]"></text> -->
@@ -334,7 +336,7 @@
 									<text v-if="item.btnType === 'collecting'"
 										class="bg-[var(--primary-color)] mr-[20rpx] w-[106rpx] box-border text-center text-[#fff] h-[50rpx] text-[22rpx] px-[20rpx] leading-[50rpx] rounded-[100rpx]"
 										@click="getCouponFn(item, index)">领取</text>
-									<text v-else class="!bg-[#FFB4B1] mr-[20rpx] text-[#fff] mr-[20rpx] h-[50rpx] text-[22rpx] px-[20rpx] leading-[50rpx] rounded-[100rpx]">{{ item.btnType === 'collected' ? '已领完' : '已领取' }}</text>
+									<text v-else class="!bg-[var(--primary-color-disabled)] mr-[20rpx] text-[#fff] mr-[20rpx] h-[50rpx] text-[22rpx] px-[20rpx] leading-[50rpx] rounded-[100rpx]">{{ item.btnType === 'collected' ? '已领完' : '已领取' }}</text>
 								</view>
 							</view>
 						</scroll-view>
@@ -371,7 +373,9 @@ import useMemberStore from '@/stores/member'
 import { useShare }from '@/hooks/useShare'
 import sharePoster from '@/components/share-poster/share-poster.vue'
 import {useGoods} from '@/addon/shop/hooks/useGoods'
+import useSystemStore from '@/stores/system'
 import nsGoodsRecommend from '@/addon/shop/components/ns-goods-recommend/ns-goods-recommend.vue';
+import sowShow from '@/components/sow-show/sow-show.vue';
 
 const diyGoods = useGoods();
 // 使用 reactive 创建响应式对象
@@ -412,6 +416,7 @@ const sendMessageImg = ref('')
 const wxPrivacyPopupRef:any = ref(null)
 const videoContext: any = ref(null)
 let pageParameter = {};
+
 onLoad((option: any) => {
 	// #ifdef MP-WEIXIN
 	// 处理小程序场景值参数
@@ -421,12 +426,19 @@ onLoad((option: any) => {
 })
 
 onShow(() => {
-	loading.value = false;
-	// 删除配送方式
-	uni.removeStorageSync('distributionType');
-	cartStore.getList();
-	getManjianInfo();
-	getDetailInfo();
+	setTimeout(()=>{ //延迟器用于sku框中的表单上传图片时，让onshow慢与图片上传方法
+		// 详情sku-表单，上传图片时不触发onshow内部方法
+		if(!uni.getStorageSync('sku_form_refresh')){
+			loading.value = false;
+			// 删除配送方式
+			uni.removeStorageSync('distributionType');
+			cartStore.getList();
+			getManjianInfo();
+			getDetailInfo();
+		}else{
+			uni.removeStorageSync('sku_form_refresh');
+		}
+	})
 })
 
 const getDetailInfo = ()=>{
@@ -482,6 +494,7 @@ const getDetailInfo = ()=>{
 		uni.setNavigationBarTitle({
 			title: goodsDetail.value.goods.goods_name
 		})
+
 		setShare({
 			wechat: {
 				...share
@@ -515,6 +528,7 @@ const getDetailInfo = ()=>{
 		copyUrlFn();
 
 		nextTick(() => {
+
 			setTimeout(() => {
 				const query = uni.createSelectorQuery().in(instance);
 				query.select('.swiper-box').boundingClientRect((data: any) => {
@@ -525,7 +539,15 @@ const getDetailInfo = ()=>{
 						detailHead = data.height ? data.height : 0;
 					}
 				}).exec();
+
+				if(sharePosterRef.value) {
+					posterParam.sku_id = goodsDetail.value.sku_id;
+					if (userInfo.value && userInfo.value.member_id) posterParam.member_id = userInfo.value.member_id;
+					sharePosterRef.value.loadPoster();
+				}
+
 			}, 400)
+
 			// #ifdef MP
 			if(wxPrivacyPopupRef.value) wxPrivacyPopupRef.value.proactive();
 			// #endif
@@ -577,7 +599,6 @@ const goodsMaxBuy = (data:any = {})=>{
 		}
 	}
 }
-
 
 const specSelectFn = (id: any) => {
 	goodsDetail.value.skuList.forEach((item: any, index: any) => {
@@ -873,8 +894,6 @@ const copyUrlFn = ()=>{
 }
 
 const openShareFn = ()=>{
-    posterParam.sku_id = goodsDetail.value.sku_id;
-    if (userInfo.value && userInfo.value.member_id) posterParam.member_id = userInfo.value.member_id;
 	sharePosterRef.value.openShare()
 }
 /************* 分享海报-end **************/
@@ -907,7 +926,11 @@ const goodsPrice = computed(() => {
 // 关闭预览图片
 onUnload(()=>{
 	// #ifdef  H5 || APP
-	uni.closePreviewImage()
+	try {
+		uni.closePreviewImage()
+	}catch (e) {
+
+	}
 	// #endif
 })
 </script>

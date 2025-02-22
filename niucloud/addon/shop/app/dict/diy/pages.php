@@ -2163,8 +2163,8 @@ return [
                         "topRounded" => 12,
                         "bottomRounded" => 12,
                         "elementBgColor" => "#FFFAF5",
-                        "topElementRounded" => 0,
-                        "bottomElementRounded" => 0,
+                        "topElementRounded" => 10,
+                        "bottomElementRounded" => 10,
                         "margin" => [
                             "top" => 5,
                             "bottom" => 5,
@@ -2321,8 +2321,8 @@ return [
                         "topRounded" => 12,
                         "bottomRounded" => 12,
                         "elementBgColor" => "#FFFAF5",
-                        "topElementRounded" => 0,
-                        "bottomElementRounded" => 0,
+                        "topElementRounded" => 10,
+                        "bottomElementRounded" => 10,
                         "margin" => [
                             "top" => 5,
                             "bottom" => 5,
@@ -3660,6 +3660,13 @@ return [
                                 "imgWidth" => 134,
                                 "imgHeight" => 132
                             ]
+                        ],
+                        // 轮播图设置
+                        'swiper' => [
+                            'indicatorColor' => 'rgba(0, 0, 0, 0.3)', // 未选中颜色
+                            "indicatorActiveColor" => '#FF0E0E',
+                            'indicatorStyle' => 'style-1',
+                            'indicatorAlign' => 'center',
                         ],
                         "textColor" => "#303133",
                         "pageStartBgColor" => "",

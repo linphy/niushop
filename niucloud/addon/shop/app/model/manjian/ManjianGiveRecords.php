@@ -12,8 +12,6 @@
 namespace addon\shop\app\model\manjian;
 
 
-use addon\shop\app\model\goods\Goods;
-use addon\shop\app\model\goods\GoodsSku;
 use addon\shop\app\model\order\Order;
 use core\base\BaseModel;
 
@@ -37,11 +35,10 @@ class ManjianGiveRecords extends BaseModel
     protected $name = 'shop_manjian_give_records';
 
     protected $type = [
-
     ];
 
     // 设置json类型字段
-    protected $json = ['coupon_json', 'goods_json', 'sku_ids'];
+    protected $json = [ 'coupon_json', 'goods_json', 'sku_ids' ];
 
     // 设置JSON数据返回数组
     protected $jsonAssoc = true;

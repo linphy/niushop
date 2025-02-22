@@ -125,6 +125,11 @@ return [
     'dict_diy_poster' => [
         'shop_goods_component_type_basic' => '商品组件',
     ],
+    'dict_diy_form' => [
+        'shop_component_type_basic' => '商城表单组件',
+        'type_goods_detail' => '商品表单',
+        'type_order_payment' => '待付款表单',
+    ],
     'dict_shop_delivery_status' => [
         'wait_delivery' => '待发货',
         'delivery' => '配送中',
@@ -231,7 +236,7 @@ return [
         'account_point_manjian_gift_back' => '满减送活动赠品退还',
         'account_balance_manjian_gift_give' => '满减送活动赠品发放',
         'account_balance_manjian_gift_back' => '满减送活动赠品退还',
-        'recharge_point_give'=>'会员充值积分发放'
+        'recharge_point_give' => '会员充值积分发放'
     ],
 
     'dict_shop_delivery_electronic_sheet' => [
@@ -280,6 +285,20 @@ return [
         'collect_num' => '收藏数量',
         'pay_money' => '支付总金额',
         'goods_visit_member_count' => '访客数',
+    ],
+
+    //批量设置
+    'dict_shop_goods_batch_set' => [
+        'label' => '商品标签',
+        'service' => '商品服务',
+        'virtual_sale_num' => '虚拟销量',
+        'category' => '商品分类',
+        'brand' => '商品品牌',
+        'poster' => '商品海报',
+        'gift' => '是否赠品',
+        'delivery' => '配送设置',
+        'stock' => '商品库存',
+        'diy_form' => '万能表单',
     ],
 
 

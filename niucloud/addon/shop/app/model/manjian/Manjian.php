@@ -12,7 +12,6 @@
 
 namespace addon\shop\app\model\manjian;
 
-use addon\shop\app\dict\active\ActiveDict;
 use addon\shop\app\dict\active\ManjianDict;
 use core\base\BaseModel;
 use think\db\Query;
@@ -41,7 +40,7 @@ class Manjian extends BaseModel
     ];
 
     // 设置json类型字段
-    protected $json = ['rule_json', 'goods_ids','level_ids','label_ids'];
+    protected $json = [ 'rule_json', 'goods_ids', 'level_ids', 'label_ids' ];
 
     // 设置JSON数据返回数组
     protected $jsonAssoc = true;
@@ -63,7 +62,7 @@ class Manjian extends BaseModel
      */
     public function getStatusNameAttr($value, $data)
     {
-        return ManjianDict::getStatus()[$data['status']] ?? '';
+        return ManjianDict::getStatus()[ $data[ 'status' ] ] ?? '';
     }
 
     /**
@@ -74,11 +73,10 @@ class Manjian extends BaseModel
      */
     public function getGoodsTypeNameAttr($value, $data)
     {
-        if (empty($data['goods_type']))
-        {
+        if (empty($data[ 'goods_type' ])) {
             return '';
         }
-        return ManjianDict::getGoodsType()[$data['goods_type']] ?? '';
+        return ManjianDict::getGoodsType()[ $data[ 'goods_type' ] ] ?? '';
     }
 
     /**
@@ -113,14 +111,14 @@ class Manjian extends BaseModel
      */
     public function searchCreateTimeAttr(Query $query, $value, $data)
     {
-        $start_time = empty($value[0]) ? 0 : strtotime($value[0]);
-        $end_time = empty($value[1]) ? 0 : strtotime($value[1]);
+        $start_time = empty($value[ 0 ]) ? 0 : strtotime($value[ 0 ]);
+        $end_time = empty($value[ 1 ]) ? 0 : strtotime($value[ 1 ]);
         if ($start_time > 0 && $end_time > 0) {
             $query->whereBetweenTime('end_time', $start_time, $end_time);
         } else if ($start_time > 0 && $end_time == 0) {
-            $query->where([['end_time', '>=', $start_time]]);
+            $query->where([ [ 'end_time', '>=', $start_time ] ]);
         } else if ($start_time == 0 && $end_time > 0) {
-            $query->where([['end_time', '<=', $end_time]]);
+            $query->where([ [ 'end_time', '<=', $end_time ] ]);
         }
     }
 }

@@ -113,12 +113,6 @@ Route::group('shop', function() {
     //获取用户当前积分数供组件调用
     Route::get('exchange/point', 'addon\shop\app\api\controller\exchange\Exchange@getPointInfo');
 
-    //积分商城订单计算
-    Route::get('exchange_order/calculate', 'addon\shop\app\api\controller\exchange\OrderCreate@calculate');
-
-    //积分商城订单创建
-    Route::post('exchange_order/create', 'addon\shop\app\api\controller\exchange\OrderCreate@create');
-
     /***************************************************** 新人专享 ****************************************************/
 
     // 新人专享商品列表
@@ -142,11 +136,6 @@ Route::group('shop', function() {
     Route::get('rank/components', 'addon\shop\app\api\controller\goods\Rank@components');
 
     Route::get('rank/getRankConfig', 'addon\shop\app\api\controller\goods\Rank@getRankConfig');
-
-    /***************************************************** 满减送 ****************************************************/
-
-    // 获取商品满减优惠信息
-    Route::get('manjian/info', 'addon\shop\app\api\controller\marketing\Manjian@info');
 
 })->middleware(ApiChannel::class)
     ->middleware(ApiCheckToken::class)//false表示不验证登录
@@ -285,10 +274,21 @@ Route::group('shop', function() {
     // 退款方式
     Route::get('order/refund/type', 'addon\shop\app\api\controller\refund\Refund@getRefundType');
 
+    //积分商城订单计算
+    Route::get('exchange_order/calculate', 'addon\shop\app\api\controller\exchange\OrderCreate@calculate');
+
+    //积分商城订单创建
+    Route::post('exchange_order/create', 'addon\shop\app\api\controller\exchange\OrderCreate@create');
+
     // 发票列表
     Route::get('invoice', 'addon\shop\app\api\controller\order\Invoice@lists');
     // 发票详情
     Route::get('invoice/:id', 'addon\shop\app\api\controller\order\Invoice@info');
+
+    /***************************************************** 满减送 ****************************************************/
+
+    // 获取商品满减优惠信息
+    Route::get('manjian/info', 'addon\shop\app\api\controller\marketing\Manjian@info');
 
 })->middleware(ApiChannel::class)
     ->middleware(ApiCheckToken::class, true)//表示验证登录

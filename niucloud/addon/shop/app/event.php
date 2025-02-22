@@ -62,6 +62,7 @@ return [
         //支付
         'PayCreate' => [ 'addon\shop\app\listener\pay\PayCreateListener' ],
         'PaySuccess' => [ 'addon\shop\app\listener\pay\PaySuccessListener' ],
+        'PayTradeInfo' => [ 'addon\shop\app\listener\order\ShopOrderTradeInfoListener' ],   //订单交易信息
         'RefundSuccess' => [ 'addon\shop\app\listener\pay\RefundSuccessListener' ],
 
         'NoticeData' => [
@@ -119,6 +120,10 @@ return [
         'ActiveEndAfter' => [
             'addon\shop\app\listener\marketing\DiscountActiveEndAfter'
         ],
+
+        'ActiveSaveAfter' => [
+            'addon\shop\app\listener\marketing\ShopActiveSaveAfter'
+        ],
         //通过支付信息获取手机端订单详情路径
         'WapOrderDetailPath' => [
             'addon\shop\app\listener\order\WapOrderDetailPathListener',
@@ -132,6 +137,21 @@ return [
         'NewcomerActiveJoin' => [ 'addon\shop\app\listener\marketing\NewcomerActiveJoinListener' ],
         //会员登录后事件
         'MemberLoginAfter' => [ 'addon\shop\app\listener\MemberLoginAfterListener' ],
+
+        // 会员充值 赠送内容
+        'RechargeGiftContent' => [ 'addon\shop\app\listener\recharge\GiftContentListener' ],
+        // 会员充值成功后的事件
+        'RechargeAfterListener' => [ 'addon\shop\app\listener\recharge\RechargeAfterListener' ],
+
+        //获取宝贝数据
+        'TreasureType' => [ 'addon\shop\app\listener\treasure\TreasureTypeListener' ],
+        'TreasureData' => [ 'addon\shop\app\listener\treasure\TreasureDataListener' ],
+
+        //主题色
+        'ThemeColor' => [ 'addon\shop\app\listener\diy\ThemeColorListener' ],
+        //万能表单删除前
+        'BeforeFormDelete' => [ 'addon\shop\app\listener\diy\BeforeFormDeleteListener' ],
+
     ],
     'subscribe' => [
     ],

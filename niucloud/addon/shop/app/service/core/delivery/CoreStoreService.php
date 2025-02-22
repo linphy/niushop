@@ -38,6 +38,13 @@ class CoreStoreService extends BaseCoreService
      */
     public static function calculate(&$order)
     {
+        $store =  $order->delivery['take_store'] ?? [];
+
+        if (empty($store)) {
+            $order->error[] = get_lang('NOT_SELECT_STORE');
+            return;
+        }
+
         foreach ($order->goods_data as $k => &$v) {
             $goods_type = $v[ 'goods' ][ 'goods_type' ];
             if ($goods_type == GoodsDict::REAL) {

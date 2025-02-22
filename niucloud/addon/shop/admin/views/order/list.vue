@@ -132,10 +132,11 @@
 									</el-table-column>
 									<el-table-column min-width="120" class-name="border-0 border-l-[1px] border-solid border-[var(--el-table-border-color)]">
 										<template #default>
-											<span v-if="item.activity_type == 'exchange'" class="text-[14px]">{{ item.point }}{{ t('point') }}
+											<div v-if="item.activity_type == 'exchange'" class="text-[14px]">{{ item.point }}{{ t('point') }}
 												<span v-if="parseFloat(item.order_money)">+￥{{ item.order_money }}</span>
-											</span>
+											</div>
 											<span v-else class="text-[14px]">￥{{ item.order_money }}</span>
+                                            <div v-if="item.pay">{{item.member_id !== item.pay.main_id && item.pay.status == 2 ? item.pay.pay_type_name:''}}</div>
 										</template>
 									</el-table-column>
 									<el-table-column min-width="120">
@@ -166,7 +167,7 @@
 											</template>
 											<el-button type="primary" link @click="delivery(item)" v-if="item.status == 2">{{ t('sendOutGoods') }}</el-button>
 											<el-button type="primary" link @click="finish(item)" v-if="item.status == 3">{{ t('confirmTakeDelivery') }}</el-button>
-											<el-button type="primary"  v-if="item.is_refund_show && item.status != 1 && item.status != -1 && item.is_enable_refund == 1" link @click="refundEvent(item)">{{ t('voluntaryRefund') }}</el-button>
+											<el-button type="primary"  v-if="item.is_refund_show && item.status != 1 && item.status != -1" link @click="refundEvent(item)">{{ t('voluntaryRefund') }}</el-button>
 										</template>
 									</el-table-column>
 								</el-table>
@@ -344,7 +345,7 @@ const loadOrderList = (page: number = 1) => {
         orderTable.data.forEach((item: any, index: number, arr: any) => {
             let refundOrderNum = 0
             item.order_goods.forEach((orderItem: any, orderIndex:number) => {
-                if (orderItem.status == 1) {
+                if (orderItem.is_enable_refund == 1) {
                     refundOrderNum++
                 }
             })

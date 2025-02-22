@@ -133,6 +133,21 @@ class OrderGoods extends BaseModel
     }
 
     /**
+     * 缩略图生成-中图
+     * @param $value
+     * @param $data
+     * @return array|mixed
+     * @throws Exception
+     */
+    public function getSkuImageThumbMidAttr($value, $data)
+    {
+        if (!empty($data['sku_image'])) {
+            return get_thumb_images($data['sku_image'], FileDict::MID);
+        }
+        return '';
+    }
+
+    /**
      * 转化发货状态
      */
     public function getDeliveryStatusNameAttr($value, $data)

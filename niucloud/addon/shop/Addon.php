@@ -595,6 +595,18 @@ class Addon
                 'storage_type' => 'local', // 图片上传类型 local本地  aliyun  阿里云oss  qiniu  七牛 ....
                 'cate_id' => $category_id, // 素材分类id
                 'create_time' => time()
+            ],
+            [
+                'name' => time() . $category_id . 'nav_sow_community.png', // 附件名称
+                'real_name' => '种草社区', // 原始文件名
+                'path' => 'addon/shop/attachment/nav_sow_community.png', // 完整地址
+                'url' => 'addon/shop/attachment/nav_sow_community.png', // 网络地址
+                'dir' => 'addon/shop/attachment', // 附件路径
+                'att_size' => '24576', // 附件大小
+                'att_type' => 'image', // 附件类型image,video
+                'storage_type' => 'local', // 图片上传类型 local本地  aliyun  阿里云oss  qiniu  七牛 ....
+                'cate_id' => $category_id, // 素材分类id
+                'create_time' => time()
             ]
         ];
         $attachment_model->insertAll($attachment_list);

@@ -14,7 +14,6 @@ namespace addon\shop\app\service\core\marketing;
 use addon\shop\app\dict\active\ActiveDict;
 use addon\shop\app\job\marketing\ActiveEndAfter;
 use addon\shop\app\job\marketing\ActiveStartAfter;
-use addon\shop\app\job\marketing\NewcomerSaveAfter;
 use addon\shop\app\model\active\Active;
 use addon\shop\app\model\active\ActiveGoods;
 use core\base\BaseCoreService;
@@ -165,9 +164,7 @@ class CoreActiveService extends BaseCoreService
             Db::commit();
             if(!empty($save_data['start_time']) && $save_data['start_time'] <= time())$this->start($active_id);
             if(!empty($save_data['end_time']) && $save_data['end_time'] <= time())$this->end($active_id);
-            if($data['active_class'] == ActiveDict::NEWCOMER_DISCOUNT && $data['active_status'] == ActiveDict::ACTIVE) {
-                NewcomerSaveAfter::dispatch([]);
-            }
+            event('ActiveSaveAfter', $data);
             return true;
         } catch (\Exception $e) {
             Db::rollback();

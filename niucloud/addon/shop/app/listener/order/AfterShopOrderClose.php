@@ -45,7 +45,8 @@ class AfterShopOrderClose
                 }
             }
             $order_goods_where = array(
-                ['order_id', '=', $order_data['order_id']]
+                ['order_id', '=', $order_data['order_id']],
+                ['is_gift', '=', 0],
             );
             $order_goods_data = (new OrderGoods())->where($order_goods_where)->select()->toArray();
             //返还商品库存

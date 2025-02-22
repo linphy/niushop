@@ -40,6 +40,7 @@ class VerifyListener
             if ($order_goods_info->isEmpty()) throw new CommonException('SHOP_ORDER_NOT_FOUND');
             if (in_array($order_goods_info[ 'delivery_status' ], [ OrderDeliveryDict::TAKED, OrderDeliveryDict::EXPIRE ])) throw new CommonException('SHOP_ORDER_ITEM_HAS_BEEN_WRITTEN_OFF_OR_EXPIRED');
             if (in_array($order_goods_info[ 'status' ], [ OrderGoodsDict::REFUNDING, OrderGoodsDict::REFUND_FINISH ])) throw new CommonException('SHOP_THE_ITEM_IS_BEING_REFUNDED_OR_HAS_BEEN_REFUNDED');
+            if (strtotime($order_goods_info[ 'verify_expire_time' ]) > 0 && strtotime($order_goods_info[ 'verify_expire_time' ]) < time()) throw new CommonException('SHOP_ORDER_ITEM_HAS_EXPIRED');
             if ($order_goods_info[ 'verify_count' ] >= $order_goods_info[ 'num' ]) throw new CommonException('SHOP_ORDER_MAXIMUM_NUMBER_OF_WRITE_OFFS_HAS_BEEN_REACHED');
 
             //todo  判断订单项状态(已收货 已核销  核销已过期)

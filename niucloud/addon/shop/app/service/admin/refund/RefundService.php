@@ -39,6 +39,7 @@ class RefundService extends BaseAdminService
         $order = 'create_time desc';
 
         $search_model = $this->model
+            ->where([ [ 'refund_id', '>', 0 ] ])
             ->withSearch([ 'order_refund_no', 'status', 'create_time' ], $where)
             ->field($field)
             ->with(
@@ -66,7 +67,7 @@ class RefundService extends BaseAdminService
             ->with(
                 [
                     'order_main' => function($query) {
-                        $query->field('order_id,order_no,order_type,order_from,out_trade_no,status,member_id,ip,goods_money,delivery_money,order_money,invoice_id,create_time,pay_time,delivery_time,take_time,finish_time,close_time,delivery_type,taker_name,taker_mobile,taker_province,taker_city,taker_district,taker_address,taker_full_address,taker_longitude,taker_latitude,take_store_id,is_enable_refund,member_remark,shop_remark,close_remark,discount_money')
+                        $query->field('order_id,order_no,order_type,order_from,out_trade_no,status,member_id,ip,goods_money,delivery_money,order_money,invoice_id,create_time,pay_time,delivery_time,take_time,finish_time,close_time,delivery_type,taker_name,taker_mobile,taker_province,taker_city,taker_district,taker_address,taker_full_address,taker_longitude,taker_latitude,take_store_id,is_enable_refund,member_remark,shop_remark,close_remark,discount_money,point')
                             ->append([ 'order_from_name', 'order_type_name', 'status_name', 'delivery_type_name' ]);
                     },
                     'order_goods' => function($query) {

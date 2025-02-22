@@ -191,7 +191,7 @@ class GoodsService extends BaseApiService
             ->field($field)
             ->with([
                 'goods' => function($query) {
-                    $query->withField('goods_id, goods_name, goods_type, sub_title, goods_cover, goods_category, goods_image,goods_video,goods_desc,brand_id,label_ids,service_ids, unit, stock, sale_num + virtual_sale_num as sale_num, is_limit,limit_type,max_buy,min_buy,status,delivery_type,attr_id,attr_format,member_discount,is_discount,poster_id,virtual_receive_type,is_gift')
+                    $query->withField('goods_id, goods_name, goods_type, sub_title, goods_cover, goods_category, goods_image,goods_video,goods_desc,brand_id,label_ids,service_ids, unit, stock, sale_num + virtual_sale_num as sale_num, is_limit,limit_type,max_buy,min_buy,status,delivery_type,attr_id,attr_format,member_discount,is_discount,poster_id,virtual_receive_type,is_gift,form_id')
                         ->append([ 'goods_type_name', 'goods_cover_thumb_mid', 'delivery_type_list', 'goods_image_thumb_small', 'goods_image_thumb_mid', 'goods_image_thumb_big', 'goods_brand' ]);
                 },
                 // 商品规格列表
@@ -302,6 +302,9 @@ class GoodsService extends BaseApiService
             // 商品统计-浏览次数
             CoreGoodsStatService::addStat([ 'goods_id' => $info[ 'goods' ][ 'goods_id' ], 'access_num' => 1 ]);
             ( new CoreGoodsAccessNumService() )->inc([ 'goods_id' => $info[ 'goods' ][ 'goods_id' ], 'access_num' => 1 ]);
+
+            // 种草秀数据查询
+            $info[ 'sow_show_list' ] = event('SowShowData', [ 'relate_id' => $info[ 'goods_id' ], 'relate_type' => 'shop', 'limit' => 3 ])[ 0 ] ?? [];
         }
 
         return $info;

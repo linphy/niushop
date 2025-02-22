@@ -4,7 +4,7 @@
 			<view class="head flex justify-between items-center mb-[16rpx]" @click="toListFn()">
 				<image v-if="diyComponent.textImg" class="h-[34rpx] w-[auto]" :src="img(diyComponent.textImg)" mode="heightFix"></image>
 				<view class="time-wrap flex items-center ml-[auto]" v-show="timeData && Object.keys(timeData).length">
-					<text v-if="!getToken() && diyStore.mode != 'decorate'" class="text-[26rpx]" :style="{color: diyComponent.countDown.otherColor}">活动未开始</text>
+					<text v-if="!getToken() && diyStore.mode != 'decorate'" class="text-[24rpx] font-500" :style="{color: diyComponent.countDown.otherColor}">活动未开始</text>
 					<block v-else-if="activeState()">
 						<text :style="{color: diyComponent.countDown.otherColor}" class="mr-[10rpx] text-[24rpx]">距结束还有</text>
 						<up-count-down class="text-[#fff] text-[28rpx]" :time="newcomerTime" format="HH:mm:ss" @change="onChange">
@@ -72,7 +72,7 @@
 			<view class="head flex justify-between items-center mb-[16rpx]" @click="toListFn()">
 				<image v-if="diyComponent.textImg" class="h-[34rpx] w-[auto]" :src="img(diyComponent.textImg)" mode="heightFix"></image>
 				<view class="time-wrap flex items-center ml-[auto]" v-show="timeData && Object.keys(timeData).length">
-					<text v-if="!getToken() && diyStore.mode != 'decorate'" class="text-[26rpx]" :style="{color: diyComponent.countDown.otherColor}">活动未开始</text>
+					<text v-if="!getToken() && diyStore.mode != 'decorate'" class="text-[24rpx] font-500" :style="{color: diyComponent.countDown.otherColor}">活动未开始</text>
 					<block v-else-if="activeState()">
 						<text :style="{color: diyComponent.countDown.otherColor}" class="mr-[10rpx] text-[24rpx]">倒计时</text>
 						<up-count-down class="text-[#fff] text-[28rpx]" :time="newcomerTime" format="DD:HH:mm" @change="onChange">
@@ -121,7 +121,7 @@
 			<view class="head flex mx-[10rpx] items-center mb-[12rpx]" @click="toListFn()">
 				<image v-if="diyComponent.textImg" class="h-[34rpx] w-[auto] mr-[16rpx]" :src="img(diyComponent.textImg)" mode="heightFix"></image>
 				<view class="time-wrap flex items-center" v-show="timeData && Object.keys(timeData).length">
-					<text v-if="!getToken() && diyStore.mode != 'decorate'" :style="{color: diyComponent.countDown.otherColor}" class="text-[26rpx]">活动未开始</text>
+					<text v-if="!getToken() && diyStore.mode != 'decorate'" :style="{color: diyComponent.countDown.otherColor}" class="text-[24rpx] font-500">活动未开始</text>
 					<up-count-down v-else-if="activeState()" class="text-[#fff] text-[28rpx]" :time="newcomerTime" format="HH:mm:ss" @change="onChange">
 						<view class="flex">
 							<view class="text-[24rpx] flex items-center">
@@ -170,7 +170,7 @@
 			<view class="head flex mx-[10rpx] items-center justify-between mb-[24rpx]">
 				<image v-if="diyComponent.textImg" class="h-[34rpx] w-[auto]" :src="img(diyComponent.textImg)" mode="heightFix"></image>
 				<view class="time-wrap ml-[auto] flex items-center -mt-[8rpx]" v-show="timeData && Object.keys(timeData).length">
-					<text v-if="!getToken() && diyStore.mode != 'decorate'" :style="{color: diyComponent.countDown.otherColor}" class="w-[200rpx] text-center text-[26rpx] pb-[4rpx]">活动未开始</text>
+					<text v-if="!getToken() && diyStore.mode != 'decorate'" :style="{color: diyComponent.countDown.otherColor}" class="w-[200rpx] text-center text-[24rpx] font-500 pb-[4rpx]">活动未开始</text>
 					<block v-else-if="activeState()">
 						<text :style="{color: diyComponent.countDown.otherColor}" class="mr-[8rpx] text-[24rpx]">本场仅剩</text>
 						<up-count-down class="text-[#fff] text-[28rpx]" :time="newcomerTime" format="HH:mm:ss" @change="onChange">
@@ -227,7 +227,7 @@
 	import useDiyStore from '@/app/stores/diy';
     import { getNewcomersComponentsList } from '@/addon/shop/api/newcomer'
 
-	const props = defineProps(['component', 'index', 'pullDownRefreshCount','value']);
+	const props = defineProps(['component', 'index','value']);
 	const diyStore = useDiyStore();
 
 	const diyComponent = computed(() => {
@@ -302,8 +302,8 @@
 		if (diyComponent.value.countDown.numberColor) style += 'color:' + diyComponent.value.countDown.numberColor + ';';
 		return style;
 	})
-	
-	
+
+
 	// 公共模块颜色
 	const commonTempCss = ()=>{
 		var style = '';

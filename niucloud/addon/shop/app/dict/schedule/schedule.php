@@ -118,7 +118,7 @@ return [
         'time' => [
             'type' => 'day',
             'day' => 1,
-            'min' => 0,
+            'min' => 1,
             'hour' => 0
         ],
         'class' => 'addon\shop\app\job\goods\GoodsStatisticalUpdate',

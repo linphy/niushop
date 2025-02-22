@@ -43,6 +43,7 @@ export function getCouponStatusList() {
 export function getCouponList(params: Record<string, any>) {
     return request.get(`shop/goods/coupon`, { params })
 }
+
 /**
  * 获取优惠券列表
  * @param params
@@ -51,6 +52,7 @@ export function getCouponList(params: Record<string, any>) {
 export function getCouponSelectList(params: Record<string, any>) {
     return request.get(`shop/goods/coupon/select`, { params })
 }
+
 /**
  * 获取优惠券领取记录
  * @param params
@@ -459,7 +461,6 @@ export function getSelectRankPageList(params: Record<string, any>) {
 
 /************ 满减 ****************/
 
-
 /**
  * 获取满减列表
  * @param params
@@ -535,10 +536,55 @@ export function closeManjian(manjian_id: number) {
 }
 
 /**
+ * 获取商品选择列表,代客下单使用
+ * @param params
+ * @returns
+ */
+export function getGoodsSelectByReplaceBuy(params: Record<string, any>) {
+    return request.get(`shop/goods/buy/goods/select`, { params })
+}
+
+/**
+ * 获取选中商品选择列表,代客下单使用
+ * @param params
+ * @returns
+ */
+export function getGoodsSelectedByReplaceBuy(params: Record<string, any>) {
+    return request.get(`shop/goods/buy/goods/selected`, { params })
+}
+
+/**
+ * 获取商品规格信息
+ * @param params
+ * @returns
+ */
+export function getGoodsSkuInfo(params: Record<string, any>) {
+    return request.get(`shop/goods/buy/sku/select`, { params })
+}
+
+/*
  * 删除满减
  * @param manjian_id
  * @returns
  */
 export function deleteManjian(manjian_id: number) {
     return request.delete(`shop/manjian/${ manjian_id }`, { showSuccessMessage: true })
+}
+
+/**
+ * 批量删除满减
+ * @param params
+ * @returns
+ */
+export function batchDeleteManjian(params: Record<string, any>) {
+    return request.put(`shop/manjian/goods/batchDelete`, params, { showSuccessMessage: true })
+}
+
+/**
+ * 批量关闭满减
+ * @param params
+ * @returns
+ */
+export function batchCloseMajian(params: Record<string, any>) {
+    return request.put(`shop/manjian/goods/batchClose`, params, { showSuccessMessage: true })
 }

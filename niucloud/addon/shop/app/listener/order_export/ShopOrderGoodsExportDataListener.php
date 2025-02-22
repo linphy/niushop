@@ -35,7 +35,7 @@ class ShopOrderGoodsExportDataListener
                 $pay_where[] = ['pay.type', '=',  $param['where'][ 'pay_type' ] ];
             }
             //查询导出订单项数据
-            $order_ids = $model->withSearch([ 'search_type', 'order_from', 'join_status', 'create_time', 'join_pay_time' ], $param['where'])
+            $order_ids = $model->where([[ 'order.order_id', '>', 0 ]])->withSearch([ 'search_type', 'order_from', 'join_status', 'create_time', 'join_pay_time' ], $param['where'])
                 ->withJoin([
                     'pay' => function(Query $query) use($pay_where){
                         $query->where($pay_where);

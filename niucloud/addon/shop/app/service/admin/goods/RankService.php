@@ -260,7 +260,10 @@ class RankService extends BaseAdminService
         $field = 'rank_id,name,rank_type,goods_source,rule_type,create_time,goods_json,category_ids,brand_ids,label_ids';
         $order = 'sort desc,create_time desc';
         $search_model = $this->model
-//            ->where([ [ 'status', '=', RankDict::ON ] ]) // 不限制状态
+            ->where([
+                [ 'rank_id', '>', 0 ],
+//                [ 'status', '=', RankDict::ON ] // 不限制状态
+            ])
             ->withSearch([ "name", 'rank_type' ], $where)
             ->field($field)
             ->order($order)->append([ 'rank_type_name', 'goods_source_name', 'rule_type_name' ]);
@@ -283,24 +286,24 @@ class RankService extends BaseAdminService
         foreach ($data as &$value) {
             switch ($value[ 'goods_source' ]) {
                 case RankDict::ALL:
-                    $value[ 'show_goods_num' ] = $goods_model->where([ [ 'is_gift', '=', GoodsDict::NOT_IS_GIFT ], [ 'status', '=', 1 ],[ 'delete_time', '=', 0 ]])->count();
+                    $value[ 'show_goods_num' ] = $goods_model->where([ [ 'is_gift', '=', GoodsDict::NOT_IS_GIFT ], [ 'status', '=', 1 ], [ 'delete_time', '=', 0 ] ])->count();
                     break;
                 case RankDict::GOODS:
                     $goods_json = $value[ 'goods_json' ];
                     $goods_ids = array_column($goods_json, 'goods_id');
-                    $value[ 'show_goods_num' ] = $goods_model->where([ [ 'is_gift', '=', GoodsDict::NOT_IS_GIFT ], [ 'goods_id', 'in', $goods_ids ], [ 'status', '=', 1 ],[ 'delete_time', '=', 0 ]])->count();
+                    $value[ 'show_goods_num' ] = $goods_model->where([ [ 'is_gift', '=', GoodsDict::NOT_IS_GIFT ], [ 'goods_id', 'in', $goods_ids ], [ 'status', '=', 1 ], [ 'delete_time', '=', 0 ] ])->count();
                     break;
                 case RankDict::CATEGORY:
                     $category_ids = $value[ 'category_ids' ];
-                    $value[ 'show_goods_num' ] = $goods_model->withSearch([ 'goods_category' ], [ 'goods_category' => $category_ids ])->where([ [ 'is_gift', '=', GoodsDict::NOT_IS_GIFT ], [ 'status', '=', 1 ],[ 'delete_time', '=', 0 ]])->count();
+                    $value[ 'show_goods_num' ] = $goods_model->withSearch([ 'goods_category' ], [ 'goods_category' => $category_ids ])->where([ [ 'is_gift', '=', GoodsDict::NOT_IS_GIFT ], [ 'status', '=', 1 ], [ 'delete_time', '=', 0 ] ])->count();
                     break;
                 case RankDict::BRAND:
                     $brand_ids = $value[ 'brand_ids' ];
-                    $value[ 'show_goods_num' ] = $goods_model->where([ [ 'is_gift', '=', GoodsDict::NOT_IS_GIFT ], [ 'brand_id', 'in', $brand_ids ], [ 'status', '=', 1 ],[ 'delete_time', '=', 0 ]])->count();
+                    $value[ 'show_goods_num' ] = $goods_model->where([ [ 'is_gift', '=', GoodsDict::NOT_IS_GIFT ], [ 'brand_id', 'in', $brand_ids ], [ 'status', '=', 1 ], [ 'delete_time', '=', 0 ] ])->count();
                     break;
                 case RankDict::LABEL:
                     $label_ids = $value[ 'label_ids' ];
-                    $value[ 'show_goods_num' ] = $goods_model->withSearch([ 'label_ids' ], [ 'label_ids' => $label_ids ])->where([ [ 'is_gift', '=', GoodsDict::NOT_IS_GIFT ], [ 'status', '=', 1 ],[ 'delete_time', '=', 0 ]])->count();
+                    $value[ 'show_goods_num' ] = $goods_model->withSearch([ 'label_ids' ], [ 'label_ids' => $label_ids ])->where([ [ 'is_gift', '=', GoodsDict::NOT_IS_GIFT ], [ 'status', '=', 1 ], [ 'delete_time', '=', 0 ] ])->count();
                     break;
             }
         }

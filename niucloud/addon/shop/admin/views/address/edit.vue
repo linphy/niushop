@@ -324,9 +324,9 @@ watch(() => formData.district_id, (nval) => {
 const areaChange = debounce(() => {
     setTimeout(() => {
         const address = [
-            formData.province_id ? provinceRef.value.states.selectedLabel : '',
-            formData.city_id ? cityRef.value.states.selectedLabel : '',
-            formData.district_id ? districtRef.value.states.selectedLabel : ''
+            formData.province_id ? provinceRef.value.selectedLabel : '',
+            formData.city_id ? cityRef.value.selectedLabel : '',
+            formData.district_id ? districtRef.value.selectedLabel : ''
         ]
 
         addressToLatLng({ mapKey, address: address.join('') }).then(({ message, result }) => {
@@ -389,9 +389,9 @@ const onSave = async (formEl: FormInstance | undefined) => {
 
             const data = formData
             const address = [
-                data.province_id ? provinceRef.value.states.selectedLabel : '',
-                data.city_id ? cityRef.value.states.selectedLabel : '',
-                data.district_id ? districtRef.value.states.selectedLabel : '',
+                data.province_id ? provinceRef.value.selectedLabel : '',
+                data.city_id ? cityRef.value.selectedLabel : '',
+                data.district_id ? districtRef.value.selectedLabel : '',
                 data.address
             ]
             data.full_address = address.join('')

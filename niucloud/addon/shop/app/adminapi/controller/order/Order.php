@@ -180,7 +180,7 @@ class Order extends BaseAdminController
      */
     public function getOrderFrom()
     {
-        return success(ChannelDict::getType());
+        return success(( new OrderService() )->getOrderFrom());
     }
 
     /**

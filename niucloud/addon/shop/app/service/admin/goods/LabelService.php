@@ -133,7 +133,7 @@ class LabelService extends BaseAdminService
     {
         // 检测商品标签分组是否被使用
         $goods_model = new Goods();
-        $count = $goods_model->withSearch([ 'label_ids' ], [ 'label_ids' => $id ])->count();
+        $count = $goods_model->where([[ 'goods_id', '>', 0 ]])->withSearch([ 'label_ids' ], [ 'label_ids' => $id ])->count();
         if ($count) {
             throw new AdminException('该标签正在使用中，无法删除');
         }

@@ -146,7 +146,12 @@ class Order extends BaseModel
     {
         if (empty($data[ 'order_from' ]))
             return '';
-        return ChannelDict::getType()[ $data[ 'order_from' ] ] ?? '';
+        $order_from_list = ChannelDict::getType();
+        $from_event_list = array_filter(event('OrderFromList')) ?? [];
+        foreach ($from_event_list as $item) {
+            $order_from_list = array_merge($order_from_list, $item);
+        }
+        return $order_from_list[ $data[ 'order_from' ] ] ?? '';
     }
 
     /**

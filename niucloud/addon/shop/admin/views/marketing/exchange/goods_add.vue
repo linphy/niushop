@@ -121,6 +121,16 @@
                                 </template>
                             </el-table-column>
                             <el-table-column :label="t('limit')" min-width="200">
+                                <template #header>
+                                    <div style="display: inline-flex; align-items: center">
+                                        <span class="mr-[5px]">{{ t('limit') }}</span>
+                                        <el-tooltip class="box-item" effect="light" :content="t('limitRules')" placement="top">
+                                        <el-icon color="#666">
+                                            <QuestionFilled />
+                                        </el-icon>
+                                        </el-tooltip>
+                                    </div>
+                                </template>
                                 <template #default="{ row,$index }">
                                     <el-form-item v-if="row.is_enabled" :prop="'product_list.'+ $index + '.limit_num'" :rules="[{
                                         trigger: 'blur',
@@ -131,6 +141,10 @@
                                                     callback(t('limitTips'))
                                                 } else if (value <=0) {
                                                     callback(t('limitTipsTwo'))
+                                                } else if (value > Number(row.stock)) {
+                                                    callback(t('limitTipsThree'))
+                                                } else if(parseInt(value)>parseInt(row.goods_stock)){
+                                                    callback(t('stockTipsThree'))
                                                 } else {
                                                     callback();
                                                 }

@@ -57,8 +57,6 @@ class CartService extends BaseApiService
             [ 'sku_id', '=', $data[ 'sku_id' ] ],
         ])->field('id,num')->findOrEmpty()->toArray();
 
-
-
 //        $other_sku_num = $this->model->where([
 //            [ 'member_id', '=', $this->member_id ],
 //            [ 'goods_id', '=', $data[ 'goods_id' ] ],
@@ -269,7 +267,7 @@ class CartService extends BaseApiService
     public function calculate($data)
     {
         //获取商品信息
-        $data = $this->getGoods($data);
+        $data = $this->getSelectGoods($data);
         //满减
         $data = ( new CoreManjianService() )->manjianPromotion($data, $this->member_id);
         $promotion_money = $data[ 'promotion_money' ] ?? 0;
@@ -281,14 +279,18 @@ class CartService extends BaseApiService
         foreach ($good_list as $k => $v) {
             $match_list[ $k ][ 'goods_id' ] = $v[ 'goods_id' ];
             $match_list[ $k ][ 'sku_id' ] = $v[ 'sku_id' ];
-            if (!empty($v[ 'promotion' ][ 'manjian' ])) {
-                $manjian_info = $v[ 'promotion' ][ 'manjian' ];
-                if ($manjian_info[ 'discount_array' ][ 'level' ] >= 0) {
-                    $match_list[ $k ][ 'level' ] = $manjian_info[ 'discount_array' ][ 'level' ];
+            foreach ($v[ 'promotion' ] as $kk => $vv) {
+                switch ($kk) {
+                    case 'manjian':
+                        if ($vv[ 'discount_array' ][ 'level' ] >= 0) {
+                            $match_list[ $k ][ 'level' ] = $vv[ 'discount_array' ][ 'level' ];
+                        }
+                        break;
+                    default:
+                        break;
                 }
             }
         }
-
         return [
             'goods_money' => $data[ 'goods_money' ],
             'promotion_money' => $promotion_money,
@@ -302,7 +304,7 @@ class CartService extends BaseApiService
      * @param $data
      * @return mixed
      */
-    public function getGoods($data)
+    public function getSelectGoods($data)
     {
         $member_id = $this->member_id;
 
@@ -328,6 +330,8 @@ class CartService extends BaseApiService
         $data[ 'goods_num' ] = 0;
         $data[ 'goods_money' ] = 0;
         $data[ 'goods_list' ] = [];
+        $data[ 'coupon_money' ] = 0; //优惠券金额
+        $data[ 'promotion_money' ] = 0; //优惠金额
         if (!empty($goods_list)) {
             foreach ($goods_list as $k => $v) {
                 $member_price = $goods_service->getMemberPrice($member_info, $v[ 'member_discount' ], $v[ 'member_price' ], $v[ 'price' ]);
@@ -339,8 +343,8 @@ class CartService extends BaseApiService
                 $v[ 'price' ] = $price;
                 $v[ 'goods_money' ] = $price * $item_num;
                 $v[ 'real_goods_money' ] = $v[ 'goods_money' ];
-                $v[ 'coupon_money' ] = 0; //优惠券金额
-                $v[ 'promotion_money' ] = 0; //优惠金额
+                $v[ 'promotion' ] = [];
+
                 $data[ 'goods_num' ] += $item_num;
                 $data[ 'goods_money' ] += $v[ 'goods_money' ];
                 $data[ 'goods_list' ][] = $v;

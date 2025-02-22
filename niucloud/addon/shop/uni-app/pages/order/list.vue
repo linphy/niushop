@@ -140,7 +140,6 @@ onLoad((option: any) => {
 	})
 	// #endif
 });
-	
 
 onShow(() => {
 	nextTick(()=>{

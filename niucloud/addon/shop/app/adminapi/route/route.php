@@ -346,6 +346,21 @@ Route::group('shop', function() {
     // 修改商品参数值
     Route::put('goods/attr/attr_value', 'addon\shop\app\adminapi\controller\goods\Attr@modifyAttrValueFormat');
 
+    // 获取商品下单选择分页列表
+    Route::get('goods/buy/goods/select', 'addon\shop\app\adminapi\controller\goods\Goods@buyGoodsSelect');
+
+    // 获取商品下单已选分页列表
+    Route::get('goods/buy/goods/selected', 'addon\shop\app\adminapi\controller\goods\Goods@buyGoodsSelected');
+
+    // 获取商品下单SKU规格列表
+    Route::get('goods/buy/sku/select', 'addon\shop\app\adminapi\controller\goods\Goods@buySkuSelect');
+
+    // 批量设置商品
+    Route::put('goods/batchSet', 'addon\shop\app\adminapi\controller\goods\Goods@batchSet');
+
+    //获取商品排行榜统计类型
+    Route::get('goods/batchSet/dict', 'addon\shop\app\adminapi\controller\goods\Goods@getBatchSetDict');
+
     /************************************************** 订单相关接口 *****************************************************/
     //交易配置
     Route::post('order/config', 'addon\shop\app\adminapi\controller\order\Config@setConfig');
@@ -696,6 +711,12 @@ Route::group('shop', function() {
 
     //满减送商品校验
     Route::post('manjian/goods/check', 'addon\shop\app\adminapi\controller\marketing\Manjian@checkGoods');
+
+    //满减送批量关闭
+    Route::put('manjian/goods/batchClose', 'addon\shop\app\adminapi\controller\marketing\Manjian@batchClose');
+
+    //满减送批量删除
+    Route::put('manjian/goods/batchDelete', 'addon\shop\app\adminapi\controller\marketing\Manjian@batchDelete');
 
 })->middleware([
     AdminCheckToken::class,

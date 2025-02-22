@@ -44,7 +44,8 @@ class ElectronicSheetService extends BaseAdminService
     {
         $order = 'is_default desc,create_time desc';
 
-        $search_model = $this->model->withSearch([ "id", "template_name", "express_company_id", "pay_type", "is_notice", "status", "is_default" ], $where)
+        $search_model = $this->model->where([ [ 'electronic_sheet.id', '>', 0 ] ])
+            ->withSearch([ "id", "template_name", "express_company_id", "pay_type", "is_notice", "status", "is_default" ], $where)
             ->field($field)
             ->withJoin([
                 'company' => [ 'company_name', 'express_no_electronic_sheet' ]
@@ -63,7 +64,7 @@ class ElectronicSheetService extends BaseAdminService
     public function getList(array $where = [], $field = 'id,template_name,express_company_id,customer_name,customer_pwd,send_site,send_staff,month_code,pay_type,is_notice,status,exp_type,print_style,is_default,create_time')
     {
         $order = 'is_default desc,create_time desc';
-        return $this->model->withSearch([ "id", "template_name", "express_company_id", "pay_type", "is_notice", "status", "is_default" ], $where)->field($field)->order($order)->select()->toArray();
+        return $this->model->where([ [ 'id', '>', 0 ] ])->withSearch([ "id", "template_name", "express_company_id", "pay_type", "is_notice", "status", "is_default" ], $where)->field($field)->order($order)->select()->toArray();
     }
 
     /**

@@ -28,21 +28,22 @@ class Config extends BaseAdminController
     public function setConfig()
     {
         $data = $this->request->params([
-            ["is_close",1],
-            ["close_length",""],
-            ["is_finish",""],
-            ["finish_length",1],
-            ["no_allow_refund",""],
-            ["refund_length",""],
-            ["is_invoice",""],
-            ["invoice_type",""],
-            ["invoice_content",""],
-            ["is_evaluate", 1],
-            ["evaluate_is_to_examine", 1],
-            ["evaluate_is_show", 1]
+            [ "is_close", 1 ],
+            [ "close_length", "" ],
+            [ "is_finish", "" ],
+            [ "finish_length", 1 ],
+            [ "no_allow_refund", "" ],
+            [ "refund_length", "" ],
+            [ "is_invoice", "" ],
+            [ "invoice_type", "" ],
+            [ "invoice_content", "" ],
+            [ "is_evaluate", 1 ],
+            [ "evaluate_is_to_examine", 1 ],
+            [ "evaluate_is_show", 1 ],
+            [ 'form_id', '' ]
         ]);
 
-        (new ConfigService())->setConfig($data);
+        ( new ConfigService() )->setConfig($data);
         return success('SUCCESS');
     }
 
@@ -52,7 +53,7 @@ class Config extends BaseAdminController
      */
     public function getConfig()
     {
-        return success((new ConfigService())->getConfig());
+        return success(( new ConfigService() )->getConfig());
     }
 
 }

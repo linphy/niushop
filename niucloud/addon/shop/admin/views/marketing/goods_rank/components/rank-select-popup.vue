@@ -2,18 +2,18 @@
     <div>
         <div @click="show">
         <slot>
-            <el-button>{{ t('选择榜单') }}</el-button>
+            <el-button>{{ t('rankSelectPopupSelectRankButton') }}</el-button>
             <div class="inline-block ml-[10px] text-[14px]" v-show="rankIds.length">
-                <span>{{ t('已选') }}</span>
+                <span>{{ t('goodsSelectPopupSelect') }}</span>
                 <span class="text-primary mx-[2px]">{{ rankIds.length }}</span>
-                <span>{{ t('个') }}</span>
+                <span>{{ t('goodsSelectPopupPiece') }}</span>
             </div>
         </slot>
         </div>
-        <el-dialog v-model="showDialog" :name="t('榜单选择')" width="1000px" :close-on-press-escape="false" :destroy-on-close="true" :close-on-click-modal="false">
+        <el-dialog v-model="showDialog" :name="t('rankSelect')" width="1000px" :close-on-press-escape="false" :destroy-on-close="true" :close-on-click-modal="false">
         <el-form :inline="true" :model="rankTable.searchParam" ref="searchFormRef">
-            <el-form-item :label="t('榜单名称')" prop="keyword" class="form-item-wrap">
-                <el-input v-model.trim="rankTable.searchParam.name" :placeholder="t('请输入榜单名称')" maxlength="60" />
+            <el-form-item :label="t('rankName')" prop="keyword" class="form-item-wrap">
+                <el-input v-model.trim="rankTable.searchParam.name" :placeholder="t('rankNamePlaceholder')" maxlength="60" />
             </el-form-item>
             <el-form-item class="form-item-wrap">
                 <el-button type="primary" @click="loadRankList()">{{ t('search') }}</el-button>
@@ -27,21 +27,21 @@
             </template>
             <!-- 多选框 -->
             <el-table-column type="selection" width="55" />
-            <el-table-column prop="name" :label="t('榜单名称')" min-width="130" />
-            <el-table-column prop="show_goods_num" :label="t('榜单商品数量')" min-width="130" />
-            <el-table-column prop="goods_source_name" :label="t('商品来源')" min-width="130" />
-            <el-table-column prop="rule_type_name" :label="t('排序规则')" min-width="130" />
-            <el-table-column prop="rank_type_name" :label="t('排行周期')" min-width="130" />
+            <el-table-column prop="name" :label="t('rankName')" min-width="130" />
+            <el-table-column prop="show_goods_num" :label="t('showGoodsNum')" min-width="130" />
+            <el-table-column prop="goods_source_name" :label="t('goodsSourceName')" min-width="130" />
+            <el-table-column prop="rule_type_name" :label="t('ruleTypeName')" min-width="130" />
+            <el-table-column prop="rank_type_name" :label="t('rankTypeName')" min-width="130" />
         </el-table>
 
         <div class="mt-[16px] flex">
             <div class="flex items-center flex-1">
                 <div class="layui-table-bottom-left-container mr-[10px]" v-show="selectRankNum">
-                    <span>{{ t('已选择') }}</span>
+                    <span>{{ t('goodsSelectPopupBeforeTip') }}</span>
                     <span class="text-primary mx-[2px]">{{ selectRankNum }}</span>
-                    <span>{{ t('个榜单') }}</span>
+                    <span>{{ t('rankSelectPopupAfterTip') }}</span>
                 </div>
-                <el-button type="primary" link @click="clear" v-show="selectRankNum">{{ t('取消选择') }}</el-button>
+                <el-button type="primary" link @click="clear" v-show="selectRankNum">{{ t('goodsSelectPopupClearGoods') }}</el-button>
             </div>
             <el-pagination v-model:current-page="rankTable.page" v-model:page-size="rankTable.limit" layout="total, sizes, prev, pager, next, jumper" :total="rankTable.total" @size-change="loadRankList()" @current-change="loadRankList" />
         </div>
@@ -242,19 +242,18 @@ const clear = () => {
     }
     setRankSelected();
 }
-
 const save = () => {
     if (prop.min && selectRankNum.value < prop.min) {
         ElMessage({
             type: 'warning',
-            message: `${t('所选榜单数量不能少于')}${prop.min}${t('个')}`,
+            message: `${t('rankSelectPopupGoodsMinTip')}${prop.min}${t('goodsSelectPopupPiece')}`,
         });
         return;
     }
     if (prop.max && prop.max > 0 && selectRankNum.value && selectRankNum.value > prop.max) {
         ElMessage({
             type: 'warning',
-            message: `${t('所选榜单不能超过')}${prop.max}${t('个')}`,
+            message: `${t('rankSelectPopupGoodsMaxTip')}${prop.max}${t('goodsSelectPopupPiece')}`,
         });
         return;
     }

@@ -18,6 +18,8 @@ use addon\shop\app\model\goods\Goods;
 use addon\shop\app\model\manjian\Manjian;
 use addon\shop\app\model\manjian\ManjianGiveRecords;
 use addon\shop\app\model\manjian\ManjianGoods;
+use addon\shop\app\service\core\coupon\CoreCouponMemberService;
+use addon\shop\app\service\core\marketing\CoreManjianService;
 use app\model\member\Member;
 use core\base\BaseAdminService;
 use core\exception\AdminException;
@@ -578,4 +580,44 @@ class ManjianService extends BaseAdminService
         }
         return $error;
     }
+
+    /**
+     * 批量关闭
+     * @param $data
+     * @return bool
+     */
+    public function batchClose($data)
+    {
+        if (empty($data[ 'manjian_id' ])) throw new AdminException('MANJIANSONG_NOT_FOUND');
+
+        $save_data = [];
+        foreach ($data[ 'manjian_id' ] as $key => $value) {
+            $save_data[ $key ][ 'manjian_id' ] = $value;
+            $save_data[ $key ][ 'status' ] = ManjianDict::CLOSE;
+        }
+        $this->model->saveAll($save_data);
+        return true;
+    }
+
+    /**
+     * 批量删除
+     * @param $data
+     * @return bool
+     */
+    public function batchDelete($data)
+    {
+        if (empty($data[ 'manjian_id' ])) throw new AdminException('MANJIANSONG_NOT_FOUND');
+        $this->model->where([ [ 'manjian_id', 'in', $data[ 'manjian_id' ] ] ])->delete();
+        return true;
+    }
+
+    /**
+     * 获取满减信息
+     * @return array
+     */
+    public function getManjianInfo($data)
+    {
+        return ( new CoreManjianService() )->getManjianInfo($data);
+    }
+
 }

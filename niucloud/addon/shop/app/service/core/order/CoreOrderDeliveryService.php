@@ -245,16 +245,18 @@ class CoreOrderDeliveryService extends BaseCoreService
                 if ($express_number_count > 0) throw new CommonException('SHOP_ORDER_DELIVERY_EXPRESS_NUMBER_EXITS');//物流单号不能重复
             }
         } elseif ($delivery_way == 'electronic_sheet') {
-            // 电子面单
-            $electronic_sheet_result = ( new CoreElectronicSheetService() )->printElectronicSheetByDelivery([
-                'order_id' => $order_data[ 'order_id' ],
-                'electronic_sheet_id' => $electronic_sheet_id,
-                'order_goods_data' => $order_goods_data->toArray()
-            ]);
-            if ($electronic_sheet_result[ 'success' ]) {
-                $insert_data[ 'express_number' ] = $electronic_sheet_result[ 'order_info' ][ 'LogisticCode' ]; // 获取电子面单返回的快递单号
-            } else {
-                throw new CommonException($electronic_sheet_result[ 'reason' ]);
+            if ($delivery_type == OrderDeliveryDict::EXPRESS) {
+                // 电子面单
+                $electronic_sheet_result = ( new CoreElectronicSheetService() )->printElectronicSheetByDelivery([
+                    'order_id' => $order_data[ 'order_id' ],
+                    'electronic_sheet_id' => $electronic_sheet_id,
+                    'order_goods_data' => $order_goods_data->toArray()
+                ]);
+                if ($electronic_sheet_result[ 'success' ]) {
+                    $insert_data[ 'express_number' ] = $electronic_sheet_result[ 'order_info' ][ 'LogisticCode' ]; // 获取电子面单返回的快递单号
+                } else {
+                    throw new CommonException($electronic_sheet_result[ 'reason' ]);
+                }
             }
         }
 
@@ -338,8 +340,20 @@ class CoreOrderDeliveryService extends BaseCoreService
             ]
         );
         $order_goods_count = ( new OrderGoods() )->where($where)->count();
+        $where_delivery = array(
+            [
+                'delivery_status', 'in', [ OrderDeliveryDict::DELIVERY_FINISH, OrderDeliveryDict::TAKED ]
+            ],
+            [
+                'order_id', '=', $order_id
+            ],
+            [
+                'status', '<>', OrderGoodsDict::REFUND_FINISH,//不包含退款完毕的
+            ]
+        );
+        $order_goods_delivery_count = ( new OrderGoods() )->where($where_delivery)->count();
         //完成
-        if ($order_goods_count == 0) {
+        if ($order_goods_count == 0 && $order_goods_delivery_count > 0) {
             $this->finish($data);
         }
         return true;

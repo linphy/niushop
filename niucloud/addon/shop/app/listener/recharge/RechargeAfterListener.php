@@ -17,22 +17,23 @@ use think\facade\Log;
 
 /**
  * 充值赠送
- * Class RechargeGiftListener
+ * Class RechargeAfterListener
  * @package addon\shop\app\listener\recharge
  */
-class RechargeGiftListener
+class RechargeAfterListener
 {
     public function handle(array $params)
     {
         $member_id = $params[ 'member_id' ];
 
-        foreach ($params['gift_json'] as $key=>$value){
-            if ($key == 'coupon'){
-                foreach ($value['coupon'] as $v){
+        foreach ($params[ 'gift_json' ] as $key => $value) {
+            if ($key == 'coupon') {
+                Log::write('会员充值赠送优惠券开始', json_encode($value[ 'value' ]));
+                foreach ($value[ 'value' ] as $v) {
                     try {
-                        (new CoreCouponMemberService())->sendCoupon($member_id, $v['coupon_id'], $v['num']);
+                        ( new CoreCouponMemberService() )->sendCoupon($member_id, $v[ 'coupon_id' ], $v[ 'num' ]);
                     } catch (CommonException $e) {
-                        Log::write('会员充值赠送优惠券“'.$v['coupon_id'].'”发放失败，错误原因：'. $e->getMessage().$e->getFile().$e->getLine());
+                        Log::write('会员充值赠送优惠券“' . $v[ 'coupon_id' ] . '”发放失败，错误原因：' . $e->getMessage() . $e->getFile() . $e->getLine());
                     }
                 }
             }

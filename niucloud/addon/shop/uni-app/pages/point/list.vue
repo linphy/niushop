@@ -1,7 +1,7 @@
 <template>
 	<view class="bg-[var(--page-bg-color)] min-h-[100vh]" :style="themeColor()">
 		<view class="fixed left-0 right-0 top-0 product-warp bg-[#fff]">
-			
+
 			<view class="py-[14rpx] flex items-center justify-between px-[20rpx]">
 				<view class="flex-1 search-input">
 					<text @click.stop="searchTypeFn('all')" class="nc-iconfont nc-icon-sousuo-duanV6xx1 btn"></text>
@@ -11,7 +11,7 @@
 			</view>
 			<view class="h-[88rpx] px-[30rpx]">
 				<view class=" flex items-center justify-between text-[26rpx] text-[var(--text-color-light6)] h-[88rpx]">
-					<text class="" :class="{ '!text-[var(--primary-color)] font-500': searchType == 'total_order_num' }" @click="searchTypeFn('total_order_num')">综合排序</text>
+					<text :class="{ '!text-[var(--primary-color)] font-500': searchType == 'total_order_num' }" @click="searchTypeFn('total_order_num')">综合排序</text>
 					<view class="flex items-center" @click="searchTypeFn('total_exchange_num')">
 						<text class="mr-[4rpx]" :class="{ '!text-[var(--primary-color)] font-500': searchType == 'total_exchange_num' }">销量</text>
 						<text v-if="sale_num == 'asc'" class="text-[16rpx] text-[var(--text-color-light6)] nc-iconfont nc-icon-a-xiangshangV6xx1"

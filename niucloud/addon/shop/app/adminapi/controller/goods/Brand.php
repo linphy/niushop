@@ -65,6 +65,7 @@ class Brand extends BaseAdminController
              ["logo",""],
              ["desc",""],
              ["sort",0],
+             ["color_json",""],
         ]);
         $this->validate($data, 'addon\shop\app\validate\goods\Brand.add');
         $id = (new BrandService())->add($data);
@@ -82,6 +83,7 @@ class Brand extends BaseAdminController
              ["logo",""],
              ["desc",""],
              ["sort",0],
+             ["color_json",""],
         ]);
         $this->validate($data, 'addon\shop\app\validate\goods\Brand.edit');
         (new BrandService())->edit($id, $data);

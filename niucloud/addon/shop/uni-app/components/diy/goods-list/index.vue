@@ -170,7 +170,7 @@
 							</view>
 						</scroll-view>
 					</view>
-					
+
 				</block>
 			</view>
 		</view>
@@ -180,13 +180,13 @@
 <script setup lang="ts">
 	// 商品列表
     import { ref,reactive,computed, watch, onMounted, nextTick,getCurrentInstance } from 'vue';
-	import { redirect, img, getToken } from '@/utils/common';
+	import { redirect, img } from '@/utils/common';
 	import useDiyStore from '@/app/stores/diy';
 	import { getGoodsComponents } from '@/addon/shop/api/goods';
 	import {useGoods} from '@/addon/shop/hooks/useGoods'
-	
+
 	const diyGoods = useGoods();
-	const props = defineProps(['component', 'index', 'pullDownRefreshCount','value']);
+	const props = defineProps(['component', 'index','value']);
 	const diyStore = useDiyStore();
 	const emits = defineEmits(['loadingFn']); //商品数据加载完成之后触发
 
@@ -256,7 +256,7 @@
 		}
         return style;
     })
-	
+
 	const goodsBtnCss = computed(() => {
         var style = '';
         if (diyComponent.value.btnStyle.style == 'button' && diyComponent.value.btnStyle.aroundRadius) style += 'border-radius:' + diyComponent.value.btnStyle.aroundRadius * 2 + 'rpx;';
@@ -269,14 +269,14 @@
 		if (diyComponent.value.btnStyle.style == 'button' && diyComponent.value.btnStyle.fontWeight) style += 'font-weight: bold;';
         return style;
     })
-	
+
 	const style2Width = computed(() => {
 		var style = '';
 		if(diyComponent.value.margin && diyComponent.value.margin.both) style += 'calc((100vw - ' + (diyComponent.value.margin.both*4) + 'rpx - 20rpx) / 2)'
 		else style += 'calc((100vw - 20rpx) / 2 )'
 		return style;
 	})
-	
+
 	const style3Css = computed(() => {
         var style = '';
         style += 'padding:0 20rpx;';
@@ -299,13 +299,6 @@
 			itemStyle3.value= 'margin-right:14rpx;'
 		// #endif
 	}
-
-	watch(
-		() => props.pullDownRefreshCount,
-		(newValue, oldValue) => {
-			// 处理下拉刷新业务
-		}
-	)
 
 	const getGoodsListFn = () => {
         let data = {

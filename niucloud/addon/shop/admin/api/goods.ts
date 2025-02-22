@@ -718,3 +718,19 @@ export function modifyAttrName(params: Record<string, any>) {
 export function modifyAttrValue(params: Record<string, any>) {
     return request.put(`shop/goods/attr/attr_value`, params, { showSuccessMessage: true })
 }
+
+/**
+ * 获取批量设置字典列表
+ * @returns
+ */
+export function getGoodsBatchSetDict() {
+    return request.get(`shop/goods/batchSet/dict`)
+}
+
+/**
+ * 商品批量设置
+ * @param params
+ */
+export function goodsBatchSet(params: Record<string, any>) {
+    return request.put(`shop/goods/batchSet`, params, { showSuccessMessage: true })
+}

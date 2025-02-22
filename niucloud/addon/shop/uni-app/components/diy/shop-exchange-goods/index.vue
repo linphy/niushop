@@ -43,7 +43,7 @@
 	import useDiyStore from '@/app/stores/diy';
 	import { getExchangeComponentsList } from '@/addon/shop/api/point';
 
-	const props = defineProps(['component', 'index', 'pullDownRefreshCount','value']);
+	const props = defineProps(['component', 'index','value']);
 	const diyStore = useDiyStore();
 
     const skeleton = reactive({
@@ -116,13 +116,6 @@
 		else style += 'calc((100vw - 20rpx) / 2 )'
 		return style;
 	})
-
-	watch(
-		() => props.pullDownRefreshCount,
-		(newValue, oldValue) => {
-			// 处理下拉刷新业务
-		}
-	)
 
 	const getGoodsListFn = () => {
         let data = {

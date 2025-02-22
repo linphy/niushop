@@ -60,7 +60,7 @@ class OrderDict
 //    const REFUND_FAIL = -1;
     const ORDER_CLOSE_ACTION = 'order_close';//订单创建
     const ORDER_DELIVERY_PART_ACTION = 'order_part_delivery';//订单支付
-    const ORDER_DELIVERY_ACTION = 'order_delivery';//订单关闭
+    const ORDER_DELIVERY_ACTION = 'order_delivery';// 订单发货
     const ORDER_FINISH_ACTION = 'order_finish';//订单部分发货
     const ORDER_REMARK_ACTION = 'order_remark';//订单发货
 

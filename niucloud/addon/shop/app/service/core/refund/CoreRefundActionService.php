@@ -188,28 +188,28 @@ class CoreRefundActionService extends BaseCoreService
      */
     public function shopActiveRefund($data)
     {
-        $order_goods_ids = $data['order_goods_ids'];
-        $shop_active_refund_money = $data['shop_active_refund_money'];
+        $order_goods_ids = $data[ 'order_goods_ids' ];
+        $shop_active_refund_money = $data[ 'shop_active_refund_money' ];
 
         $check_data = ( new CoreRefundService() )->refundCheck($order_goods_ids, $shop_active_refund_money);
-        $order_goods_list = $check_data['order_goods_list'];
+        $order_goods_list = $check_data[ 'order_goods_list' ];
 
         foreach ($order_goods_list as $order_goods_info) {
             $order_refund_no = create_no();
             $insert_data = [
-                'order_id' => $order_goods_info['order_id'],
-                'order_goods_id' => $order_goods_info['order_goods_id'],
+                'order_id' => $order_goods_info[ 'order_id' ],
+                'order_goods_id' => $order_goods_info[ 'order_goods_id' ],
                 'order_refund_no' => $order_refund_no,
                 'refund_type' => OrderRefundDict::ONLY_REFUND,
-                'reason' => '',
-                'member_id' => $order_goods_info['member_id'],
-                'apply_money' => $order_goods_info['item_refund_money'],
-                'money' => $order_goods_info['item_refund_money'],
+                'reason' => get_lang('dict_shop_order_refund_action.shop_active_refund'),
+                'member_id' => $order_goods_info[ 'member_id' ],
+                'apply_money' => $order_goods_info[ 'item_refund_money' ],
+                'money' => $order_goods_info[ 'item_refund_money' ],
                 'status' => OrderRefundDict::STORE_AGREE_REFUND_WAIT_TRANSFER,
-                'remark' => $data['shop_active_refund_remark'],
+                'remark' => $data[ 'shop_active_refund_remark' ],
                 'voucher' => [],
                 'source' => OrderRefundDict::ACTIVE_REFUND,
-                'is_refund_delivery' => $order_goods_info['is_refund_delivery'],
+                'is_refund_delivery' => $order_goods_info[ 'is_refund_delivery' ],
             ];
             $order_refund_info = $this->model->create($insert_data);
 
@@ -217,7 +217,7 @@ class CoreRefundActionService extends BaseCoreService
             $order_goods_info->save([
                 'order_refund_no' => $order_refund_no,
                 'shop_active_refund' => 1,
-                'shop_active_refund_money' => $order_goods_info['item_refund_money'],
+                'shop_active_refund_money' => $order_goods_info[ 'item_refund_money' ],
                 'status' => OrderGoodsDict::REFUNDING
             ]);
 

@@ -11,6 +11,7 @@
 
 namespace addon\shop\app\service\core\order;
 
+use app\model\diy_form\DiyForm;
 use app\service\core\sys\CoreConfigService;
 use core\base\BaseCoreService;
 
@@ -55,6 +56,7 @@ class CoreOrderConfigService extends BaseCoreService
             'evaluate_is_to_examine' => $params[ 'evaluate_is_to_examine' ],
             'evaluate_is_show' => $params[ 'evaluate_is_show' ]
         ];
+        $value[ 'form_id' ] = $params[ 'form_id' ];
 
         $this->core_config_service->setConfig('SHOP_ORDER_CONFIG', $value);
 
@@ -114,9 +116,10 @@ class CoreOrderConfigService extends BaseCoreService
                 'finish_length' => 14
             ];
             $data[ 'refund' ] = [
-                'no_allow_refund' => true,
+                'no_allow_refund' => 1,
                 'refund_length' => 7
             ];
+            $data[ 'form_id' ] = '';
         } else {
             $data[ 'close_order_info' ] = [
                 'is_close' => $data[ 'order_close' ][ 'is_close' ],
@@ -130,6 +133,17 @@ class CoreOrderConfigService extends BaseCoreService
                 'no_allow_refund' => $data[ 'order_refund' ][ 'no_allow_refund' ],
                 'refund_length' => $data[ 'order_refund' ][ 'refund_length' ],
             ];
+            $data[ 'form_id' ] = $data[ 'form_id' ] ?? '';
+
+            if(!empty($data[ 'form_id' ])) {
+                $diy_form_model = new DiyForm();
+                $diy_form_count = $diy_form_model->where([
+                    [ 'form_id', '=', $data[ 'form_id' ] ]
+                ])->count();
+                if ($diy_form_count == 0) {
+                    $data[ 'form_id' ] = '';
+                }
+            }
         }
 
         //发票
@@ -181,7 +195,7 @@ class CoreOrderConfigService extends BaseCoreService
         $data = ( new CoreConfigService() )->getConfigValue('SHOP_ORDER_CONFIG');
         if (empty($data)) {
             $refundOrderInfo = [
-                'no_allow_refund' => true,
+                'no_allow_refund' => 1,
                 'refund_length' => 7
             ];
         } else {

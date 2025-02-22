@@ -65,23 +65,13 @@ class ExchangeService extends BaseAdminService
         switch ($info[ 'type' ]) {
             case ExchangeDict::GOODS:
                 $goods_id = 0;
-                $sku_id = 0;
                 foreach ($info[ 'product_detail' ] as $k => $v) {
                     if (!empty($v[ 'goods_id' ])) {
                         $goods_id = $v[ 'goods_id' ];
                     }
-                    if (!empty($v[ 'sku_id' ])) {
-                        $sku_id = $v[ 'sku_id' ];
-                    }
                 }
-                if (!empty($goods_id)) {
-                    $info[ 'goods_list' ] = ( new GoodsSku() )->where([ [ 'goods_id', '=', $goods_id ] ])->field('sku_spec_format,sku_id,sku_name,sku_image,sku_no,price as goods_price,stock as goods_stock')->select()->toArray();
-                    $info[ 'goods_info' ] = ( new Goods() )->where([ [ 'goods_id', '=', $goods_id ] ])->field('goods_id,goods_name,goods_image,goods_cover')->findOrEmpty()->toArray();
-                } elseif (!empty($sku_id)) {
-                    $goods_info = ( new GoodsSku() )->where([ [ 'sku_id', '=', $sku_id ] ])->field('goods_id')->findOrEmpty()->toArray();
-                    $info[ 'goods_info' ] = ( new Goods() )->where([ [ 'goods_id', '=', $goods_info[ 'goods_id' ] ] ])->field('goods_id,goods_name,goods_image,goods_cover')->findOrEmpty()->toArray();
-                    $info[ 'goods_list' ] = ( new GoodsSku() )->where([ [ 'goods_id', '=', $goods_info[ 'goods_id' ] ] ])->field('sku_spec_format,sku_id,sku_name,sku_image,sku_no,price as goods_price,stock as goods_stock')->select()->toArray();
-                }
+                $info[ 'goods_list' ] = ( new GoodsSku() )->where([ [ 'goods_id', '=', $goods_id ] ])->field('sku_spec_format,sku_id,sku_name,sku_image,sku_no,price as goods_price,stock as goods_stock')->select()->toArray();
+                $info[ 'goods_info' ] = ( new Goods() )->where([ [ 'goods_id', '=', $goods_id ] ])->field('goods_id,goods_name,goods_image,goods_cover')->findOrEmpty()->toArray();
                 $info[ 'goods_info' ][ 'spec_type' ] = empty($info[ 'goods_list' ][ 0 ][ 'sku_spec_format' ]) ? 'single' : 'multi';
                 $info[ 'goods_info' ][ 'goods_price' ] = $info[ 'goods_list' ][ 0 ][ 'goods_price' ];
                 foreach ($info[ 'goods_list' ] as &$item) {

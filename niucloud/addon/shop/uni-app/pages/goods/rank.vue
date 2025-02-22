@@ -9,7 +9,7 @@
 			<view class="content-box">
 				<!-- 榜单分类按钮 -->
 				<scroll-view scroll-x="true" class="category-slider" scroll-with-animation :scroll-into-view="'id' + activeIndex">
-					<view class="category-con" :style="rankList.length <= 3 ? { display: 'flex', justifyContent: 'center' } : {}">
+					<view class="category-con" :style="{ justifyContent: centered ? 'center' : 'flex-start' }">
 						<view class="category-btn" v-for="(item, index) in rankList" :key="index"  :id="'id' + index" @click="selectCategory(item, index)" :style="{ color: activeIndex === index ? rankConfig.select_color : rankConfig.no_color, background: activeIndex === index ? `linear-gradient(to right, ${rankConfig.select_bg_color_start}, ${rankConfig.select_bg_color_end})`: 'transparent'}">
 							<view>{{ item.name }}</view>
 						</view>
@@ -88,7 +88,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, computed } from 'vue'
+import { reactive, ref, computed,nextTick } from 'vue'
 import { t } from '@/locale'
 import { redirect, img, pxToRpx } from '@/utils/common';
 import { getRankList ,getRankGoodsList,getRankConfig} from '@/addon/shop/api/rank';
@@ -139,20 +139,37 @@ const closeFn = () =>{
 const rankList = ref<Array<any>>([]);
 const rankGoodsList = ref<Array<any>>([]);
 
+const centered = ref(false); // 是否居中
+const calculateCentered = () => {
+	nextTick(() => {
+		const query = uni.createSelectorQuery();
+		query.selectAll('.category-btn').boundingClientRect((rects) => {
+			if (rects && rects.length > 0) {
+				const totalWidth = rects.reduce((sum, rect) => sum + rect.width, 0);
+				const screenWidth = uni.getSystemInfoSync().windowWidth;
+				centered.value = totalWidth <= screenWidth; // 判断是否需要居中
+			} else {
+				console.error('Failed to get .category-btn elements.');
+			}
+		})
+		.exec();
+	});
+};
+
 // 加载分类数据
 const getRankListFn = (isFirstLoad = false) => {
-  getRankList().then((res) => {
-      rankList.value = res.data
-
-      // 仅在首次加载时选择第一个分类
-      if (isFirstLoad && rankList.value && rankList.value.length) {
-        selectCategory(rankList.value[0], 0);
-      } else if (!rankList.value.length) {
-        loading.value = false;
-      }
-
+	getRankList().then((res) => {
+		rankList.value = res.data
+		// 仅在首次加载时选择第一个分类
+		if (isFirstLoad && rankList.value && rankList.value.length) {
+			selectCategory(rankList.value[0], 0);
+		} else if (!rankList.value.length) {
+			loading.value = true;
+		}
+		calculateCentered();
+		
     }).catch((error) => {
-      console.error("加载分类数据失败", error);
+		console.error("加载分类数据失败", error);
     })
 };
 

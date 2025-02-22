@@ -48,5 +48,11 @@
   "totalBalance": "累计赠送余额",
   "totalCouponNum": "累计赠送优惠券",
   "totalGoodsNum": "累计赠送商品数",
-  "activeMember": "活动会员"
+  "activeMember": "活动会员",
+  "batchDelete": "批量删除",
+  "batchClose": "批量关闭",
+  "batchEmptySelectedActiveDeleteTips": "请先选择要删除的活动",
+  "batchEmptySelectedActiveCloseTips": "请先选择要关闭的活动",
+  "batchGoodsDeleteTips": "确定删除选中的活动吗？",
+  "batchGoodsCloseTips": "确定关闭选中的活动吗？"
 }

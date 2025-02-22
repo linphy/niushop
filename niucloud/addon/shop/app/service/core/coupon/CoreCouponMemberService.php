@@ -32,11 +32,11 @@ class CoreCouponMemberService extends BaseCoreService
     /**
      * 通过会员id查询会员有效可用的优惠券
      * @param $member_id
-     * @return void
+     * @return mixed
      */
     public function getUseCouponListByMemberId($member_id)
     {
-        $where = array (
+        $where = array(
             [ 'member_id', '=', $member_id ],
             [ 'status', '=', CouponMemberDict::WAIT_USE ],
             [ 'expire_time', '>', time() ]
@@ -57,7 +57,7 @@ class CoreCouponMemberService extends BaseCoreService
      */
     public function getUseCouponById($id)
     {
-        $where = array (
+        $where = array(
             [ 'id', '=', $id ],
             [ 'status', '=', CouponMemberDict::WAIT_USE ]
         );
@@ -73,27 +73,27 @@ class CoreCouponMemberService extends BaseCoreService
      */
     public function recover($id)
     {
-        $where = array (
+        $where = array(
             [ 'id', '=', $id ],
             [ 'status', '=', CouponMemberDict::USED ]
         );
 
         $coupon = $this->model->where($where)->findOrEmpty();
         //恢复没必要返还错误
-        if (!$coupon->isEmpty()){
-                //判断使用时间是否过期
-                if(time() >= $coupon['expire_time']){
-                    $status = CouponMemberDict::EXPIRE;
-                }else{
-                    $status = CouponMemberDict::WAIT_USE;
-                }
-                $coupon->save(
-                    [
-                        'status' => $status,
-                        'trade_id' => 0,
-                        'use_time' => 0
-                    ]
-                );
+        if (!$coupon->isEmpty()) {
+            //判断使用时间是否过期
+            if (time() >= $coupon[ 'expire_time' ]) {
+                $status = CouponMemberDict::EXPIRE;
+            } else {
+                $status = CouponMemberDict::WAIT_USE;
+            }
+            $coupon->save(
+                [
+                    'status' => $status,
+                    'trade_id' => 0,
+                    'use_time' => 0
+                ]
+            );
         }
 
         return true;
@@ -134,6 +134,7 @@ class CoreCouponMemberService extends BaseCoreService
         $this->model->where($where)->update($data);
         return true;
     }
+
     /**
      * 使用
      * @param array $data
@@ -142,7 +143,7 @@ class CoreCouponMemberService extends BaseCoreService
     public function use(array $data)
     {
         $id = $data[ 'id' ];
-        $where = array (
+        $where = array(
             [ 'id', '=', $id ],
             [ 'status', '=', CouponMemberDict::WAIT_USE ]
         );
@@ -165,8 +166,9 @@ class CoreCouponMemberService extends BaseCoreService
      * @param $num
      * @return void
      */
-    public function sendCoupon($member_id, $coupon_id, $num) {
-        $coupon = (new Coupon())->where([ [ 'id', '=', $coupon_id ] ])->findOrEmpty();
+    public function sendCoupon($member_id, $coupon_id, $num)
+    {
+        $coupon = ( new Coupon() )->where([ [ 'id', '=', $coupon_id ] ])->findOrEmpty();
         if ($coupon->isEmpty()) {
             throw new CommonException('COUPON_NOT_EXIST');
         }

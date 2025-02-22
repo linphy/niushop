@@ -159,7 +159,7 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted } from 'vue'
 import { t } from '@/locale'
-import { redirect, img, getToken } from '@/utils/common';
+import { redirect, img } from '@/utils/common';
 import { getGoodsCategoryTree, getGoodsPages } from '@/addon/shop/api/goods';
 import MescrollBody from '@/components/mescroll/mescroll-body/mescroll-body.vue';
 import MescrollEmpty from '@/components/mescroll/mescroll-empty/mescroll-empty.vue';

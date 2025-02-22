@@ -59,10 +59,12 @@ class CoreOrderCreateService extends BaseCoreService
         $this->getOrderCache($order_key);
 
         $this->goods_data = array_merge($this->goods_data, $this->gift_goods);
+        $this->form_data = $this->param[ 'form_data' ] ?? []; // 万能表单数据
         //校验错误
         $this->checkError();
         //普通订单校验库存
         $this->checkStock($this->goods_data);
+
         $order_data = [
             //订单整体
             'order_type' => OrderDict::TYPE,
@@ -89,7 +91,7 @@ class CoreOrderCreateService extends BaseCoreService
             'taker_latitude' => $this->delivery[ 'take_address' ][ 'lat' ] ?? '',
             'take_store_id' => $this->delivery[ 'take_store' ][ 'store_id' ] ?? 0,
 
-            //附属信息
+            // 附属信息
             'member_remark' => $this->param[ 'member_remark' ] ?? '',//买家留言
             'relate_id' => $this->extend_data[ 'relate_id' ] ?? 0,//关联id
             'activity_type' => $this->extend_data[ 'activity_type' ] ?? '', // 活动类型
@@ -180,8 +182,7 @@ class CoreOrderCreateService extends BaseCoreService
         //查看会员信息
         $member_id = $this->param[ 'member_id' ];
         $this->member_id = $member_id;
-        $member_info = ( new CoreMemberService() )->getInfoByMemberId($member_id, 'nickname, point, member_level');
-
+        $member_info = ( new CoreMemberService() )->getInfoByMemberId($member_id, 'nickname, headimg, balance, point, member_level');
         if (empty($member_info)) throw new CommonException('SHOP_ORDER_BUYER_NOT_FOUND');//无效的账号
 
         // 查询会员等级信息
@@ -189,6 +190,9 @@ class CoreOrderCreateService extends BaseCoreService
 
         //会员账户信息
         $this->buyer = $member_info;
+
+        $order_config = ( new CoreOrderConfigService() )->getConfig() ?? [];
+        $this->form_id = $order_config[ 'form_id' ];
 
         //查询商品信息
         $this->getGoodsData();

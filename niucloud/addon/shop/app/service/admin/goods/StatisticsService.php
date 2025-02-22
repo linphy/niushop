@@ -274,7 +274,7 @@ class StatisticsService extends BaseAdminService
      */
     public function syncStatGoods($date = [])
     {
-        $pageSize = 50;
+        $pageSize = 100;
         $page = 1;
 
         if (empty($date)) {

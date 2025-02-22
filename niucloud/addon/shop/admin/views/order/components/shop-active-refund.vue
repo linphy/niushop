@@ -80,7 +80,7 @@ import { t } from '@/lang'
 import { img } from '@/utils/common'
 import { FormInstance, ElMessage } from 'element-plus'
 import { shopActiveRefund } from '@/addon/shop/api/order'
-
+import { cloneDeep } from 'lodash-es'
 const showDialog = ref(false)
 const loading = ref(false)
 
@@ -163,7 +163,9 @@ const confirm = async (formEl: FormInstance | undefined) => {
     await formEl.validate(async (valid) => {
         if (valid) {
             loading.value = true
-            const data = formData
+            const data = cloneDeep(formData)
+            data.shop_active_refund_money = formData.refund_money;
+            delete data.refund_money;
             shopActiveRefund(data).then(res => {
                 loading.value = false
                 showDialog.value = false

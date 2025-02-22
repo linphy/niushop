@@ -100,7 +100,7 @@
                                             }
                                         }
                                     }]" v-else>
-                                    <span v-if="row.valid">{{ row.min_discount_rate==row.max_discount_rate?row.min_discount_rate:row.min_discount_rate+'-'+row.max_discount_rate }}</span>
+                                    <span v-if="row.valid && row.min_discount_rate!=Infinity&&row.max_discount_rate!=-Infinity">{{ row.min_discount_rate==row.max_discount_rate?row.min_discount_rate:row.min_discount_rate+'-'+row.max_discount_rate }}</span>
                                     <span v-else>--</span>
                                     </el-form-item>
                                 </template>
@@ -126,7 +126,7 @@
                                         <el-input v-model.trim="row.reduce_money" @blur="inputBlur(row,'reduce',row.index)" clearable placeholder="0.00" maxlength="8" />
                                     </el-form-item>
                                     <el-form-item v-else>
-                                        <span v-if="row.valid">{{ row.min_reduce_money==row.max_reduce_money?row.min_reduce_money:row.min_reduce_money+'-'+row.max_reduce_money }}</span>
+                                        <span v-if="row.valid && row.min_reduce_money!=Infinity&&row.max_reduce_money!=-Infinity">{{ row.min_reduce_money==row.max_reduce_money?row.min_reduce_money:row.min_reduce_money+'-'+row.max_reduce_money }}</span>
                                         <span v-else>--</span>
                                     </el-form-item>
                                 </template>
@@ -152,7 +152,7 @@
                                         <el-input v-model.trim="row.specify_price" clearable @blur="inputBlur(row,'specify',row.index)" placeholder="0.00" maxlength="8" />
                                     </el-form-item>
                                     <el-form-item v-else>
-                                        <span v-if="row.valid">{{ row.min_specify_price==row.max_specify_price?row.min_specify_price:row.min_specify_price+'-'+row.max_specify_price }}</span>
+                                        <span v-if="row.valid && row.min_specify_price!=Infinity&&row.max_specify_price!=-Infinity">{{ row.min_specify_price==row.max_specify_price?row.min_specify_price:row.min_specify_price+'-'+row.max_specify_price }}</span>
                                         <span v-else>--</span>
                                     </el-form-item>
                                 </template>

@@ -7,8 +7,13 @@
 
             <el-form :model="formData" label-width="95" ref="formRef" :rules="rules" class="page-form" v-loading="loading">
                 <el-card class="box-card !border-none" shadow="never">
-                    <h3 class="panel-title !text-sm pl-[15px]">{{ t('closeOrderInfo') }}</h3>
-                    <el-form-item prop="close_length">
+                    <div class="flex justify-start items-center">
+                        <h3 class="panel-title !text-sm pl-[15px]">{{ t('closeOrderInfo') }}</h3>
+                        <el-form-item class="ml-[-80px]" prop="is_close">
+                            <el-checkbox v-model="formData.is_close"  true-label="1" false-label="2" />
+                        </el-form-item>
+                    </div>
+                    <el-form-item prop="close_length" v-if="formData.is_close == '1'">
                         <div>
                             <p class="!text-sm">
                                 <span>{{ t('closeOrderInfoLeft') }}</span>
@@ -18,13 +23,15 @@
                             <p class="text-[12px] text-[#a9a9a9] leading-normal  mt-[5px]">{{ t('closeOrderInfoBottom') }}</p>
                         </div>
                     </el-form-item>
-                    <el-form-item prop="is_close">
-                        <el-checkbox v-model="formData.is_close" :label="t('isClose')" true-label="1" false-label="2" />
-                    </el-form-item>
                 </el-card>
                 <el-card class="box-card !border-none" shadow="never">
-                    <h3 class="panel-title !text-sm pl-[15px]">{{ t('confirm') }}</h3>
-                    <el-form-item prop="finish_length">
+                    <div class="flex justify-start items-center">
+                        <h3 class="panel-title !text-sm pl-[15px]">{{ t('confirm') }}</h3>
+                        <el-form-item  class="ml-[-80px]"  prop="is_finish">
+                            <el-checkbox v-model="formData.is_finish"  true-label="1" false-label="2" />
+                        </el-form-item>
+                    </div>
+                    <el-form-item prop="finish_length" v-if="formData.is_finish == '1'">
                         <div>
                             <p class="!text-sm">
                                 <span>{{ t('confirmLeft') }}</span>
@@ -34,13 +41,15 @@
                             <p class="text-[12px] text-[#a9a9a9] leading-normal  mt-[5px]">{{ t('confirmBottom') }}</p>
                         </div>
                     </el-form-item>
-                    <el-form-item prop="is_finish">
-                        <el-checkbox v-model="formData.is_finish" :label="t('isFinish')" true-label="1" false-label="2" />
-                    </el-form-item>
                 </el-card>
                 <el-card class="box-card !border-none" shadow="never">
-                    <h3 class="panel-title !text-sm pl-[15px]">{{ t('refund') }}</h3>
-                    <el-form-item prop="refund_length">
+                    <div class="flex justify-start items-center">
+                        <h3 class="panel-title !text-sm pl-[15px]">{{ t('refund') }}</h3>
+                        <el-form-item  class="ml-[-80px]" prop="no_allow_refund">
+                            <el-checkbox v-model="formData.no_allow_refund"  :true-label="1" :false-label="2" />
+                        </el-form-item>
+                    </div>
+                    <el-form-item prop="refund_length" v-if="formData.no_allow_refund == '1'">
                         <div>
                             <p class="!text-sm">
                                 <span>{{ t('refundLeft') }}</span>
@@ -50,8 +59,18 @@
                             <p class="text-[12px] text-[#a9a9a9] leading-normal  mt-[5px]">{{ t('refundBottom') }}</p>
                         </div>
                     </el-form-item>
-                    <el-form-item prop="no_allow_refund">
-                        <el-checkbox v-model="formData.no_allow_refund" :label="t('noAllowRefund')" true-label="1" false-label="2" />
+                </el-card>
+                <!-- 万能表单 -->
+                <el-card class="box-card !border-none" shadow="never">
+                    <h3 class="panel-title !text-sm pl-[15px]">{{ t('diyForm') }}</h3>
+                    <el-form-item>
+                        <el-select v-model="formData.form_id" :placeholder="t('diyFormPlaceholder')" clearable>
+                            <el-option v-for="item in diyFormOptions" :key="item.form_id" :label="item.page_title" :value="item.form_id" />
+                        </el-select>
+                        <div class="ml-[10px]">
+                            <span class="cursor-pointer text-primary mr-[10px]" @click="refreshDiyForm(true)">{{ t('refresh') }}</span>
+                            <span class="cursor-pointer text-primary" @click="toDiyFormEvent">{{ t('addDiyForm') }}</span>
+                        </div>
                     </el-form-item>
                 </el-card>
                 <el-card class="box-card !border-none" shadow="never">
@@ -131,13 +150,17 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref,reactive } from 'vue'
 import { t } from '@/lang'
 import { getConfig, setConfig } from '@/addon/shop/api/order'
-import { useRoute } from 'vue-router'
+import { useRoute,useRouter } from 'vue-router'
 import { filterNumber } from '@/utils/common'
+import { getDiyFormList } from '@/app/api/diy_form'
+import { ElMessage } from 'element-plus'
 
 const route = useRoute()
+const router = useRouter()
+
 const pageName = route.meta.title
 const formData = ref({
     close_length: '10',
@@ -151,8 +174,10 @@ const formData = ref({
     refund_length: '1',
     is_evaluate: 1,
     evaluate_is_to_examine: 1,
-    evaluate_is_show: 1
+    evaluate_is_show: 1,
+    form_id: ''
 })
+
 const validCloseLength = (rule:any, value:any, callback:Function) => {
     if (formData.value.is_close != '2') {
         if (value == '') {
@@ -166,6 +191,7 @@ const validCloseLength = (rule:any, value:any, callback:Function) => {
         return callback()
     }
 }
+
 const validFinishLength = (rule:any, value:any, callback:Function) => {
     if (formData.value.is_finish != '2') {
         if (value == '') {
@@ -179,6 +205,7 @@ const validFinishLength = (rule:any, value:any, callback:Function) => {
         return callback()
     }
 }
+
 const validRefundLength = (rule:any, value:any, callback:Function) => {
     if (formData.value.no_allow_refund != '2') {
         if (value == '') {
@@ -192,6 +219,7 @@ const validRefundLength = (rule:any, value:any, callback:Function) => {
         return callback()
     }
 }
+
 const validInvoiceType = (rule:any, value:any, callback:Function) => {
     if (formData.value.is_invoice === '1') {
         if (!value.length) {
@@ -203,6 +231,7 @@ const validInvoiceType = (rule:any, value:any, callback:Function) => {
         return callback()
     }
 }
+
 const rules = ref({
     close_length: [
         { validator: validCloseLength, trigger: 'blur' }
@@ -217,6 +246,40 @@ const rules = ref({
         { validator: validInvoiceType, trigger: 'change' }
     ]
 })
+
+/** ***************** 万能表单-start *************************/
+// 万能表单列表下拉框
+const diyFormOptions = reactive([])
+// 跳转到万能表单列表，添加表单
+const toDiyFormEvent = () => {
+    const url = router.resolve({
+        path: '/diy_form/list'
+    })
+    window.open(url.href)
+}
+
+// 刷新万能表单
+const refreshDiyForm = (bool = false) => {
+    getDiyFormList({
+        type: 'DIY_FROM_ORDER_PAYMENT',
+        status: 1
+    }).then((res) => {
+        const data = res.data
+        if (data) {
+            diyFormOptions.splice(0, diyFormOptions.length, ...data)
+            if (bool) {
+                ElMessage({
+                    message: t('refreshSuccess'),
+                    type: 'success'
+                })
+            }
+        }
+    })
+}
+
+refreshDiyForm()
+/** *****************万能表单-end *************************/
+
 const loading = ref(false)
 const getConfigFn = () => {
     loading.value = true
@@ -224,6 +287,7 @@ const getConfigFn = () => {
         Object.values(res.data).forEach(el => {
             formData.value = Object.assign(formData.value, el)
         })
+        formData.value.form_id = res.data.form_id;
         if (!formData.value.invoice_content.length) formData.value.invoice_content.push('')
         loading.value = false
     }).catch(() => {

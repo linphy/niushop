@@ -157,7 +157,7 @@ class CoreNewcomerService extends BaseCoreService
                         $member_info = ( new Member() )->field('create_time')->where([
                             [ 'member_id', '=', $member_id ] ])
                             ->findOrEmpty()->toArray();
-                        if (strtotime($member_info[ 'create_time' ]) >= $appoint_time) $is_newcomer = true;
+                        if (!empty($member_info) && strtotime($member_info[ 'create_time' ]) >= $appoint_time) $is_newcomer = true;
                         break;
                 }
 

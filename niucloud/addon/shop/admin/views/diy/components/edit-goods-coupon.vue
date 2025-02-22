@@ -144,7 +144,7 @@ diyStore.editComponent.verify = (index: number) => {
     if(diyStore.value[index].btnText == ''){
         res.code = false
         res.message = t('couponBtnTextPlaceholder')
-        return res;
+        return res; 
     }
 
     if(diyStore.value[index].couponTitle == ''){

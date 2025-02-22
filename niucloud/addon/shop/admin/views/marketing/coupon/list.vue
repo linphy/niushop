@@ -108,6 +108,7 @@
         </el-card>
         <!-- 商品推广弹出框 -->
         <coupon-spread-popup ref="couponSpreadPopupRef"/>
+        <coupon-collection ref="couponCollectionRef"/> 
     </div>
 </template>
 
@@ -119,6 +120,7 @@ import { ElMessageBox, FormInstance } from 'element-plus'
 import { t } from '@/lang'
 import couponSpreadPopup from '@/addon/shop/views/marketing/coupon/components/coupon-spread-popup.vue'
 import { setTablePageStorage,getTablePageStorage } from "@/utils/common";
+import couponCollection from '@/addon/shop/views/marketing/coupon/components/coupon-collection.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -164,6 +166,9 @@ const loadCouponList = (page: number = 1) => {
 }
 loadCouponList(getTablePageStorage(tableData.searchParam).page);
 
+// 优惠券领取记录
+const couponCollectionRef: any = ref(null)
+
 // 商品推广
 const couponSpreadPopupRef: any = ref(null)
 
@@ -181,7 +186,9 @@ const editEvent = (data: any) => {
 
 // 领取记录
 const collectionEvent = (data: any) => {
-    router.push('/shop/marketing/coupon/collection?id=' + data.id)
+    let parameter = {id: data.id};
+    couponCollectionRef.value.setFormData(parameter);
+    couponCollectionRef.value.showDialog = true;
 }
 
 /**

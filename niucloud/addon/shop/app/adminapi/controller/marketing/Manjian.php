@@ -182,4 +182,30 @@ class Manjian extends BaseAdminController
         return success('SUCCESS', data:( new ManjianService() )->checkGoods($data));
     }
 
+    /**
+     * 批量关闭
+     * @return \think\Response
+     */
+    public function batchClose()
+    {
+        $data = $this->request->params([
+            [ "manjian_id", [] ],
+        ]);
+        ( new ManjianService() )->batchClose($data);
+        return success('SUCCESS');
+    }
+
+    /**
+     * 批量删除
+     * @return \think\Response
+     */
+    public function batchDelete()
+    {
+        $data = $this->request->params([
+            [ "manjian_id", [] ],
+        ]);
+        ( new ManjianService() )->batchDelete($data);
+        return success('DELETE_SUCCESS');
+    }
+
 }

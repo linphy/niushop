@@ -24,6 +24,10 @@ use addon\shop\app\model\order\OrderGoods;
 use addon\shop\app\service\admin\delivery\DeliveryService;
 use addon\shop\app\service\core\order\CoreOrderEventService;
 use addon\shop\app\service\core\order\CoreOrderPayService;
+use app\dict\common\ChannelDict;
+use app\dict\pay\PayDict;
+use app\model\diy_form\DiyFormRecordsFields;
+use app\model\member\Member;
 use app\model\pay\Pay;
 use app\service\core\pay\CorePayService;
 use core\base\BaseAdminService;
@@ -58,16 +62,32 @@ class OrderService extends BaseAdminService
 
         $pay_where = [];
         if ($where[ 'pay_type' ]) {
-            $pay_where[] = [ 'pay.type', '=', $where[ 'pay_type' ] ];
+            if ($where[ 'pay_type' ] == PayDict::FRIENDSPAY) {
+                $pay_where = [
+                    [ 'pay.main_id', '<>', Db::raw("pay.from_main_id") ],
+                    [ 'pay.status', '=', PayDict::STATUS_FINISH ]
+                ];
+            } else {
+                $pay_where[] = [ 'pay.type', '=', $where[ 'pay_type' ] ];
+            }
+        }
+        $member_where = [];
+        if ($where['keyword'] != ''){
+            $member_where = [
+                [ 'member.member_no|member.nickname|member.username|member.mobile', 'like' , "%" . $where['keyword'] . "%" ],
+            ];
         }
         $search_model = $this->model
-            ->withSearch([ 'search_type', 'order_from', 'join_status', 'create_time', 'join_pay_time', 'activity_type', 'keyword' ], $where)
+            ->where([ [ 'order.order_id', '>', 0 ] ])
+            ->withSearch([ 'search_type', 'order_from', 'join_status', 'create_time', 'join_pay_time', 'activity_type' ], $where)
             ->field($field)
             ->withJoin([
                 'pay' => function(Query $query) use ($pay_where) {
                     $query->where($pay_where);
                 },
-                'member'
+                'member'=> function(Query $query) use ($member_where) {
+                    $query->where($member_where);
+                },
             ], 'left')
             ->with([
                 'order_goods' => function($query) {
@@ -80,6 +100,7 @@ class OrderService extends BaseAdminService
             $item_pay = $item[ 'pay' ];
             if (!empty($item_pay)) {
                 $item_pay->append([ 'type_name' ]);
+                $item_pay[ 'pay_type_name' ] = PayDict::getPayType()[PayDict::FRIENDSPAY]['name'] ?? '';
             }
         });
         return $list;
@@ -92,12 +113,12 @@ class OrderService extends BaseAdminService
      */
     public function getDetail(int $order_id)
     {
-        $field = 'activity_type,point,order_id,order_no,order_type,order_from,out_trade_no,status,member_id,ip,goods_money,delivery_money,order_money,invoice_id,create_time,pay_time,delivery_time,take_time,finish_time,close_time,delivery_type,taker_name,taker_mobile,taker_province,taker_city,taker_district,taker_address,taker_full_address,taker_longitude,taker_latitude,take_store_id,is_enable_refund,member_remark,shop_remark,close_remark,discount_money';
+        $field = 'activity_type,point,order_id,order_no,order_type,order_from,out_trade_no,status,member_id,ip,goods_money,delivery_money,order_money,invoice_id,create_time,pay_time,delivery_time,take_time,finish_time,close_time,delivery_type,taker_name,taker_mobile,taker_province,taker_city,taker_district,taker_address,taker_full_address,taker_longitude,taker_latitude,take_store_id,is_enable_refund,member_remark,shop_remark,close_remark,discount_money,form_record_id';
         $info = $this->model->where([ [ 'order_id', '=', $order_id ] ])->field($field)
             ->with(
                 [
                     'order_goods' => function($query) {
-                        $query->field('extend,order_goods_id, order_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money, is_enable_refund, goods_type, delivery_status, status,discount_money,delivery_id,is_gift')->append([ 'delivery_status_name', 'status_name' ]);
+                        $query->field('extend,order_goods_id, order_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money, is_enable_refund, goods_type, delivery_status, status,discount_money,delivery_id,is_gift,form_record_id')->append([ 'delivery_status_name', 'status_name' ]);
                     },
                     'member' => function($query) {
                         $query->field('member_id, nickname, mobile, headimg');
@@ -105,7 +126,7 @@ class OrderService extends BaseAdminService
                     'order_log' => function($query) {
                         $query->field('order_id, content, main_type, create_time, main_id, type')->order("create_time desc, id desc")->append([ 'main_type_name', 'type_name', 'main_name' ]);
                     },
-                    'order_discount' => function ($query) {
+                    'order_discount' => function($query) {
                         $query->field('order_id,discount_type,money');
                     }
                 ])->append([ 'order_from_name', 'order_type_name', 'status_name', 'delivery_type_name' ])->findOrEmpty()->toArray();
@@ -127,7 +148,17 @@ class OrderService extends BaseAdminService
 
         if ($info[ 'out_trade_no' ]) {
             $info[ 'pay' ] = ( new Pay() )->where([ [ 'out_trade_no', '=', $info[ 'out_trade_no' ] ] ])
-                ->field('out_trade_no, type, pay_time')->append([ 'type_name' ])->findOrEmpty()->toArray();
+                ->field('main_id, out_trade_no, type, pay_time, status')->append([ 'type_name' ])->findOrEmpty()->toArray();
+
+            if (!empty($info[ 'pay' ])) {
+                if ($info[ 'member_id' ] != $info[ 'pay' ][ 'main_id' ]) {
+                    $member_info = ( new Member() )->where([ [ 'member_id', '=', $info[ 'pay' ][ 'main_id' ] ] ])->findOrEmpty()->toArray();
+                    if (!empty($member_info)) {
+                        $info[ 'pay' ][ 'pay_member' ] = $member_info['nickname'];
+                    }
+                }
+                $info[ 'pay' ][ 'pay_type_name' ] = PayDict::getPayType()[PayDict::FRIENDSPAY]['name'] ?? '';
+            }
         }
 
         $coupon_money = 0;
@@ -144,6 +175,26 @@ class OrderService extends BaseAdminService
         }
         $info[ 'coupon_money' ] = number_format($coupon_money, 2, '.', '');
         $info[ 'manjian_discount_money' ] = number_format($manjian_discount_money, 2, '.', '');
+
+        $diy_form_records_fields_model = new DiyFormRecordsFields();
+        if (!empty($info['form_record_id'])) {
+            $field_count = $diy_form_records_fields_model->where([[ 'record_id', '=', $info['form_record_id'] ]])->count();
+            if ($field_count > 0) {
+                $info[ 'form_record_show' ] = true;
+            } else {
+                $info[ 'form_record_show' ] = false;
+            }
+        }
+        if (!empty($info[ 'order_goods' ])) {
+            foreach ($info[ 'order_goods' ] as &$item) {
+                $field_count = $diy_form_records_fields_model->where([[ 'record_id', '=', $item['form_record_id'] ]])->count();
+                if ($field_count > 0) {
+                    $item[ 'form_record_show' ] = true;
+                } else {
+                    $item[ 'form_record_show' ] = false;
+                }
+            }
+        }
 
         return $info;
     }
@@ -412,5 +463,19 @@ class OrderService extends BaseAdminService
             $order[ 'error_msg' ] = get_lang('NOT_SUPPORT_DELIVERY_ADDRESS');
         }
         return $order;
+    }
+
+    /**
+     * 获取订单来源
+     * @return array
+     */
+    public function getOrderFrom()
+    {
+        $order_from_list = ChannelDict::getType();
+        $from_event_list = array_filter(event('OrderFromList')) ?? [];
+        foreach ($from_event_list as $item) {
+            $order_from_list = array_merge($order_from_list, $item);
+        }
+        return $order_from_list;
     }
 }

@@ -52,7 +52,7 @@
 	import {useGoods} from '@/addon/shop/hooks/useGoods'
 
 	const diyGoods = useGoods();
-	const props = defineProps(['component', 'index', 'pullDownRefreshCount','value']);
+	const props = defineProps(['component', 'index','value']);
 	const diyStore = useDiyStore();
 	const emits = defineEmits(['loadingFn']); //商品数据加载完成之后触发
 
@@ -109,6 +109,7 @@
 		 }
 		 return style
 	}
+
 	//moreTitle样式
 	const moreTitleStyle = (item:any)=>{
 		var style= '';
@@ -118,6 +119,7 @@
 		 }
 		 return style
 	}
+
 	//商品样式
 	const itemStyle = ref('');
 	const setItemStyle = ()=>{
@@ -136,13 +138,6 @@
 	}
 
 	setItemStyle();
-
-	watch(
-		() => props.pullDownRefreshCount,
-		(newValue, oldValue) => {
-			// 处理下拉刷新业务
-		}
-	)
 
 	const getGoodsListFn = () => {
         let data: any = {}
