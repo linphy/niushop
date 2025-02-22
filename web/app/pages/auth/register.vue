@@ -83,7 +83,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref,reactive,watch,computed } from 'vue'
+import { ref,reactive,computed } from 'vue'
 import { usernameRegister, mobileRegister, wechatCheck } from '@/app/api/auth'
 import useMemberStore from '@/stores/member'
 import useConfigStore from '@/stores/config'

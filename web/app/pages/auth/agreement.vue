@@ -3,7 +3,7 @@
         <div>
             <div>
                 <template v-if="agreement">
-                    <div class="" v-if="agreement.title && agreement.content">
+                    <div v-if="agreement.title && agreement.content">
                         <h2 class="text-center">{{ agreement.title }}</h2>
                         <div v-html="agreement.content"></div>
                     </div>

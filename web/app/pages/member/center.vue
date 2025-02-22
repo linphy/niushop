@@ -124,7 +124,6 @@ const uploadRef = ref<any>(null)
 const upload = computed(() => {
     const headers: Record<string, any> = {}
     headers.token = getToken()
-    headers['site-id'] = storage.get('siteId') || 1
     return {
         action: `${request.options.baseURL}/file/image`,
         limit: 1,
