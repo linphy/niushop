@@ -90,3 +90,11 @@ export function cancelInstall(addon: string) {
 export function getInstalledAddonList() {
     return request.get('addon/list/install')
 }
+
+/**
+ * 获取站点应用
+ * @returns
+ */
+export function getShowApp() {
+    return request.get('addon/list/showapp')
+}

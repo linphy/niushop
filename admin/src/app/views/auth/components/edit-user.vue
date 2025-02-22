@@ -52,8 +52,7 @@ import { t } from '@/lang'
 import type { FormInstance } from 'element-plus'
 import { getUserInfo, addUser, editUser } from '@/app/api/user'
 import { allRole } from '@/app/api/sys'
-import { img, deepClone } from '@/utils/common'
-import { AnyObject } from '@/types/global'
+import { deepClone } from '@/utils/common'
 
 const uid = ref<number | string>('')
 

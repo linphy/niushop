@@ -53,13 +53,13 @@
         <el-dialog v-model="dialogVisible" :title="t('codeDownTwoDesc')" width="30%" :before-close="handleClose">
             <el-form ref="ruleFormRef" :model="form" label-width="120px">
                 <el-form-item prop="code" :label="t('code')">
-                    <el-input v-model="form.code" :placeholder="t('codePlaceholder')" onkeyup="this.value = this.value.replace(/[^\d\.]/g,'');" />
+                    <el-input v-model.trim="form.code" :placeholder="t('codePlaceholder')" onkeyup="this.value = this.value.replace(/[^\d\.]/g,'');" />
                 </el-form-item>
                 <el-form-item prop="path" :label="t('path')">
                     <upload-file v-model="form.path" :api="'weapp/upload'" :accept="'.zip'" />
                 </el-form-item>
                 <el-form-item :label="t('content')">
-                    <el-input type="textarea" v-model="form.content" :placeholder="t('contentPlaceholder')" />
+                    <el-input type="textarea" v-model.trim="form.content" :placeholder="t('contentPlaceholder')" />
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -73,7 +73,7 @@
         </el-dialog>
 
         <el-dialog v-model="failReasonDialogVisible" :title="t('failReason')" width="60%">
-            <el-scrollbar class="h-[60vh] w-full whitespace-pre p-[20px]">
+            <el-scrollbar class="h-[60vh] w-full whitespace-pre-wrap p-[20px]">
                 <div v-html="failReason"></div>
             </el-scrollbar>
         </el-dialog>

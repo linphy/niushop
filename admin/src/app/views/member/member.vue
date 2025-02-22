@@ -28,7 +28,7 @@
                         </el-select>
                     </el-form-item>
 
-                    <el-form-item :label="t('memberLevel')" prop="member_label">
+                    <el-form-item :label="t('memberLevel')" prop="member_level">
                         <el-select v-model="memberTableData.searchParam.member_level" collapse-tags clearable :placeholder="t('memberLevelPlaceholder')" class="input-width">
                             <el-option :label="t('selectPlaceholder')" value="" />
                             <el-option :label="item['level_name']" :value="item['level_id']" v-for="(item, index) in levelSelectData" :key="index" />

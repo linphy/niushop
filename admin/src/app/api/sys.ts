@@ -391,7 +391,7 @@ export function getTransferInfo(channel: string) {
  * @returns
  */
 export function setTransferInfo(params: Record<string, any>) {
-    return request.post(`pay/channel/set/transfer`, params)
+    return request.post(`pay/channel/set/transfer`, params, { showSuccessMessage: true })
 }
 
 /***************************************************** 定时任务 ****************************************************/
@@ -570,7 +570,6 @@ export function setPatConfig(params: Record<string, any>) {
     return request.post(`pay/channel/set/all`, params, { showSuccessMessage: true })
 }
 
-
 /***************************************************** 刷新菜单 ****************************************************/
 /**
  * 刷新菜单
@@ -609,8 +608,6 @@ export function setMap(params: Record<string, any>) {
 export function getMap() {
     return request.get(`sys/config/map`)
 }
-
-/***************************************************** 首页 ****************************************************/
 
 /**
  * 获取支付待审核记录
