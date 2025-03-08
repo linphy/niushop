@@ -403,10 +403,22 @@ class Index extends BaseInstall
 
         $files = get_files_by_dir($addon_path);
         if (!empty($files)) {
+            $addon = [];
             foreach ($files as $path) {
                 $data = ( new CoreAddonService() )->getAddonConfig($path);
                 if (isset($data[ 'key' ])) {
-                    $install_service = ( new CoreAddonInstallService($data[ 'key' ]) );
+                    if ($data['type'] == 'app') {
+                        $install_service = ( new CoreAddonInstallService($data[ 'key' ]) );
+                        $install_service->installCheck();
+                        $install_service->install();
+                    } else {
+                        $addon[] = $data;
+                    }
+                }
+            }
+            if (!empty($addon)) {
+                foreach ($addon as $k => $v) {
+                    $install_service = ( new CoreAddonInstallService($v[ 'key' ]) );
                     $install_service->installCheck();
                     $install_service->install();
                 }
