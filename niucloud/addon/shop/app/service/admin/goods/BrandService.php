@@ -36,13 +36,13 @@ class BrandService extends BaseAdminService
      */
     public function getPage(array $where = [])
     {
-        $field = 'brand_id,brand_name,logo,desc,sort,create_time';
+        $field = 'brand_id,brand_name,logo,color_json,desc,sort,create_time';
         $order = 'brand_id desc';
         if (!empty($where[ 'order' ])) {
             $order = $where[ 'order' ] . ' ' . $where[ 'sort' ];
         }
 
-        $search_model = $this->model->where([['brand_id', '>', 0]])->withSearch([ "brand_name" ], $where)->field($field)->order($order);
+        $search_model = $this->model->where([ [ 'brand_id', '>', 0 ] ])->withSearch([ "brand_name" ], $where)->field($field)->order($order);
         $list = $this->pageQuery($search_model);
         return $list;
     }
@@ -53,10 +53,10 @@ class BrandService extends BaseAdminService
      * @param string $field
      * @return array
      */
-    public function getList(array $where = [], $field = 'brand_id,brand_name,logo,desc,sort,create_time')
+    public function getList(array $where = [], $field = 'brand_id,brand_name,logo,color_json,desc,sort,create_time')
     {
         $order = 'sort desc';
-        return $this->model->where([['brand_id', '>', 0]])->withSearch([ "brand_name" ], $where)->field($field)->order($order)->select()->toArray();
+        return $this->model->where([ [ 'brand_id', '>', 0 ] ])->withSearch([ "brand_name" ], $where)->field($field)->order($order)->select()->toArray();
     }
 
     /**
@@ -66,7 +66,7 @@ class BrandService extends BaseAdminService
      */
     public function getInfo(int $id)
     {
-        $field = 'brand_id,brand_name,logo,desc,sort,create_time';
+        $field = 'brand_id,brand_name,logo,color_json,desc,sort,create_time';
         $info = $this->model->field($field)->where([ [ 'brand_id', '=', $id ] ])->findOrEmpty()->toArray();
         return $info;
     }

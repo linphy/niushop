@@ -631,6 +631,7 @@ trait CoreOrderCreateTrait
         //存在实物商品查询物流信息
         if (in_array(GoodsDict::REAL, $has_goods_types)) {
             $delivery_type_list = $this->delivery[ 'delivery_type_list' ];
+            if (empty($delivery_type_list)) $this->setError('NOT_CONFIGURED_DELIVERY_TYPE');//商家尚未配置配送方式
             if ($delivery_type) {
                 //校验是否合法
                 if (empty($delivery_type_list[ $delivery_type ])) throw new CommonException('SHOP_ORDER_PLEASE_SELECT_DELIVERY_TYPE');//配送方式非法

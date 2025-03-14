@@ -49,17 +49,25 @@
                             <span v-else >否</span>
                         </template>
                     </el-table-column>
-
-                    <el-table-column  :label="t('sumCount')" min-width="160">
-                        <template #default="{ row }">
-                            <span v-if="row.receive_type == 1 && row.sum_count != '-1'">{{ row.remain_count || 0 }} / {{ row.sum_count || 0 }}</span>
-                            <span v-else>不限量</span>
-                        </template>
-                    </el-table-column>
-                    <el-table-column  :label="t('remainCount')" min-width="140">
-                        <template #default="{ row }">
-                            <span >{{ row.receive_count || 0}} / {{ row.receive_use_count || 0}} </span>
-                        </template>
+                    <el-table-column  :label="t('count')" min-width="160" :show-overflow-tooltip="true">
+                      <template #header>
+                        <div style="display: inline-flex; align-items: center">
+                          <span class="mr-[5px]">{{ t('count') }}</span>
+                          <el-tooltip class="box-item" effect="light" placement="top">
+                            <template #content>{{t('countTips1')}}<br />{{t('countTips2')}}<br />{{t('countTips3')}}<br />{{t('countTips4')}} </template>
+                            <el-icon color="#666">
+                              <QuestionFilled />
+                            </el-icon>
+                          </el-tooltip>
+                        </div>
+                      </template>
+                      <template #default="{ row }">
+                        <div v-if="row.receive_type == 1 && row.sum_count != '-1'">{{ t('sumCount') }}：{{ row.remain_count || 0 }} / {{ row.sum_count || 0 }} 张</div>
+                        <div v-else>{{ t('sumCount') }}：{{ t('noLimit') }}</div>
+                        <div>{{ t('receiveCount') }}：{{ row.receive_count || 0 }} 张</div>
+                        <div>{{ t('giveCount') }}：{{ row.give_count || 0 }} 张</div>
+                        <div>{{ t('receiveUseCount') }}：{{ row.receive_use_count || 0 }} 张</div>
+                      </template>
                     </el-table-column>
                     <el-table-column  :label="t('threshold')" min-width="130" >
                         <template #default="{ row }">
@@ -108,7 +116,7 @@
         </el-card>
         <!-- 商品推广弹出框 -->
         <coupon-spread-popup ref="couponSpreadPopupRef"/>
-        <coupon-collection ref="couponCollectionRef"/> 
+        <coupon-collection ref="couponCollectionRef"/>
     </div>
 </template>
 
@@ -211,7 +219,7 @@ const deleteEvent = (data: any) => {
 
 // 关闭
 const closeEvent = (data: any) => {
-    ElMessageBox.confirm(t('couponColseTips'), t('warning'),
+    ElMessageBox.confirm(t('couponCloseTips'), t('warning'),
         {
             confirmButtonText: t('confirm'),
             cancelButtonText: t('cancel'),

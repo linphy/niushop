@@ -11,5 +11,9 @@
       "sortPlaceholder":"请输入排序",
       "addBrand":"添加商品品牌",
       "updateBrand":"编辑商品品牌",
-      "brandDeleteTips":"确定要删除该数据吗？"
+      "brandDeleteTips":"确定要删除该数据吗？",
+      "textColor": "文字颜色",
+      "bgColor": "背景颜色",
+      "borderColor": "边框颜色",
+      "colorTips": "若未设置颜色，则为默认色"
 }

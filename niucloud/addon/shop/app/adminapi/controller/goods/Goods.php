@@ -11,6 +11,7 @@
 
 namespace addon\shop\app\adminapi\controller\goods;
 
+use addon\shop\app\service\admin\goods\ConfigService;
 use core\base\BaseAdminController;
 use addon\shop\app\service\admin\goods\GoodsService;
 
@@ -464,6 +465,21 @@ class Goods extends BaseAdminController
     public function getBatchSetDict()
     {
         return success(( new GoodsService() )->getBatchSetDict());
+    }
+
+    /**
+     * 验证商品编码是否重复
+     * @return \think\Response
+     */
+    public function verifySkuNo()
+    {
+        $params = $this->request->params(
+            [
+                ['sku_no', ''],
+                ['goods_id', 0]
+            ]);
+        (new ConfigService())->verifySkuNo($params);
+        return success('SUCCESS');
     }
 
 }

@@ -70,7 +70,7 @@ class CouponService extends BaseAdminService
      */
     public function getPage(array $where = [])
     {
-        $field = 'id,title,price,type,receive_type,start_time,end_time,remain_count,receive_count,status,limit_count,min_condition_money,receive_status,valid_type,length,valid_end_time';
+        $field = 'id,title,price,type,receive_type,start_time,end_time,remain_count,receive_count,give_count,status,limit_count,min_condition_money,receive_status,valid_type,length,valid_end_time';
         $order = 'id desc';
         $search_model = $this->model->where([ [ 'id', '>', 0 ] ])->withSearch([ "title", "status" ], $where)->append([ 'type_name', 'receive_type_name', 'status_name' ])->field($field)->order($order);
         $list = $this->pageQuery($search_model);
@@ -111,12 +111,6 @@ class CouponService extends BaseAdminService
         $order = 'id desc';
         $search_model = $this->model->where([ [ 'status', '=', CouponDict::NORMAL ] ])->withSearch([ "title" ], $where)->append([ 'type_name', 'receive_type_name', 'status_name' ])->field($field)->order($order);
         $list = $this->pageQuery($search_model);
-        foreach ($list[ 'data' ] as $k => $v) {
-            if ($v[ 'remain_count' ] == 0) {
-                unset($list[ 'data' ][ $k ]);
-            }
-        }
-        $list[ 'data' ] = array_values($list[ 'data' ]);
         $list[ 'verify_coupon_ids' ] = $verify_coupon_ids;
         return $list;
     }
@@ -495,10 +489,14 @@ class CouponService extends BaseAdminService
         $sign_config = ( new CoreConfigService() )->getConfig('SIGN_CONFIG');
         if (!empty($sign_config) && !empty($sign_config['value'])) {
             $sign_info = $sign_config['value'];
-            $coupon_ids = $sign_info['day_award']['shop_coupon']['coupon_id'];
+            if (!empty($sign_info['day_award']) && !empty($sign_info['day_award']['shop_coupon'])) {
+                $coupon_ids = $sign_info['day_award']['shop_coupon']['coupon_id'];
+            }
             if (!empty($sign_info['continue_award'])) {
                 foreach ($sign_info['continue_award'] as $item) {
-                    $coupon_ids = array_merge($coupon_ids, $item['shop_coupon']['coupon_id']);
+                    if (!empty($item['shop_coupon'])) {
+                        $coupon_ids = array_merge($coupon_ids, $item['shop_coupon']['coupon_id']);
+                    }
                 }
             }
             $coupon_ids = array_values(array_unique($coupon_ids));

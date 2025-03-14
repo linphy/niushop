@@ -14,7 +14,7 @@
                     </el-form-item>
                     <el-form-item :label="t('goodsCategory')" prop="goods_category">
                         <!-- <el-cascader v-model="goodsTable.searchParam.goods_category" :options="goodsCategoryOptions" :placeholder="t('goodsCategoryPlaceholder')" clearable :props="{ value: 'value', label: 'label', emitPath:false }"/> -->
-                        <el-cascader v-model="goodsTable.searchParam.goods_category" ref="cascader" :options="goodsCategoryOptions" @change="handleCascaderChange" :placeholder="t('goodsCategoryPlaceholder')" clearable :props="{ value: 'value', label: 'label', emitPath:false, multiple: false,checkStrictly: true,expandTrigger: 'hover'}"/>
+                        <el-cascader v-model="goodsTable.searchParam.goods_category" ref="cascader" :options="goodsCategoryOptions"  :placeholder="t('goodsCategoryPlaceholder')" clearable :props="goodsCategoryProps"/>
                     </el-form-item>
                     <el-form-item :label="t('goodsType')" prop="goods_type">
                         <el-select v-model="goodsTable.searchParam.goods_type" :placeholder="t('goodsTypePlaceholder')" clearable>
@@ -237,7 +237,10 @@ const regExp = {
 
 // 商品分类
 const goodsCategoryOptions: any = reactive([])
-
+const goodsCategoryProps = {
+    checkStrictly: true,
+    emitPath: false
+}
 // 商品类型
 const goodsType: any = reactive([])
 
@@ -246,15 +249,6 @@ const brandOptions: any = reactive([])
 
 // 标签组列表下拉框
 const labelOptions: any = reactive([])
-
-const cascader = ref(null);
-// 级联选择器的 change 事件处理
-const handleCascaderChange = (value:any) => {
-    const cascaderInstance = cascader.value;
-        if (cascaderInstance?.togglePopperVisible) {
-            cascaderInstance.togglePopperVisible(false); // 关闭下拉框
-        }
-};
 
 // 初始化数据
 const initData = () => {

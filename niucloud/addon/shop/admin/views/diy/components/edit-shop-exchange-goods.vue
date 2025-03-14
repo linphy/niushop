@@ -76,6 +76,9 @@
 							<el-radio :label="'bold'">{{ t('fontWeightBold') }}</el-radio>
 						</el-radio-group>
 					</el-form-item>
+					<el-form-item :label="t('imageRounded')">
+						<el-slider v-model="diyStore.editComponent.imgElementRounded" show-input size="small" class="ml-[10px] diy-nav-slider"     :max="50" />
+					</el-form-item>
 					<el-form-item :label="t('goodsNumColor')">
 						<el-color-picker v-model="diyStore.editComponent.saleStyle.color" show-alpha :predefine="diyStore.predefineColors" />
 					</el-form-item>

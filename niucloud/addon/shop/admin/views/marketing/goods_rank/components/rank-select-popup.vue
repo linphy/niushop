@@ -10,7 +10,7 @@
             </div>
         </slot>
         </div>
-        <el-dialog v-model="showDialog" :name="t('rankSelect')" width="1000px" :close-on-press-escape="false" :destroy-on-close="true" :close-on-click-modal="false">
+        <el-dialog v-model="showDialog" :name="t('rankSelect')" width="1000px" :destroy-on-close="true" :close-on-click-modal="false">
         <el-form :inline="true" :model="rankTable.searchParam" ref="searchFormRef">
             <el-form-item :label="t('rankName')" prop="keyword" class="form-item-wrap">
                 <el-input v-model.trim="rankTable.searchParam.name" :placeholder="t('rankNamePlaceholder')" maxlength="60" />

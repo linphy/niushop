@@ -174,19 +174,19 @@ class CoreCouponMemberService extends BaseCoreService
         }
 
         // 剩余数量不足
-        if ($coupon[ 'remain_count' ] != '-1' && $coupon[ 'remain_count' ] < $num) {
-            throw new CommonException('COUPON_STOCK_INSUFFICIENT');
-        }
-
-        if (strtotime($coupon[ 'start_time' ]) > 0) {
-            $time = time();
-            if ($time < strtotime($coupon[ 'start_time' ])) {
-                throw new CommonException('COUPON_RECEIVE_NOT_TIME');//优惠券不在领取时间范围内
-            }
-            if ($time > strtotime($coupon[ 'end_time' ])) {
-                throw new CommonException('COUPON_RECEIVE_NOT_TIME');//优惠券不在领取时间范围内
-            }
-        }
+//        if ($coupon[ 'remain_count' ] != '-1' && $coupon[ 'remain_count' ] < $num) {
+//            throw new CommonException('COUPON_STOCK_INSUFFICIENT');
+//        }
+//
+//        if (strtotime($coupon[ 'start_time' ]) > 0) {
+//            $time = time();
+//            if ($time < strtotime($coupon[ 'start_time' ])) {
+//                throw new CommonException('COUPON_RECEIVE_NOT_TIME');//优惠券不在领取时间范围内
+//            }
+//            if ($time > strtotime($coupon[ 'end_time' ])) {
+//                throw new CommonException('COUPON_RECEIVE_NOT_TIME');//优惠券不在领取时间范围内
+//            }
+//        }
 
         if ($coupon[ 'valid_type' ] == 1) {
             $expire_time = 86400 * $coupon[ 'length' ] + time();
@@ -212,10 +212,10 @@ class CoreCouponMemberService extends BaseCoreService
 
         $this->model->saveAll($member_coupon_data);
 
-        $coupon->receive_count += $num;
-        if ($coupon[ 'remain_count' ] != -1) {
-            $coupon->remain_count -= $num;
-        }
+        $coupon->give_count += $num;
+//        if ($coupon[ 'remain_count' ] != -1) {
+//            $coupon->remain_count -= $num;
+//        }
         $coupon->save();
 
         return true;

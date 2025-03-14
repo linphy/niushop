@@ -54,6 +54,15 @@ export function getCouponSelectList(params: Record<string, any>) {
 }
 
 /**
+ * 获取商品分类列表
+ * @param params
+ * @returns
+ */
+export function getSelectedCouponList(params: Record<string, any>) {
+    return request.get(`shop/goods/coupon/selected`, { params })
+}
+
+/**
  * 获取优惠券领取记录
  * @param params
  * @returns
@@ -108,15 +117,6 @@ export function deleteCoupon(id: number) {
  */
 export function closeCoupon(id: number) {
     return request.put(`shop/goods/coupon/invalid/${ id }`, { showSuccessMessage: true })
-}
-
-/**
- * 获取商品分类列表
- * @param params
- * @returns
- */
-export function getSelectedCouponList(params: Record<string, any>) {
-    return request.get(`shop/goods/coupon/selected`, { params })
 }
 
 /************ 限时折扣 ****************/
@@ -244,6 +244,15 @@ export function editActiveDiscountConfig(params: Record<string, any>) {
  */
 export function getActiveExchangePageList(params: Record<string, any>) {
     return request.get(`shop/active/exchange`, { params })
+}
+
+/**
+ * 获取积分商品分页列表（用于弹框选择）
+ * @param params
+ * @returns
+ */
+export function getActiveExchangeSelectPageList(params: Record<string, any>) {
+    return request.get(`shop/active/exchange/select`, { params })
 }
 
 /**

@@ -84,7 +84,7 @@
 			</el-form>
 		</div>
 
-        <el-dialog v-model="categoryShowDialog" :title="t('goodsCategoryTitle')" width="750px" :close-on-press-escape="false" :destroy-on-close="true" :close-on-click-modal="false">
+        <el-dialog v-model="categoryShowDialog" :title="t('goodsCategoryTitle')" width="750px" :destroy-on-close="true" :close-on-click-modal="false">
             <el-table :data="categoryTable.data" ref="categoryTableRef" size="large" v-loading="categoryTable.loading"
                 height="450px" @selection-change="handleSelectionChange" row-key="category_id"
                 :expand-row-keys="expand_category_ids"

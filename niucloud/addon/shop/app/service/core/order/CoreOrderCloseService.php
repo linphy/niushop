@@ -47,6 +47,9 @@ class CoreOrderCloseService extends BaseCoreService
             ])->findOrEmpty()->toArray();
             if (empty($order_data)) throw new CommonException('SHOP_ORDER_NOT_FOUND');//订单不存在
             if ($order_data['status'] == OrderDict::CLOSE) throw new CommonException('SHOP_ORDER_IS_CLOSED');
+            if ($data['close_type'] == OrderDict::SHOP_CLOSE && !in_array($order_data['status'], [ OrderDict::WAIT_PAY, OrderDict::CLOSE ])) {
+                throw new CommonException('SHOP_ORDER_IS_PAY_FINISH');//订单已支付
+            }
             if ($data['close_type'] != OrderDict::REFUND_CLOSE) {
                 //关闭相关的支付  todo  封装订单专用的关闭支付相关
                 try {
@@ -80,7 +83,7 @@ class CoreOrderCloseService extends BaseCoreService
             CoreOrderEventService::orderCloseAfter($data);
             return true;
         } catch ( \Exception $e ) {
-            return false;
+            throw new CommonException($e->getMessage());
         }
     }
 

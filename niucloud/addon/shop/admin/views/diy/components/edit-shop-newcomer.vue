@@ -70,6 +70,9 @@
         <div class="edit-attr-item-wrap">
 			<h3 class="mb-[10px]">{{ t('goodsStyle') }}</h3>
 			<el-form label-width="80px" class="px-[10px]">
+				<el-form-item :label="t('imageRounded')">
+					<el-slider v-model="diyStore.editComponent.imgElementRounded" show-input size="small" class="ml-[10px] diy-nav-slider" :max="50" />
+				</el-form-item>
 				<el-form-item :label="t('topRounded')">
 					<el-slider v-model="diyStore.editComponent.topElementRounded" show-input size="small" class="ml-[10px] diy-nav-slider" :max="50" />
 				</el-form-item>
@@ -276,8 +279,6 @@ const selectStyle = reactive({
     title: diyStore.editComponent.style.title,
     value: diyStore.editComponent.style.value
 })
-
-initStyle(diyStore.editComponent.style.value);
 
 defineExpose({})
 

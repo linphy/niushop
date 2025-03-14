@@ -242,6 +242,7 @@ class CartService extends BaseApiService
         $member_info = $goods_service->getMemberInfo();
 
         array_multisort(array_column($list, 'id'), SORT_ASC, $list);
+        $gift_goods = [];
         foreach ($list as $k => &$v) {
             if (!empty($v[ 'goodsSku' ])) {
                 $v[ 'goodsSku' ][ 'member_price' ] = $goods_service->getMemberPrice($member_info, $v[ 'goods' ][ 'member_discount' ], $v[ 'goodsSku' ][ 'member_price' ], $v[ 'goodsSku' ][ 'price' ]);
@@ -252,7 +253,10 @@ class CartService extends BaseApiService
                 $v[ 'goods' ][ 'has_buy' ] = $has_buy;
             }
 
-            $manjian_info = ( new ManjianService() )->getManjianInfo([ 'goods_id' => $v[ 'goods_id' ], 'sku_id' => $v[ 'sku_id' ] ]);
+            $manjian_info = ( new ManjianService() )->getManjianInfo([ 'goods_id' => $v[ 'goods_id' ], 'sku_id' => $v[ 'sku_id' ], 'gift_goods' => $gift_goods ]);
+            if (!empty($manjian_info[ 'gift_goods' ])) {
+                $gift_goods = array_merge($gift_goods, $manjian_info[ 'gift_goods' ]);
+            }
             $v[ 'manjian_info' ] = $manjian_info;
         }
         array_multisort(array_column($list, 'id'), SORT_DESC, $list);

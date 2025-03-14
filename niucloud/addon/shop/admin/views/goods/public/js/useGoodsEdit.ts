@@ -14,7 +14,8 @@ import {
     getSupplierList,
     getCategoryTree,
     getAttrList,
-    getAttrInfo
+    getAttrInfo,
+    goodsVerify
 } from '@/addon/shop/api/goods'
 import { getPosterList } from '@/app/api/poster'
 import { getDiyFormList } from '@/app/api/diy_form'
@@ -1388,6 +1389,17 @@ export function useGoodsEdit(params: any = {}) {
         formRefArr.detailFormRef.value?.validateField('goods_desc')
     }
 
+    const goodsVerifyFn = (data: any) =>{
+        if(!data.target.value) return false
+        const obj = {
+            goods_id: formData.goods_id,
+            sku_no: data.target.value
+        }
+        goodsVerify(obj).then((res) =>{
+
+        })
+    }
+
     /******************** 商品参数-start ***************************/
     const attrOptions = reactive([])
     const getAttrListFn = () => {
@@ -1592,6 +1604,7 @@ export function useGoodsEdit(params: any = {}) {
         addAttr,
         delAttr,
         attrRadioChange,
-        attrCheckboxChange
+        attrCheckboxChange,
+        goodsVerifyFn
     }
 }

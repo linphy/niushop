@@ -158,7 +158,7 @@ class CouponService extends BaseApiService
             }
 
             if ($member_info) {
-                $coupon_member_count = $coupon_member->where([ [ 'member_id', '=', $this->member_id ], [ 'coupon_id', '=', $v[ 'id' ] ] ])->count();
+                $coupon_member_count = $coupon_member->where([ [ 'member_id', '=', $this->member_id ], [ 'coupon_id', '=', $v[ 'id' ] ], [ 'receive_type', '=', 'receive' ] ])->count();
                 if ($coupon_member_count) {
                     $v[ 'is_receive' ] = 1;
                     $v[ 'member_receive_count' ] = $coupon_member_count;
@@ -172,33 +172,6 @@ class CouponService extends BaseApiService
             }
         }
         return $list;
-    }
-
-
-    public function getCouponListByGoodsIdOrCategoryIds($data)
-    {
-        $goods_coupon_id = [];
-
-        if ($data[ 'goods_id' ] != '') {
-            $coupon_goods_model = new CouponGoods();
-            $goods_coupon_list = $coupon_goods_model->where([ [ 'goods_id', '=', $data[ 'goods_id' ] ] ])->select()->toArray();
-            if (!empty($goods_coupon)) {
-                $goods_coupon_id = array_column($goods_coupon_list, 'coupon_id');
-            } else {
-                $goods_coupon_id = [ -1 ];
-            }
-        }
-
-        $category_coupon_id = [];
-        if ($data[ 'category_ids' ] != '') {
-            $coupon_goods_model = new CouponGoods();
-            $category_coupon_list = $coupon_goods_model->where([ [ 'category_id', 'in', $data[ 'category_ids' ] ] ])->select()->toArray();
-            if (!empty($category_coupon_list)) {
-                $category_coupon_id = array_column($category_coupon_list, 'coupon_id');
-            } else {
-                $category_coupon_id = [ -1 ];
-            }
-        }
     }
 
     /**
@@ -220,7 +193,7 @@ class CouponService extends BaseApiService
         $member_info = ( new Member() )->where([ [ 'member_id', '=', $this->member_id ] ])->field('member_id')->findOrEmpty()->toArray();
 
         if ($member_info) {
-            $coupon_member_count = $coupon_member->where([ [ 'member_id', '=', $this->member_id ], [ 'coupon_id', '=', $id ] ])->count();
+            $coupon_member_count = $coupon_member->where([ [ 'member_id', '=', $this->member_id ], [ 'coupon_id', '=', $id ], [ 'receive_type', '=', 'receive' ] ])->count();
             if ($coupon_member_count) {
                 $info[ 'is_receive' ] = 1;
                 $info[ 'member_receive_count' ] = $coupon_member_count;
@@ -263,6 +236,10 @@ class CouponService extends BaseApiService
 
             if($info['status'] != 1){
                 throw new CommonException('COUPON_INVALID');//优惠券已失效
+            }
+
+            if($info['receive_type'] != CouponDict::USER) {
+                throw new CommonException('COUPON_CAN_NOT_MANUAL_RECEIVE');//该优惠券不可手动领取
             }
 
             if ($member_coupon_count == $info[ 'limit_count' ]) {

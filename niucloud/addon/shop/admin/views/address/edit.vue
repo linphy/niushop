@@ -323,10 +323,14 @@ watch(() => formData.district_id, (nval) => {
 
 const areaChange = debounce(() => {
     setTimeout(() => {
+        let province = areaList.province.map((item) => { if (item.id == formData.province_id) { return item.name } })
+        let city = areaList.city.map((item) => { if (item.id == formData.city_id) { return item.name } })
+        let district = areaList.district.map((item) => { if (item.id == formData.district_id) { return item.name } })
+
         const address = [
-            formData.province_id ? provinceRef.value.selectedLabel : '',
-            formData.city_id ? cityRef.value.selectedLabel : '',
-            formData.district_id ? districtRef.value.selectedLabel : ''
+            formData.province_id ? (provinceRef.value.selectedLabel || province) : '',
+            formData.city_id ? (cityRef.value.selectedLabel || city) : '',
+            formData.district_id ? (districtRef.value.selectedLabel || district) : ''
         ]
 
         addressToLatLng({ mapKey, address: address.join('') }).then(({ message, result }) => {

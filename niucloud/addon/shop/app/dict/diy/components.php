@@ -50,7 +50,8 @@ return [
                         "endBgColor" => "#FF4142",
                         "style" => "button",
                         "control" => true
-                    ]
+                    ],
+                    "imgElementRounded" => 10,// 图片圆角
                 ],
                 // 组件属性
                 'template' => [
@@ -174,6 +175,7 @@ return [
                             "imageUrl" => ''
                         ]
                     ],
+                    "imgElementRounded" => 0 // 图片圆角
                 ],
                 // 组件属性
                 'template' => [
@@ -259,7 +261,8 @@ return [
                     "styleName" => "风格1",
                     'bgUrl' => '',
                     'isShowAccount' => true,
-                    'uidTextColor' => '#666666'
+                    'uidTextColor' => '#666666',
+                    'accountTextColor' => '#666666'
                 ],
             ],
             'ShopOrderInfo' => [
@@ -326,6 +329,7 @@ return [
                         "color" => "#999999",
                         "control" => true
                     ],
+                    "imgElementRounded" => 10,// 图片圆角
                 ],
                 // 组件属性
                 'template' => [
@@ -347,7 +351,7 @@ return [
                         "top" => 0, // 上边距
                         "bottom" => 0, // 下边距
                         "both" => 10 // 左右边距
-                    ]
+                    ],
                 ]
             ],
             'ShopGoodsRecommend' => [
@@ -428,6 +432,7 @@ return [
                             ]
                         ]
                     ],
+                    "imgElementRounded" => 10,// 图片圆角
                 ],
                 // 组件属性
                 'template' => [
@@ -552,7 +557,7 @@ return [
                         'title' => '风格1',
                         'value' => 'style-1'
                     ],
-                    'textImg' => '',
+                    'textImg' => 'addon/shop/diy/newcomer/style_title_01.png',
                     "subTitle" => [
                         "text" => "查看更多",
                         "textColor" => "#FFFFFF",
@@ -563,23 +568,39 @@ return [
                         ],
                     ],
                     "countDown" => [
-                        "numberColor" => "",
+                        "numberColor" => "rgba(255, 0, 0, 1)",
                         "numberBg" => [
-                            "startColor" => "",
+                            "startColor" => "rgba(255, 255, 255, 1)",
                             "endColor" => ""
                         ],
-                        "otherColor" => ""
+                        "otherColor" => "rgba(255, 255, 255, 1)"
                     ],
                     'source' => 'all',
                     'num' => 10,
                     'goods_category' => '',
                     "goods_category_name" => "请选择",
-                    'goods_ids' => []
+                    'goods_ids' => [],
+                    "imgElementRounded" => 10 // 图片圆角
                 ],
                  // 组件属性
                  'template' => [
+                    "textColor" => "#303133", // 文字颜色
+                    'pageStartBgColor' => '', // 底部背景颜色（开始）
+                    'pageEndBgColor' => '', // 底部背景颜色（结束）
+                    'pageGradientAngle' => 'to bottom', // 渐变角度，从上到下（to bottom）、从左到右（to right）
+                    "componentStartBgColor" => '#ff6D1A', // 组件背景颜色（开始）
+                    "componentEndBgColor" => 'rgba(255, 70, 56, 1)', // 组件背景颜色（结束）
+                    "componentGradientAngle" => 'to right', // 渐变角度，上下（to bottom）、左右（to right）
+                    "topRounded" => 12, // 组件上圆角
+                    "bottomRounded" => 12, // 组件下圆角
+                    "elementBgColor" => '', // 元素背景颜色
                     "topElementRounded" => 10,// 元素上圆角
-                    "bottomElementRounded" => 10 // 元素下圆角
+                    "bottomElementRounded" => 10, // 元素下圆角
+                    "margin" => [
+                        "top" => 10, // 上边距
+                        "bottom" => 10, // 下边距
+                        "both" => 10 // 左右边距
+                    ]
                 ]
             ],
             'ShopGoodsRanking' => [

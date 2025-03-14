@@ -22,6 +22,8 @@ use core\base\BaseCoreService;
  */
 class CoreGoodsConfigService extends BaseCoreService
 {
+    public $search_key = 'GOODS_SEARCH_CONFIG';
+    public $unique_key = 'GOODS_UNIQUE_CONFIG';
     //系统配置文件
     public $core_config_service;
 
@@ -95,6 +97,58 @@ class CoreGoodsConfigService extends BaseCoreService
 
         }
         return $data;
+    }
+
+    /**
+     * 获取商品搜索配置
+     * @return array
+     */
+    public function getSearchConfig()
+    {
+        $data =  $this->core_config_service->getConfigValue($this->search_key);
+        if (empty($data)){
+            return [
+                'default_word'=>'',
+                'search_words'=>[]
+            ];
+        }
+        return $data;
+    }
+
+    /**
+     * 设置商品搜索配置
+     * @param $data
+     * @return SysConfig|bool|\think\Model
+     */
+    public function setSearchConfig($data)
+    {
+        $data['search_words'] = explode(',', $data['search_words']);
+        return $this->core_config_service->setConfig($this->search_key, $data);
+    }
+
+    /**
+     * 获取编码唯一配置
+     * @return array|int[]|mixed
+     */
+    public function getUniqueConfig()
+    {
+        $data = $this->core_config_service->getConfigValue($this->unique_key);
+        if (empty($data)){
+            return [
+                'is_enable'=>0,
+            ];
+        }
+        return $data;
+    }
+
+    /**
+     * 设置商品编码唯一值配置
+     * @param $data
+     * @return SysConfig|bool|\think\Model
+     */
+    public function setUniqueConfig($data)
+    {
+        return $this->core_config_service->setConfig($this->unique_key, $data);
     }
 
 }

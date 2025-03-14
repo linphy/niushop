@@ -28,11 +28,25 @@ class Exchange extends BaseAdminController
     public function lists()
     {
         $data = $this->request->params([
-            ["names", ""],
-            ["status", ""],
-            ["create_time", ""],
+            [ "names", "" ],
+            [ "status", "" ],
+            [ "create_time", "" ],
         ]);
-        return success((new ExchangeService())->getPage($data));
+        return success(( new ExchangeService() )->getPage($data));
+    }
+
+    /**
+     * 积分商品分页列表（用于弹框选择）
+     * @return \think\Response
+     */
+    public function select()
+    {
+        $data = $this->request->params([
+            [ "names", "" ],
+            [ "create_time", "" ],
+            [ 'verify_goods_ids', [] ], // 检测id集合是否存在，移除不存在的id，纠正数据准确性
+        ]);
+        return success(( new ExchangeService() )->getSelectPage($data));
     }
 
     /**
@@ -59,20 +73,20 @@ class Exchange extends BaseAdminController
     public function add()
     {
         $data = $this->request->params([
-            ["type", ''],
-            ["names", ""],
-            ["title", ''],
-            ["image", ''],
-            ["product_detail", '{}'],
-            ["point", ''],
-            ["price", ''],
-            ["limit_num", ''],
-            ["content", ''],
-            ["sort", ''],
-            ["stock", ''],
+            [ "type", '' ],
+            [ "names", "" ],
+            [ "title", '' ],
+            [ "image", '' ],
+            [ "product_detail", '{}' ],
+            [ "point", '' ],
+            [ "price", '' ],
+            [ "limit_num", '' ],
+            [ "content", '' ],
+            [ "sort", '' ],
+            [ "stock", '' ],
         ]);
-        $id = (new ExchangeService())->add($data);
-        return success('ADD_SUCCESS', ['id' => $id]);
+        $id = ( new ExchangeService() )->add($data);
+        return success('ADD_SUCCESS', [ 'id' => $id ]);
     }
 
     /**
@@ -82,7 +96,7 @@ class Exchange extends BaseAdminController
      */
     public function detail(int $id)
     {
-        return success((new ExchangeService())->getDetail($id));
+        return success(( new ExchangeService() )->getDetail($id));
     }
 
     /**
@@ -93,19 +107,19 @@ class Exchange extends BaseAdminController
     public function edit(int $id)
     {
         $data = $this->request->params([
-            ["type", ''],
-            ["names", ""],
-            ["title", ''],
-            ["image", ''],
-            ["product_detail", '{}'],
-            ["point", ''],
-            ["price", ''],
-            ["limit_num", ''],
-            ["content", ''],
-            ["sort", ''],
-            ["stock", ''],
+            [ "type", '' ],
+            [ "names", "" ],
+            [ "title", '' ],
+            [ "image", '' ],
+            [ "product_detail", '{}' ],
+            [ "point", '' ],
+            [ "price", '' ],
+            [ "limit_num", '' ],
+            [ "content", '' ],
+            [ "sort", '' ],
+            [ "stock", '' ],
         ]);
-        (new ExchangeService())->edit($id, $data);
+        ( new ExchangeService() )->edit($id, $data);
         return success('EDIT_SUCCESS');
     }
 
@@ -117,9 +131,9 @@ class Exchange extends BaseAdminController
     public function editStatus(int $id)
     {
         $data = $this->request->params([
-            ['status', ''],
+            [ 'status', '' ],
         ]);
-        (new ExchangeService())->editStatus($data, $id);
+        ( new ExchangeService() )->editStatus($data, $id);
         return success('SUCCESS');
     }
 
@@ -130,7 +144,7 @@ class Exchange extends BaseAdminController
      */
     public function del(int $id)
     {
-        (new ExchangeService())->del($id);
+        ( new ExchangeService() )->del($id);
         return success('DELETE_SUCCESS');
     }
 
@@ -142,9 +156,9 @@ class Exchange extends BaseAdminController
     public function modifySort(int $id)
     {
         $data = $this->request->params([
-            ['sort', ''],
+            [ 'sort', '' ],
         ]);
-        (new ExchangeService())->modifySort($data, $id);
+        ( new ExchangeService() )->modifySort($data, $id);
         return success('SUCCESS');
     }
 

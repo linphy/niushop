@@ -54,6 +54,33 @@ class ExchangeService extends BaseAdminService
     }
 
     /**
+     * 获取积分商城分页列表（用于弹框选择）
+     * @param array $where
+     * @return array
+     */
+    public function getSelectPage(array $where = [])
+    {
+        $verify_ids=[];
+        // 检测id集合是否存在，移除不存在的id，纠正数据准确性
+        if (!empty($where[ 'verify_ids' ])) {
+            $verify_ids = $this->model->where([
+                [ 'id', 'in', $where[ 'verify_ids' ] ]
+            ])->field('id')->select()->toArray();
+
+            if (!empty($verify_ids)) {
+                $verify_ids = array_column($verify_ids, 'id');
+            }
+        }
+
+        $field = 'total_exchange_num,stock,id,type,names,title,image,status,product_detail,point,price,limit_num,content,sort,total_point_num,total_price_num,total_order_num,total_member_num,update_time,create_time';
+        $order = 'id desc';
+        $search_model = $this->model->where([ [ 'status', '=', ExchangeDict::UP ] ])->withSearch([ 'names', 'status', 'create_time' ], $where)->append([ 'type_name', 'status_name', 'goods_cover_thumb_small' ])->field($field)->order($order);
+        $list = $this->pageQuery($search_model);
+        $list[ 'verify_ids' ] = $verify_ids;
+        return $list;
+    }
+
+    /**
      * 获取积分商城详情
      * @param int $id
      * @return array

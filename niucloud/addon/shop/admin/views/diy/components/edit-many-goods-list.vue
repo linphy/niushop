@@ -103,7 +103,7 @@
 			</el-form>
 
 			<!-- 选择一级商品分类弹出框 -->
-			<el-dialog v-model="firstCategoryShowDialog" :title="t('goodsCategoryTitle')" width="750px" :close-on-press-escape="false" :destroy-on-close="true" :close-on-click-modal="false">
+			<el-dialog v-model="firstCategoryShowDialog" :title="t('goodsCategoryTitle')" width="750px" :destroy-on-close="true" :close-on-click-modal="false">
 				<el-table :data="firstCategoryTable.data" ref="firstCategoryTableRef" size="large" v-loading="firstCategoryTable.loading" height="450px" @current-change="handleCurrentCategoryChange" row-key="category_id" highlight-current-row>
 					<template #empty>
 						<span>{{ !firstCategoryTable.loading ? t('emptyData') : '' }}</span>
@@ -133,7 +133,7 @@
 				</div>
 			</el-dialog>
 
-			<el-dialog v-model="categoryShowDialog" :title="t('goodsCategoryTitle')" width="750px" :close-on-press-escape="false" :destroy-on-close="true" :close-on-click-modal="false">
+			<el-dialog v-model="categoryShowDialog" :title="t('goodsCategoryTitle')" width="750px" :destroy-on-close="true" :close-on-click-modal="false">
 				<el-table :data="categoryTable.data" ref="categoryTableRef" size="large" v-loading="categoryTable.loading"
 					height="490px" @selection-change="handleSelectionChange" row-key="category_id"
 					:expand-row-keys="expand_category_ids"
@@ -234,6 +234,9 @@
 						<el-radio :label="'normal'">{{ t('fontWeightNormal') }}</el-radio>
 						<el-radio :label="'bold'">{{ t('fontWeightBold') }}</el-radio>
 					</el-radio-group>
+				</el-form-item>
+				<el-form-item :label="t('imageRounded')">
+					<el-slider v-model="diyStore.editComponent.imgElementRounded" show-input size="small" class="ml-[10px] diy-nav-slider" :max="50" />
 				</el-form-item>
 				<el-form-item :label="t('goodsPriceColor')">
 					<el-color-picker v-model="diyStore.editComponent.priceStyle.color" show-alpha :predefine="diyStore.predefineColors" />

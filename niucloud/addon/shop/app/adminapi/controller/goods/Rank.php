@@ -172,7 +172,7 @@ class Rank extends BaseAdminController
     }
 
     /**
-     * 获取排行榜分页列表
+     * 获取排行榜分页列表（用于弹框选择）
      * @return \think\Response
      */
     public function select()

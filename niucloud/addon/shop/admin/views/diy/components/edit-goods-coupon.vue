@@ -234,7 +234,6 @@ const initStyleFn = ()=>{
     }
 	
 }
-initStyleFn();
 
 defineExpose({})
 

@@ -17,7 +17,7 @@
 										<EditPen/>
 									</el-icon>
 								</div>
-								<el-switch v-model="item.status" active-value="1" inactive-value="2" @change="update(item)"/>
+								<el-switch v-model="item.status" :active-value="1" :inactive-value="2" @change="update"/>
 							</div>
 						</template>
 						<div class="flex items-center justify-between">
@@ -112,9 +112,9 @@ const inputBlur = () => {
     update()
 }
 const update = () => {
-    setShopDeliveryConfig({
-        value: tableData.value
-    })
+	setShopDeliveryConfig({
+		value: tableData.value
+	})
 }
 const goRouter = (path: string) => {
     router.push({ path })

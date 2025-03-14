@@ -66,6 +66,7 @@ class CoreManjianService extends BaseCoreService
         ])->findOrEmpty()->toArray();
 
         if (!empty($manjian_list) && !empty($member_info)) {
+            $gift_goods_all = [];//合并所有赠品计算剩余库存
             foreach ($manjian_list as &$value) {
                 //判断会员是否有参与资格
                 $can_join = 0;
@@ -171,15 +172,10 @@ class CoreManjianService extends BaseCoreService
                             $gift_coupon = $rule[ 'coupon' ] ?? [];
                             if ($gift_coupon) {
                                 foreach ($gift_coupon as $coupon_key => &$coupon) {
-                                    $coupon_info = ( new Coupon() )->field('remain_count,limit_count,price,min_condition_money')->where([
+                                    $coupon_info = ( new Coupon() )->field('price,min_condition_money')->where([
                                         [ 'id', '=', $coupon[ 'coupon_id' ] ],
                                         [ 'status', '=', CouponDict::NORMAL ],
                                     ])->findOrEmpty()->toArray();
-                                    $coupon_member_count = ( new CouponMember() )->where([
-                                        [ 'coupon_id', '=', $coupon[ 'coupon_id' ] ],
-                                        [ 'member_id', '=', $order->member_id ],
-                                        [ 'status', '<>', CouponMemberDict::INVALID ]
-                                    ])->count();
                                     if (!empty($coupon_info)) {
                                         if ($coupon_info[ 'min_condition_money' ] == '0.00') {
                                             $coupon_name = $coupon_info[ 'price' ] . "元无门槛券";
@@ -187,9 +183,6 @@ class CoreManjianService extends BaseCoreService
                                             $coupon_name = "满" . $coupon_info[ 'min_condition_money' ] . "元减" . $coupon_info[ 'price' ] . "元券";
                                         }
                                         $coupon[ 'coupon_name' ] = $coupon_name;
-                                        if ($coupon_info[ 'remain_count' ] == 0 || $coupon_member_count >= $coupon_info[ 'limit_count' ]) {
-                                            unset($gift_coupon[ $coupon_key ]);
-                                        }
                                     } else {
                                         unset($gift_coupon[ $coupon_key ]);
                                     }
@@ -207,21 +200,46 @@ class CoreManjianService extends BaseCoreService
                             $gift_goods = $rule[ 'goods' ] ?? [];
                             if ($gift_goods) {
                                 foreach ($gift_goods as $goods_key => &$goods) {
-                                    $sku_info = ( new GoodsSku() )->field('goods_id,sku_name,sku_image,price')->where([
+                                    $sku_info = ( new GoodsSku() )->field('goods_id,sku_name,sku_image,price,stock')->where([
                                         [ 'goods_id', '=', $goods[ 'goods_id' ] ],
                                         [ 'sku_id', '=', $goods[ 'sku_id' ] ],
-                                        [ 'stock', '>=', $goods[ 'num' ] ],
+                                        [ 'stock', '>', 0 ],
                                     ])->with([ 'goods' ])->findOrEmpty()->toArray();
-                                    if (!empty($sku_info) && $sku_info[ 'goods' ][ 'status' ] == 1) {
+                                    if (!empty($sku_info) && !empty($sku_info[ 'goods' ]) && $sku_info[ 'goods' ][ 'status' ] == 1) {
                                         $goods[ 'goods_name' ] = $sku_info[ 'goods' ][ 'goods_name' ];
                                         $goods[ 'sku_name' ] = $sku_info[ 'sku_name' ];
                                         $goods[ 'sku_image' ] = $sku_info[ 'sku_image' ];
                                         $goods[ 'price' ] = $sku_info[ 'price' ];
+
+                                        if (empty($gift_goods_all)) {
+                                            // 库存小于赠送数量时，取剩余库存
+                                            $num = $sku_info[ 'stock' ] >= $goods[ 'num' ] ? $goods[ 'num' ] : $sku_info[ 'stock' ];
+                                            $goods[ 'num' ] = $num;
+                                        } else {
+                                            // 计算剩余库存
+                                            $leave_num = $sku_info[ 'stock' ];
+                                            foreach ($gift_goods_all as $gift_goods_item) {
+                                                if ($gift_goods_item[ 'goods_id' ] == $goods[ 'goods_id' ] && $gift_goods_item[ 'sku_id' ] == $goods[ 'sku_id' ]) {
+                                                    if ($leave_num - $gift_goods_item[ 'num' ] >= 0) {
+                                                        $leave_num = $leave_num - $gift_goods_item[ 'num' ];
+                                                    } else {
+                                                        $leave_num = 0;
+                                                    }
+                                                }
+                                            }
+                                            $goods[ 'num' ] = $leave_num >= $goods[ 'num' ] ? $goods[ 'num' ] : $leave_num;
+                                        }
+
+                                        if ($goods[ 'num' ] == 0) {
+                                            unset($gift_goods[ $goods_key ]);
+                                        }
+
                                     } else {
                                         unset($gift_goods[ $goods_key ]);
                                     }
                                 }
                                 $gift_goods = array_values($gift_goods);
+                                $gift_goods_all = array_merge($gift_goods_all, $gift_goods);
                                 $rule_json[ $key ][ 'goods' ] = $gift_goods;
                             }
                             $gift[ 'goods' ] = $gift_goods;
@@ -254,15 +272,10 @@ class CoreManjianService extends BaseCoreService
                                 if ($gift_coupon) {
                                     foreach ($gift_coupon as $coupon_key => &$coupon) {
                                         $coupon[ 'num' ] = intval($coupon[ 'num' ]) * $cycle_num;
-                                        $coupon_info = ( new Coupon() )->field('remain_count,limit_count,price,min_condition_money')->where([
+                                        $coupon_info = ( new Coupon() )->field('price,min_condition_money')->where([
                                             [ 'id', '=', $coupon[ 'coupon_id' ] ],
                                             [ 'status', '=', CouponDict::NORMAL ],
                                         ])->findOrEmpty()->toArray();
-                                        $coupon_member_count = ( new CouponMember() )->where([
-                                            [ 'coupon_id', '=', $coupon[ 'coupon_id' ] ],
-                                            [ 'member_id', '=', $order->member_id ],
-                                            [ 'status', '<>', CouponMemberDict::INVALID ]
-                                        ])->count();
                                         if (!empty($coupon_info)) {
                                             if ($coupon_info[ 'min_condition_money' ] == '0.00') {
                                                 $coupon_name = $coupon_info[ 'price' ] . "元无门槛券";
@@ -270,9 +283,6 @@ class CoreManjianService extends BaseCoreService
                                                 $coupon_name = "满" . $coupon_info[ 'min_condition_money' ] . "元减" . $coupon_info[ 'price' ] . "元券";
                                             }
                                             $coupon[ 'coupon_name' ] = $coupon_name;
-                                            if ($coupon_info[ 'remain_count' ] == 0 || $coupon_member_count >= $coupon_info[ 'limit_count' ]) {
-                                                unset($gift_coupon[ $coupon_key ]);
-                                            }
                                         } else {
                                             unset($gift_coupon[ $coupon_key ]);
                                         }
@@ -287,21 +297,46 @@ class CoreManjianService extends BaseCoreService
                                 if ($gift_goods) {
                                     foreach ($gift_goods as $goods_key => &$goods) {
                                         $goods[ 'num' ] = intval($goods[ 'num' ]) * $cycle_num;
-                                        $sku_info = ( new GoodsSku() )->field('goods_id,sku_name,sku_image,price')->where([
+                                        $sku_info = ( new GoodsSku() )->field('goods_id,sku_name,sku_image,price,stock')->where([
                                             [ 'goods_id', '=', $goods[ 'goods_id' ] ],
                                             [ 'sku_id', '=', $goods[ 'sku_id' ] ],
-                                            [ 'stock', '>=', $goods[ 'num' ] ],
+                                            [ 'stock', '>', 0 ],
                                         ])->with([ 'goods' ])->findOrEmpty()->toArray();
-                                        if (!empty($sku_info) && $sku_info[ 'goods' ][ 'status' ] == 1) {
+                                        if (!empty($sku_info) && !empty($sku_info[ 'goods' ]) && $sku_info[ 'goods' ][ 'status' ] == 1) {
                                             $goods[ 'goods_name' ] = $sku_info[ 'goods' ][ 'goods_name' ];
                                             $goods[ 'sku_name' ] = $sku_info[ 'sku_name' ];
                                             $goods[ 'sku_image' ] = $sku_info[ 'sku_image' ];
                                             $goods[ 'price' ] = $sku_info[ 'price' ];
+
+                                            if (empty($gift_goods_all)) {
+                                                // 库存小于赠送数量时，取剩余库存
+                                                $num = $sku_info[ 'stock' ] >= $goods[ 'num' ] ? $goods[ 'num' ] : $sku_info[ 'stock' ];
+                                                $goods[ 'num' ] = $num;
+                                            } else {
+                                                // 计算剩余库存
+                                                $leave_num = $sku_info[ 'stock' ];
+                                                foreach ($gift_goods_all as $gift_goods_item) {
+                                                    if ($gift_goods_item[ 'goods_id' ] == $goods[ 'goods_id' ] && $gift_goods_item[ 'sku_id' ] == $goods[ 'sku_id' ]) {
+                                                        if ($leave_num - $gift_goods_item[ 'num' ] >= 0) {
+                                                            $leave_num = $leave_num - $gift_goods_item[ 'num' ];
+                                                        } else {
+                                                            $leave_num = 0;
+                                                        }
+                                                    }
+                                                }
+                                                $goods[ 'num' ] = $leave_num >= $goods[ 'num' ] ? $goods[ 'num' ] : $leave_num;
+                                            }
+
+                                            if ($goods[ 'num' ] == 0) {
+                                                unset($gift_goods[ $goods_key ]);
+                                            }
+
                                         } else {
                                             unset($gift_goods[ $goods_key ]);
                                         }
                                     }
                                     $gift_goods = array_values($gift_goods);
+                                    $gift_goods_all = array_merge($gift_goods_all, $gift_goods);
                                     $rule_json[ $key ][ 'goods' ] = $gift_goods;
                                 }
                                 $gift[ 'goods' ] = $gift_goods;
@@ -312,11 +347,19 @@ class CoreManjianService extends BaseCoreService
                     }
                 }
 
-                $value[ 'rule_json' ] = $rule_json;
+                if ($level >= 0) {
+                    foreach ($match_sku_ids as $sku_id) {
+                        $value['rule'] = $rule_json[$level];
+                        if ($value['rule']['is_discount'] || $value['rule']['is_free_shipping'] || $value['rule']['is_give_point'] || $value['rule']['is_give_balance'] || !empty($value['rule']['coupon']) || !empty($value['rule']['goods'])) {
+                            $order->goods_data[$sku_id]['manjian_info'] = $value;
+                        }
+                    }
+                }
+
                 //填充满减商品优惠信息
                 $manjian_one_discount_money = 0;
                 if ($level >= 0) {
-                    $this->manjianGoodsCalculate($order, $value, $is_free_shipping, $level, $discount_money, $match_sku_ids, $match_order_goods_money, $manjian_one_discount_money);
+                    $this->manjianGoodsCalculate($order, $is_free_shipping, $discount_money, $match_sku_ids, $match_order_goods_money, $manjian_one_discount_money);
                 }
                 if ($manjian_one_discount_money > 0) {
                     $manjian_discount_money = bcadd($manjian_discount_money, $manjian_one_discount_money, 2);
@@ -347,13 +390,14 @@ class CoreManjianService extends BaseCoreService
     /**
      * 满减活动商品计算
      * @param $order
-     * @param $manjian_info
      * @param $is_free_shipping
-     * @param $level
      * @param $discount_money
+     * @param $match_sku_ids
+     * @param $match_order_goods_money
+     * @param $manjian_one_discount_money
      * @return void
      */
-    public function manjianGoodsCalculate(&$order, $manjian_info, $is_free_shipping, $level, $discount_money, $match_sku_ids, $match_order_goods_money, &$manjian_one_discount_money)
+    public function manjianGoodsCalculate(&$order, $is_free_shipping, $discount_money, $match_sku_ids, $match_order_goods_money, &$manjian_one_discount_money)
     {
         if ($discount_money > $match_order_goods_money) {//优惠金额大于订单商品总金额，则优惠金额等于订单商品总金额
             $discount_money = $match_order_goods_money;
@@ -368,10 +412,6 @@ class CoreManjianService extends BaseCoreService
             if ($is_free_shipping) {
                 $order->goods_data[ $sku_id ][ 'goods' ][ 'is_free_shipping' ] = 1;
                 $order->goods_data[ $sku_id ][ 'goods' ][ 'delivery_money' ] = 0;
-            }
-            $manjian_info[ 'rule' ] = $manjian_info[ 'rule_json' ][ $level ];
-            if ($manjian_info[ 'rule' ][ 'is_discount' ] || $manjian_info[ 'rule' ][ 'is_free_shipping' ] || $manjian_info[ 'rule' ][ 'is_give_point' ] || $manjian_info[ 'rule' ][ 'is_give_balance' ] || !empty($manjian_info[ 'rule' ][ 'coupon' ]) || !empty($manjian_info[ 'rule' ][ 'goods' ])) {
-                $order->goods_data[ $sku_id ][ 'manjian_info' ] = $manjian_info;
             }
 
             //订单项满减优惠计算
@@ -420,20 +460,11 @@ class CoreManjianService extends BaseCoreService
                 case 'coupon':
                     if (!empty($v) && is_array($v)) {
                         foreach ($v as $kk => $vv) {
-                            $coupon_info = ( new Coupon() )->field('remain_count,limit_count,price,min_condition_money')->where([
+                            $coupon_count = ( new Coupon() )->where([
                                 [ 'id', '=', $vv[ 'coupon_id' ] ],
                                 [ 'status', '=', CouponDict::NORMAL ],
-                            ])->findOrEmpty()->toArray();
-                            $coupon_member_count = ( new CouponMember() )->where([
-                                [ 'coupon_id', '=', $vv[ 'coupon_id' ] ],
-                                [ 'member_id', '=', $order->member_id ],
-                                [ 'status', '<>', CouponMemberDict::INVALID ]
                             ])->count();
-                            if (!empty($coupon_info)) {
-                                if ($coupon_info[ 'remain_count' ] == 0 || $coupon_member_count >= $coupon_info[ 'limit_count' ]) {
-                                    unset($v[ $kk ]);
-                                }
-                            } else {
+                            if ($coupon_count == 0) {
                                 unset($v[ $kk ]);
                             }
                         }
@@ -451,9 +482,9 @@ class CoreManjianService extends BaseCoreService
                             $sku_info = ( new GoodsSku() )->field('sku_id, sku_name, sku_image, goods_id, price, stock, weight, volume,sku_id, sku_spec_format,member_price, sale_price')->where([
                                 [ 'goods_id', '=', $vv[ 'goods_id' ] ],
                                 [ 'sku_id', '=', $vv[ 'sku_id' ] ],
-                                [ 'stock', '>=', $vv[ 'num' ] ],
+                                [ 'stock', '>', 0 ],
                             ])->with([ 'goods' ])->findOrEmpty()->toArray();
-                            if (!empty($sku_info) && $sku_info[ 'goods' ][ 'status' ] == 1) {
+                            if (!empty($sku_info) && !empty($sku_info[ 'goods' ]) && $sku_info[ 'goods' ][ 'status' ] == 1) {
                                 if (isset($order->gift_goods[ $vv[ 'sku_id' ] ])) {
                                     $order->gift_goods[ $vv[ 'sku_id' ] ][ 'num' ] += $vv[ 'num' ];
                                 } else {
@@ -840,10 +871,7 @@ class CoreManjianService extends BaseCoreService
                             ])->limit($coupon[ 'num' ])->order('create_time desc')->column('id');
                             if (!empty($ids)) {
                                 $core_coupon_member_service->invalid($ids);
-                                $coupon_info->receive_count -= $coupon[ 'num' ];
-                                if ($coupon_info[ 'remain_count' ] != -1) {
-                                    $coupon_info->remain_count += $coupon[ 'num' ];
-                                }
+                                $coupon_info->give_count -= $coupon[ 'num' ];
                                 $coupon_info->save();
                             }
                             if (!empty($give_records[ 'coupon_json' ])) {
@@ -989,7 +1017,7 @@ class CoreManjianService extends BaseCoreService
                                     [ 'goods_id', '=', $goods[ 'goods_id' ] ],
                                     [ 'sku_id', '=', $goods[ 'sku_id' ] ]
                                 ])->with([ 'goods' ])->findOrEmpty()->toArray();
-                                if (!empty($sku_info)) {
+                                if (!empty($sku_info) && !empty($sku_info[ 'goods' ])) {
                                     $goods[ 'goods_name' ] = $sku_info[ 'goods' ][ 'goods_name' ];
                                     $goods[ 'sku_name' ] = $sku_info[ 'sku_name' ];
                                     $goods[ 'sku_image' ] = $sku_info[ 'sku_image' ];
@@ -1241,6 +1269,7 @@ class CoreManjianService extends BaseCoreService
         $member_id = $data[ 'member_id' ];
         $goods_id  = $data[ 'goods_id' ];
         $sku_id    = $data[ 'sku_id' ];
+        $gift_goods = $data[ 'gift_goods' ] ?? [];
         if (empty($sku_id) && !empty($goods_id)) {
             // 查询默认规格项
             $default_sku_info = ( new GoodsSku() )->where([ [ 'goods_id', '=', $goods_id ], [ 'is_default', '=', 1 ] ], 'sku_id')
@@ -1262,7 +1291,7 @@ class CoreManjianService extends BaseCoreService
             $manjian_info = $manjian_info_all_goods;
             $can_join = $this->canJoinManjian($manjian_info, $member_id);
             if ($can_join) {
-                $rule_content = $this->getRuleContent($manjian_info, $member_id);
+                $rule_content = $this->getRuleContent($manjian_info, $gift_goods);
                 $manjian_info = $rule_content[ 'is_join' ] ? $rule_content : [];
             }
         } else {
@@ -1276,7 +1305,7 @@ class CoreManjianService extends BaseCoreService
                 $manjian_info = $manjian_info_selected_goods_not;
                 $can_join = $this->canJoinManjian($manjian_info, $member_id);
                 if ($can_join) {
-                    $rule_content = $this->getRuleContent($manjian_info, $member_id);
+                    $rule_content = $this->getRuleContent($manjian_info, $gift_goods);
                     $manjian_info = $rule_content[ 'is_join' ] ? $rule_content : [];
                 }
             } else {//指定商品参与
@@ -1287,7 +1316,7 @@ class CoreManjianService extends BaseCoreService
                         $manjian_info = $manjian_info_selected_goods[ $manjian_goods_info[ 'manjian_id' ] ];
                         $can_join = $this->canJoinManjian($manjian_info, $member_id);
                         if ($can_join) {
-                            $rule_content = $this->getRuleContent($manjian_info, $member_id);
+                            $rule_content = $this->getRuleContent($manjian_info, $gift_goods);
                             $manjian_info = $rule_content[ 'is_join' ] ? $rule_content : [];
                         }
                     }
@@ -1302,10 +1331,11 @@ class CoreManjianService extends BaseCoreService
      * @param $manjian_info
      * @return array
      */
-    public function getRuleContent($manjian_info, $member_id)
+    public function getRuleContent($manjian_info, $gift_goods)
     {
         if (!empty($manjian_info)) {
             $is_join = false;
+            $manjian_info[ 'gift_goods' ] = $gift_goods;
             foreach ($manjian_info[ 'rule_json' ] as $key => $item) {
                 if ($item[ 'is_discount' ]) {
                     $is_join = true;
@@ -1321,15 +1351,10 @@ class CoreManjianService extends BaseCoreService
                 }
                 if ($item[ 'is_give_coupon' ]) {
                     foreach ($item[ 'coupon' ] as $coupon_key => &$coupon) {
-                        $coupon_info = ( new Coupon() )->field('remain_count,limit_count,price,min_condition_money')->where([
+                        $coupon_info = ( new Coupon() )->field('price,min_condition_money')->where([
                             [ 'id', '=', $coupon[ 'coupon_id' ] ],
                             [ 'status', '=', CouponDict::NORMAL ],
                         ])->findOrEmpty()->toArray();
-                        $coupon_member_count = ( new CouponMember() )->where([
-                            [ 'coupon_id', '=', $coupon[ 'coupon_id' ] ],
-                            [ 'member_id', '=', $member_id ],
-                            [ 'status', '<>', CouponMemberDict::INVALID ]
-                        ])->count();
                         if (!empty($coupon_info)) {
                             if ($coupon_info[ 'min_condition_money' ] == '0.00') {
                                 $coupon_name = $coupon_info[ 'price' ] . "元无门槛券";
@@ -1337,9 +1362,6 @@ class CoreManjianService extends BaseCoreService
                                 $coupon_name = "满" . $coupon_info[ 'min_condition_money' ] . "元减" . $coupon_info[ 'price' ] . "元券";
                             }
                             $coupon[ 'coupon_name' ] = $coupon_name;
-                            if ($coupon_info[ 'remain_count' ] == 0 || $coupon_member_count >= $coupon_info[ 'limit_count' ]) {
-                                unset($item[ 'coupon' ][ $coupon_key ]);
-                            }
                         } else {
                             unset($item[ 'coupon' ][ $coupon_key ]);
                         }
@@ -1351,17 +1373,41 @@ class CoreManjianService extends BaseCoreService
                 }
                 if ($item[ 'is_give_goods' ]) {
                     foreach ($item[ 'goods' ] as $goods_key => &$goods) {
-                        $sku_info = ( new GoodsSku() )->field('goods_id,sku_name,sku_image,price')->where([
+                        $sku_info = ( new GoodsSku() )->field('goods_id,sku_name,sku_image,price,stock')->where([
                             [ 'goods_id', '=', $goods[ 'goods_id' ] ],
                             [ 'sku_id', '=', $goods[ 'sku_id' ] ],
-                            [ 'stock', '>=', $goods[ 'num' ] ],
+                            [ 'stock', '>', 0 ],
                         ])->with([ 'goods' ])->findOrEmpty()->toArray();
-                        if (!empty($sku_info) && $sku_info[ 'goods' ][ 'status' ] == 1) {
-                            $sku_info[ 'num' ] = $goods[ 'num' ];
+                        if (!empty($sku_info) && !empty($sku_info[ 'goods' ]) && $sku_info[ 'goods' ][ 'status' ] == 1) {
+                            if (empty($gift_goods)) {
+                                // 库存小于赠送数量时，取剩余库存
+                                $num = $sku_info[ 'stock' ] >= $goods[ 'num' ] ? $goods[ 'num' ] : $sku_info[ 'stock' ];
+                                $goods[ 'num' ] = $num;
+                            } else {
+                                // 计算剩余库存
+                                $leave_num = $sku_info[ 'stock' ];
+                                foreach ($gift_goods as $gift_goods_item) {
+                                    if ($gift_goods_item[ 'goods_id' ] == $goods[ 'goods_id' ] && $gift_goods_item[ 'sku_id' ] == $goods[ 'sku_id' ]) {
+                                        if ($leave_num - $gift_goods_item[ 'num' ] >= 0) {
+                                            $leave_num = $leave_num - $gift_goods_item[ 'num' ];
+                                        } else {
+                                            $leave_num = 0;
+                                        }
+                                    }
+                                }
+                                $goods[ 'num' ] = $leave_num >= $goods[ 'num' ] ? $goods[ 'num' ] : $leave_num;
+                            }
                             $goods[ 'goods_name' ] = $sku_info[ 'goods' ][ 'goods_name' ];
                             $goods[ 'sku_name' ] = $sku_info[ 'sku_name' ];
                             $goods[ 'sku_image' ] = $sku_info[ 'sku_image' ];
                             $goods[ 'price' ] = $sku_info[ 'price' ];
+
+                            if ($goods[ 'num' ] == 0) {
+                                unset($item[ 'goods' ][ $goods_key ]);
+                            }
+
+                            $manjian_info[ 'gift_goods' ][] = $goods;
+
                         } else {
                             unset($item[ 'goods' ][ $goods_key ]);
                         }

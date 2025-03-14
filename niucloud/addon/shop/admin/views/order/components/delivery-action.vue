@@ -1,5 +1,5 @@
 <template>
-    <el-dialog v-model="showDialog" :title="t('delivery')" width="700px" class="diy-dialog-wrap" :destroy-on-close="true">
+    <el-dialog v-model="showDialog" :title="t('delivery')" width="700px" class="diy-dialog-wrap" :destroy-on-close="true" :close-on-click-modal="false">
         <div v-loading="loading">
 
             <el-alert type="warning" :closable="false" class="!mb-[10px]" v-if="isTradeManaged">

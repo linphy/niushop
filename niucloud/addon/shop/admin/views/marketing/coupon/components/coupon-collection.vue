@@ -54,7 +54,7 @@
                         <span>{{ !tableData.loading ? t('emptyData') : '' }}</span>
                     </template>
 
-                    <el-table-column prop="title" :label="t('collectionTtitle')" />
+                    <el-table-column prop="title" :label="t('collectionTitle')" />
                     <el-table-column :label="t('userName')">
                         <template #default="{ row }">
                             <div class="flex flex-col">
@@ -91,7 +91,7 @@
                 </div>
             </div>
         </div>
-        
+
     </el-drawer>
 </template>
 

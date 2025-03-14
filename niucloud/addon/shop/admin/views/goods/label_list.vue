@@ -75,6 +75,7 @@
                        <template #default="{ row }">
                            <el-button type="primary" link @click="editEvent(row)">{{ t('edit') }}</el-button>
                            <el-button type="primary" link @click="deleteEvent(row.label_id)">{{ t('delete') }}</el-button>
+                           <el-button type="primary" link @click="copyEvent(row)">{{ t('copyLabel') }}</el-button>
                        </template>
                     </el-table-column>
 
@@ -94,11 +95,11 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
 import { t } from '@/lang'
-import { getLabelPageList, deleteLabel, modifyLabelSort,getLabelGroupList,modifyLabelStatus } from '@/addon/shop/api/goods'
+import { getLabelPageList, deleteLabel, modifyLabelSort, getLabelGroupList, modifyLabelStatus, copyLabel } from '@/addon/shop/api/goods'
 import { ElMessageBox, FormInstance, ElMessage } from 'element-plus'
 import LabelEdit from '@/addon/shop/views/goods/components/label-edit.vue'
-import { useRoute,useRouter } from 'vue-router'
-import { debounce,img } from '@/utils/common'
+import { useRoute, useRouter } from 'vue-router'
+import { debounce, img } from '@/utils/common'
 
 const route = useRoute()
 const router = useRouter()
@@ -245,7 +246,30 @@ const modifyLabelStatusEvent = (label_id: any, status: any) => {
         isRepeat.value = false
     })
 }
+// 复制商品
+const copyEvent = (data: any) => {
+    ElMessageBox.confirm(t('labelCopyTips'), t('warning'),
+        {
+            confirmButtonText: t('confirm'),
+            cancelButtonText: t('cancel'),
+            type: 'warning'
+        }
+    ).then(() => {
+        if (isRepeat.value) return
+        isRepeat.value = true
 
+        copyLabel({
+            label_id: data.label_id
+        }).then((res: any) => {
+            if (res.code == 1) {
+                loadLabelList()
+            }
+            isRepeat.value = false
+        }).catch(() => {
+            isRepeat.value = false
+        })
+    })
+}
 const resetForm = (formEl: FormInstance | undefined) => {
     if (!formEl) return
     formEl.resetFields()

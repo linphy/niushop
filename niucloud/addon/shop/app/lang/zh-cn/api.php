@@ -20,6 +20,7 @@ return [
     'COUPON_STOCK_INSUFFICIENT' => '优惠券已领完',
     'COUPON_NOT_EXIST' => '优惠券不存在',
     'COUPON_INVALID' => '优惠券已失效',
+    'COUPON_CAN_NOT_MANUAL_RECEIVE' => '该优惠券不可手动领取',
     'COUPON_RECEIVE_NOT_TIME' => '优惠券不在领取时间范围内',
     'COUPON_RECEIVE_EXCESS' => '已领取数量超过限制领取数量，不可领取',
     'COUPON_RECEIVE_TYPE_NOT_EXIST' => '优惠券领取方式有误',
@@ -41,7 +42,7 @@ return [
     'SHOP_ONLY_PENDING_ORDERS_CAN_BE_REPRICED' => '只有待支付的订单可以改价',
     'SHOP_THE_AVAILABLE_SHIPPING_RATES_AREN_T_CONFIGURED' => '未配置可用的运费模板',
 
-    'SHOP_ONLY_PENDING_ORDERS_EDIT_TAKER' => '只有待支付的订单可以修改配送地址',
+    'SHOP_ONLY_PENDING_ORDERS_EDIT_TAKER' => '只有待支付或待发货的订单可以修改配送地址',
     'SHOP_VIRTUAL_ORDERS_EDIT_TAKER' => '虚拟商品订单不可以修改配送地址',
     'EXPRESS_FIELD_EMPTY' => '地址信息有误',
     'GOODS_NOT_DELIVERY_TYPE' => '当前商品不支持该配送方式',
@@ -75,6 +76,7 @@ return [
     'SHOP_ORDER_DELIVERY_SUCCESS' => '发货成功',
     'SHOP_ORDER_DELIVERY_EXPRESS_NUMBER_EXITS' => '物流单号不能重复',
     'NOT_CONFIGURED_LOCAL_DELIVERY' => '商家未配置同城配送',
+    'NOT_CONFIGURED_DELIVERY_TYPE' => '商家尚未配置配送方式',
 
     'SHOP_ELECTRONIC_SHEET_API_EMPTY' => '未配置电子面单接口',
     'SHOP_ELECTRONIC_SHEET_TEMPLATE_FOUND' => '电子面单模板不存在',

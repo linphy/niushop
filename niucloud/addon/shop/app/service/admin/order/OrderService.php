@@ -346,7 +346,7 @@ class OrderService extends BaseAdminService
         $order = $this->model->where([ [ 'order_id', '=', $order_id ] ])->findOrEmpty()->toArray();
         $delivery_list = ( new DeliveryService() )->getDeliveryList();
         if (empty($order)) throw new AdminException('SHOP_ORDER_NOT_FOUND');
-        if ($order[ 'status' ] != OrderDict::WAIT_PAY) throw new AdminException('SHOP_ONLY_PENDING_ORDERS_EDIT_TAKER');
+        if (!in_array($order[ 'status' ], [ OrderDict::WAIT_PAY, OrderDict::WAIT_DELIVERY ])) throw new AdminException('SHOP_ONLY_PENDING_ORDERS_EDIT_TAKER');
         if ($order[ 'delivery_type' ] == OrderDeliveryDict::VIRTUAL) throw new AdminException('SHOP_VIRTUAL_ORDERS_EDIT_TAKER');
         $order[ 'delivery_data' ] = $data;
 

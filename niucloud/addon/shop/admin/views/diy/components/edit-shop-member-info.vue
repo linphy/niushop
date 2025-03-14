@@ -25,10 +25,14 @@
 					<el-color-picker v-model="diyStore.editComponent.textColor"/>
 				</el-form-item>
 			</el-form>
-			
 			<el-form label-width="80px" class="px-[10px]">
 				<el-form-item :label="t('shopMemberInfoComponentUidTextColor')">
 					<el-color-picker v-model="diyStore.editComponent.uidTextColor"/>
+				</el-form-item>
+			</el-form>
+			<el-form label-width="80px" class="px-[10px]">
+				<el-form-item :label="t('shopMemberInfoComponentAccountTextColor')">
+					<el-color-picker v-model="diyStore.editComponent.accountTextColor"/>
 				</el-form-item>
 			</el-form>
 		</div>

@@ -232,7 +232,7 @@ class Goods extends BaseModel
             $goods_brand_model = new Brand();
             $info = $goods_brand_model->where([
                 [ 'brand_id', '=', $data[ 'brand_id' ] ],
-            ])->field('brand_id,brand_name,logo')
+            ])->field('brand_id,brand_name,logo,color_json')
                 ->findOrEmpty()->toArray();
             return $info;
         }

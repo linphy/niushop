@@ -195,7 +195,7 @@
                                 </el-input>
                             </el-form-item>
                             <el-form-item :label="t('skuNo')">
-                                <el-input v-model.trim="goodsEdit.formData.sku_no" clearable :placeholder="t('skuNoPlaceholder')" class="input-width" maxlength="50" @keyup="goodsEdit.filterSpecial($event)"  />
+                                <el-input v-model.trim="goodsEdit.formData.sku_no" clearable :placeholder="t('skuNoPlaceholder')" class="input-width" maxlength="50" @keyup="goodsEdit.filterSpecial($event)" @blur="goodsEdit.goodsVerifyFn($event)" />
                             </el-form-item>
                         </template>
                     </el-form>
@@ -258,7 +258,7 @@
                                     <el-input v-model.trim="goodsEdit.batchOperation.stock" clearable :placeholder="t('stock')" class="set-input" maxlength="8"/>
                                     <el-input v-model.trim="goodsEdit.batchOperation.weight" clearable :placeholder="t('skuWeight')" class="set-input" maxlength="6" />
                                     <el-input v-model.trim="goodsEdit.batchOperation.volume" clearable :placeholder="t('skuVolume')" class="set-input" maxlength="6" />
-                                    <el-input v-model.trim="goodsEdit.batchOperation.sku_no" clearable maxlength="50" :placeholder="t('skuNo')" class="set-input" />
+                                    <el-input v-model.trim="goodsEdit.batchOperation.sku_no" clearable maxlength="50" :placeholder="t('skuNo')" class="set-input"   @blur="goodsEdit.goodsVerifyFn($event)" />
                                     <el-button type="primary" @click="goodsEdit.saveBatch">{{ t('confirm') }}</el-button>
                                 </div>
 
@@ -390,7 +390,7 @@
                                                                                 </td>
                                                                                 <td class="el-table__cell">
                                                                                     <div class="cell">
-                                                                                        <el-input v-model.trim="item.sku_no" clearable maxlength="50" />
+                                                                                        <el-input v-model.trim="item.sku_no" clearable maxlength="50" @blur="goodsEdit.goodsVerifyFn($event)" />
                                                                                     </div>
                                                                                 </td>
                                                                                 <td class="el-table__cell">
@@ -596,11 +596,7 @@ import { FormInstance } from 'element-plus'
 import { Rank, ArrowLeft } from '@element-plus/icons-vue'
 import { filterNumber } from '@/utils/common'
 import { useRoute, useRouter } from 'vue-router'
-import {
-    addGoods,
-    editGoods,
-    getGoodsInit
-} from '@/addon/shop/api/goods'
+import { addGoods, editGoods, getGoodsInit } from '@/addon/shop/api/goods'
 import {
     getShopDeliveryList,
     getShippingTemplateList

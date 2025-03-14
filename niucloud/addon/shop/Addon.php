@@ -3,10 +3,12 @@
 namespace addon\shop;
 
 
+use addon\shop\app\listener\diy\ThemeColorListener;
 use addon\shop\app\model\goods\Label;
 use addon\shop\app\model\goods\LabelGroup;
 use addon\shop\app\service\core\delivery\CoreCompanyService;
 use addon\shop\app\service\core\delivery\CoreElectronicSheetService;
+use app\model\diy\DiyTheme;
 use app\service\admin\diy\DiyService;
 use app\service\core\diy\CoreDiyService;
 use app\service\core\poster\CorePosterService;
@@ -69,7 +71,7 @@ class Addon
                 'create_time' => time()
             ],
             [
-                'name' => time() .  $category_id . 'banner3.jpg', // 附件名称
+                'name' => time() . $category_id . 'banner3.jpg', // 附件名称
                 'real_name' => '轮播素材03', // 原始文件名
                 'path' => 'addon/shop/attachment/banner3.jpg', // 完整地址
                 'url' => 'addon/shop/attachment/banner3.jpg', // 网络地址
@@ -81,7 +83,7 @@ class Addon
                 'create_time' => time()
             ],
             [
-                'name' => time() .  $category_id . 'banner4.png', // 附件名称
+                'name' => time() . $category_id . 'banner4.png', // 附件名称
                 'real_name' => '轮播素材04', // 原始文件名
                 'path' => 'addon/shop/attachment/banner4.png', // 完整地址
                 'url' => 'addon/shop/attachment/banner4.png', // 网络地址
@@ -93,7 +95,7 @@ class Addon
                 'create_time' => time()
             ],
             [
-                'name' => time() .  $category_id . 'banner5.png', // 附件名称
+                'name' => time() . $category_id . 'banner5.png', // 附件名称
                 'real_name' => '轮播素材05', // 原始文件名
                 'path' => 'addon/shop/attachment/banner5.png', // 完整地址
                 'url' => 'addon/shop/attachment/banner5.png', // 网络地址
@@ -1175,6 +1177,9 @@ class Addon
         ];
         $label_model->insertAll($label_list);
 
+        $listener = new ThemeColorListener();
+        $addon_theme = $listener->handle([ 'key' => 'shop' ]);
+        $diy_service->initAddonThemeColorData('shop', $addon_theme);
         return true;
     }
 
@@ -1252,6 +1257,9 @@ class Addon
             [ 'path', 'in', $path_arr ]
         ])->delete();
 
+        $diy_theme_model = new DiyTheme();
+        // 删除原有主题风格颜色
+        $diy_theme_model->where([ [ 'addon', '=', 'shop' ] ])->delete();
         return true;
     }
 

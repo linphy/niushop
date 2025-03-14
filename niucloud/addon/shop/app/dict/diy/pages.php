@@ -719,6 +719,7 @@ return [
                                 "id" => "4v1bhzhxay60"
                             ]
                         ],
+                        "imgElementRounded" => 10, // 图片圆角
                         "textColor" => "#303133",
                         "pageStartBgColor" => "",
                         "pageEndBgColor" => "",
@@ -1141,6 +1142,7 @@ return [
                             ],
                             "otherColor" => "rgba(255, 255, 255, 1)"
                         ],
+                        "imgElementRounded" => 10, // 图片圆角
                         "source" => "all",
                         "num" => 10,
                         "goods_category" => "",
@@ -1350,6 +1352,7 @@ return [
                             "style" => "nc-icon-gouwuche1",
                             "control" => true
                         ],
+                        "imgElementRounded" => 12, // 图片圆角
                         "list" => [
                             [
                                 "title" => "推荐",
@@ -2490,6 +2493,7 @@ return [
                             "style" => "button",
                             "control" => true
                         ],
+                        "imgElementRounded" => 10,// 图片圆角
                         "textColor" => "#303133",
                         'pageStartBgColor' => '',
                         'pageEndBgColor' => '',
@@ -2640,6 +2644,7 @@ return [
                             "style" => "button",
                             "control" => true
                         ],
+                        "imgElementRounded" => 10,// 图片圆角
                         "textColor" => "#303133",
                         'pageStartBgColor' => '',
                         'pageEndBgColor' => '',
@@ -2759,6 +2764,7 @@ return [
                             "style" => "button",
                             "control" => true
                         ],
+                        "imgElementRounded" => 12,// 图片圆角
                         "textColor" => "#303133",
                         'pageStartBgColor' => '',
                         'pageEndBgColor' => '',
@@ -2812,6 +2818,7 @@ return [
                             "control" => true,
                             "isShow" => true
                         ],
+                        "imgElementRounded" => 12, // 图片圆角
                         "btnStyle" => [
                             "fontWeight" => false,
                             "padding" => 0,
@@ -2983,6 +2990,8 @@ return [
                             "both" => 0
                         ],
                         "textColor" => "#333333",
+                        "uidTextColor" => "#666666",
+                        'accountTextColor' => '#666666',
                         "pageStartBgColor" => "",
                         "pageEndBgColor" => "",
                         "pageGradientAngle" => "to bottom",
@@ -3836,6 +3845,7 @@ return [
                             "color" => "#999999",
                             "control" => true
                         ],
+                        "imgElementRounded" => 0,// 图片圆角
                         "textColor" => "#303133",
                         "pageStartBgColor" => "",
                         "pageEndBgColor" => "",

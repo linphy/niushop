@@ -18,9 +18,7 @@
                                     <u-swipe-action-item :options="cartOptions" @click="swipeClick(item)">
                                         <view class="flex px-[var(--pad-sidebar-m)]">
                                             <view class="self-center w-[58rpx] h-[60rpx] flex items-center" v-if="isEdit" @click.stop="item.checked = !item.checked">
-                                                <text class=" iconfont text-primary text-[34rpx] w-[34rpx] h-[34rpx] rounded-[17rpx] overflow-hidden shrink-0"
-                                                    :class="{ 'iconxuanze1':item.checked,'bg-[#F5F5F5]':!item.checked}">
-                                                </text>
+                                                <text class=" iconfont text-primary text-[34rpx] w-[34rpx] h-[34rpx] rounded-[17rpx] overflow-hidden shrink-0" :class="{ 'iconxuanze1':item.checked,'bg-[#F5F5F5]':!item.checked}"></text>
                                             </view>
                                             <view  class="flex flex-1" @click="toDetail(item)">
                                                 <view class="relative w-[200rpx] h-[200rpx] flex items-center justify-center rounded-[var(--goods-rounded-big)] overflow-hidden">
@@ -35,12 +33,8 @@
                                                 </view>
                                                 <view class="flex flex-1 flex-wrap ml-[20rpx]">
                                                     <view class="w-[100%] flex flex-col items-baseline">
-                                                        <view class="text-[#333] text-[28rpx] max-h-[80rpx] leading-[40rpx] multi-hidden font-400">
-                                                            {{ item.goods_name }}
-                                                        </view>
-                                                        <view class="box-border max-w-[376rpx] mt-[10rpx] px-[14rpx] h-[36rpx] leading-[36rpx] truncate text-[var(--text-color-light6)] bg-[#F5F5F5] text-[22rpx] rounded-[20rpx]" v-if="item.sku_name">
-                                                            {{ item.sku_name }}
-                                                        </view>
+                                                        <view class="text-[#333] text-[28rpx] max-h-[80rpx] leading-[40rpx] multi-hidden font-400">{{ item.goods_name }}</view>
+                                                        <view class="box-border max-w-[376rpx] mt-[10rpx] px-[14rpx] h-[36rpx] leading-[36rpx] truncate text-[var(--text-color-light6)] bg-[#F5F5F5] text-[22rpx] rounded-[20rpx]" v-if="item.sku_name">{{ item.sku_name }}</view>
                                                     </view>
                                                     <view class="flex justify-between items-end self-end mt-[10rpx] w-[100%]">
                                                         <view class="text-[var(--price-text-color)] price-font truncate max-w-[200rpx]">
@@ -96,28 +90,28 @@ interface mescrollStructure {
 }
 
 const getCollectListFn = (mescroll: mescrollStructure) => {
-	loading.value = false
+    loading.value = false
     let data: object = {
-		page: mescroll.num,
-		limit: mescroll.size
-	};
-	getCollectList(data).then((res: any) => {
-		let newArr = (res.data.data as Array<Object>);
-		//设置列表数据
-		if (Number(mescroll.num) === 1) {
-			goodsList.value = []; //如果是第一页需手动制空列表
-		}
-        newArr = newArr.map((item: any) =>{
+        page: mescroll.num,
+        limit: mescroll.size
+    };
+    getCollectList(data).then((res: any) => {
+        let newArr = (res.data.data as Array<Object>);
+        //设置列表数据
+        if (Number(mescroll.num) === 1) {
+            goodsList.value = []; //如果是第一页需手动制空列表
+        }
+        newArr = newArr.map((item: any) => {
             item.checked = false
             return item
         })
-		goodsList.value = goodsList.value.concat(newArr);
-		mescroll.endSuccess(newArr.length);
-		loading.value = true;
-	}).catch(() => {
-		loading.value = true;
-		mescroll.endErr(); // 请求失败, 结束加载
-	})
+        goodsList.value = goodsList.value.concat(newArr);
+        mescroll.endSuccess(newArr.length);
+        loading.value = true;
+    }).catch(() => {
+        loading.value = true;
+        mescroll.endErr(); // 请求失败, 结束加载
+    })
 }
 
 const cartOptions = ref([
@@ -125,9 +119,9 @@ const cartOptions = ref([
         text: t('delete'),
         style: {
             backgroundColor: '#EF000C',
-			width: '100rpx',
-			height:'100%',
-			borderRadius: '10rpx'
+            width: '100rpx',
+            height: '100%',
+            borderRadius: '10rpx'
         }
     }
 ]);
@@ -135,8 +129,8 @@ const cartOptions = ref([
 // 取消单个收藏
 const swipeClick = (data: any) => {
     if (optionLoading.value) return
-	optionLoading.value = true
-    cancelCollect({goods_ids: [data.goods_id]}).then((res: any) => {
+    optionLoading.value = true
+    cancelCollect({ goods_ids: [data.goods_id] }).then((res: any) => {
         optionLoading.value = false
         getMescroll().resetUpScroll();
     })
@@ -145,16 +139,16 @@ const swipeClick = (data: any) => {
 //取消全部收藏
 const  deleteCollectFn = () => {
     if (!checkedNum.value) {
-		uni.showToast({ title: '请先选择收藏的商品', icon: 'none' })
-		return
-	}
+        uni.showToast({ title: '请先选择收藏的商品', icon: 'none' })
+        return
+    }
     if (optionLoading.value) return
-	optionLoading.value = true
+    optionLoading.value = true
     const ids: any = []
-	goodsList.value.forEach((item: any) => {
-		if (item.checked) ids.push(item.goods_id)
-	})
-    cancelCollect({goods_ids: ids}).then((res: any) => {
+    goodsList.value.forEach((item: any) => {
+        if (item.checked) ids.push(item.goods_id)
+    })
+    cancelCollect({ goods_ids: ids }).then((res: any) => {
         optionLoading.value = false
         getMescroll().resetUpScroll();
     })
@@ -162,22 +156,23 @@ const  deleteCollectFn = () => {
 
 // 选中数量
 const checkedNum = computed(() => {
-	let num = 0
-	goodsList.value.forEach((item: any) => {
-		item.checked && (num += 1)
-	})
-	return num
+    let num = 0
+    goodsList.value.forEach((item: any) => {
+        item.checked && (num += 1)
+    })
+    return num
 })
 
 /**
  * 全选
  */
  const selectAll = () => {
-	const checked = goodsList.value.length == checkedNum.value ? false : true
-	goodsList.value.forEach((item: any) => {
-		item.checked = checked
-	})
+    const checked = goodsList.value.length == checkedNum.value ? false : true
+    goodsList.value.forEach((item: any) => {
+        item.checked = checked
+    })
 }
+
 const toDetail = (data: any) => {
     redirect({ url: '/addon/shop/pages/goods/detail', param: { goods_id: data.goods_id } })
 }

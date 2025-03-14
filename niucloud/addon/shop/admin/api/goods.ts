@@ -331,6 +331,13 @@ export function modifyLabelGroupSort(params: Record<string, any>) {
 }
 
 /**
+ * 复制标签
+ * @param params
+ */
+export function copyLabel(params: Record<string, any>) {
+    return request.post(`shop/goods/label/copy/${ params.label_id }`, params, { showSuccessMessage: true })
+}
+/**
  * 获取商品品牌分页列表
  * @param params
  * @returns
@@ -733,4 +740,46 @@ export function getGoodsBatchSetDict() {
  */
 export function goodsBatchSet(params: Record<string, any>) {
     return request.put(`shop/goods/batchSet`, params, { showSuccessMessage: true })
+}
+
+/**
+ * 获取商品搜索配置
+ * @returns
+ */
+export function getGoodsConfigSearch() {
+    return request.get(`shop/goods/config/search`)
+}
+
+/**
+ * 编辑商品搜索配置
+ * @returns
+ */
+export function setGoodsConfigSearch(param: any) {
+    return request.post('shop/goods/config/search', param, { showSuccessMessage: true })
+}
+
+
+/**
+ * 获取商品唯一编码配置
+ * @returns
+ */
+export function getGoodsConfigUnique() {
+    return request.get(`shop/goods/config/unique`)
+}
+
+/**
+ * 编辑商品唯一编码配置
+ * @returns
+ */
+export function setGoodsConfigUnique(param: any) {
+    return request.post('shop/goods/config/unique', param, { showSuccessMessage: true })
+}
+
+/**
+ * 校验商品唯一编码
+
+ * @returns
+ */
+export function goodsVerify(param: any) {
+    return request.post('shop/goods/verify/skuno', param)
 }

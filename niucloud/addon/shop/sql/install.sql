@@ -48,6 +48,7 @@ CREATE TABLE `{{prefix}}shop_coupon` (
   `end_time` int(11) NOT NULL DEFAULT '0' COMMENT '活动结束时间',
   `remain_count` int(11) NOT NULL DEFAULT '0' COMMENT '剩余数量',
   `receive_count` int(11) NOT NULL DEFAULT '0' COMMENT '已领取数量',
+  `give_count` INT(11) NOT NULL DEFAULT 0 COMMENT '已发放数量',
   `limit_count` int(11) NOT NULL DEFAULT '0' COMMENT '单个会员限制领取数量',
   `status` tinyint(4) NOT NULL DEFAULT '1' COMMENT ' 状态 1 正常 2 未开启 3 已无效',
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '添加时间',

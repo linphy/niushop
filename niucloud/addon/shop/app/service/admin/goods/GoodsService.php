@@ -264,6 +264,9 @@ class GoodsService extends BaseAdminService
 
             $sku_data = [];
             if ($data[ 'spec_type' ] == 'single') {
+                if(!empty( $data[ 'sku_no' ])){
+                    (new ConfigService())->verifySkuNo(['sku_no'=>$data['sku_no']]);
+                }
                 // 单规格
                 $sku_data = [
                     'sku_name' => '',
@@ -283,7 +286,10 @@ class GoodsService extends BaseAdminService
                 $goods_sku_model->save($sku_data);
 
             } elseif ($data[ 'spec_type' ] == 'multi') {
-
+                $sku_no = implode(',', array_column($data['goods_sku_data'] ?? [], 'sku_no'));
+                if(!empty($sku_no)) {
+                    (new ConfigService())->verifySkuNo(['sku_no' => $sku_no]);
+                }
                 // 多规格数据
                 $default_spec_count = 0;
                 foreach ($data[ 'goods_sku_data' ] as $k => $v) {
@@ -419,6 +425,10 @@ class GoodsService extends BaseAdminService
 
             $sku_data = [];
             if ($data[ 'spec_type' ] == 'single') {
+                if(!empty( $data[ 'sku_no' ])) {
+                    $check = ['sku_no' => $data['sku_no'], 'goods_id' => $goods_id];
+                    (new ConfigService())->verifySkuNo($check);
+                }
                 // 单规格
                 $sku_data = [
                     'sku_name' => '',
@@ -461,7 +471,11 @@ class GoodsService extends BaseAdminService
                 }
 
             } elseif ($data[ 'spec_type' ] == 'multi') {
-
+                $sku_no = implode(',', array_column($data['goods_sku_data'] ?? [], 'sku_no'));
+                if(!empty($sku_no)) {
+                    $check = ['sku_no' => $sku_no, 'goods_id' => $goods_id];
+                    (new ConfigService())->verifySkuNo($check);
+                }
                 // 多规格数据
                 $first_sku_data = reset($data[ 'goods_sku_data' ]);
 
@@ -814,7 +828,7 @@ class GoodsService extends BaseAdminService
         $field = 'goods_id,goods_name,goods_type,goods_cover,goods_category,unit,stock,sale_num,virtual_sale_num,status,create_time,update_time';
         $order = 'create_time desc';
         $sku_where = [
-            [ 'goodsSku.is_default', '=', 1 ],
+            [ 'goodsSku.is_default', '=', 1 ]
         ];
         if (!empty($where[ 'order' ])) {
             $order = $where[ 'order' ] . ' ' . $where[ 'sort' ];
@@ -839,7 +853,7 @@ class GoodsService extends BaseAdminService
         $order = 'sort desc,create_time desc';
 
         $sku_where = [
-            [ 'goodsSku.is_default', '=', 1 ],
+            [ 'goodsSku.is_default', '=', 1 ]
         ];
 
         if (isset($where[ 'is_gift' ]) && $where[ 'is_gift' ] == GoodsDict::IS_GIFT) {
@@ -1170,7 +1184,7 @@ class GoodsService extends BaseAdminService
             Db::startTrans();
 
             $goods_info = $this->model->where([
-                [ 'goods_id', '=', $params[ 'goods_id' ] ],
+                [ 'goods_id', '=', $params[ 'goods_id' ] ]
             ])->field('goods_type')->findOrEmpty()->toArray();
 
             if (empty($goods_info)) {
@@ -1218,7 +1232,7 @@ class GoodsService extends BaseAdminService
             Db::startTrans();
 
             $goods_info = $this->model->where([
-                [ 'goods_id', '=', $params[ 'goods_id' ] ],
+                [ 'goods_id', '=', $params[ 'goods_id' ] ]
             ])->field('goods_id,goods_type')->findOrEmpty()->toArray();
 
             if (empty($goods_info)) {
@@ -1267,7 +1281,7 @@ class GoodsService extends BaseAdminService
             Db::startTrans();
 
             $goods_info = $this->model->where([
-                [ 'goods_id', '=', $params[ 'goods_id' ] ],
+                [ 'goods_id', '=', $params[ 'goods_id' ] ]
             ])->field('goods_type')->findOrEmpty()->toArray();
 
             if (empty($goods_info)) {
@@ -1276,7 +1290,7 @@ class GoodsService extends BaseAdminService
 
             // 修改商品的会员等级折扣
             $this->model->where([
-                [ 'goods_id', '=', $params[ 'goods_id' ] ],
+                [ 'goods_id', '=', $params[ 'goods_id' ] ]
             ])->update([
                 'member_discount' => $params[ 'member_discount' ]
             ]);

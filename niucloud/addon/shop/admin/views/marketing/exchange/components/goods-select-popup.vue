@@ -16,7 +16,7 @@
 		</el-form>
 		<!-- 列表 -->
 		<div class="mt-[10px]">
-			<el-table :data="tableData.data" ref="tableRef" row-key="id" size="large" v-loading="tableData.loading" @selection-change="handleSelectionChange">
+			<el-table :data="tableData.data" ref="tableRef" row-key="id" size="large" v-loading="tableData.loading" @selection-change="handleSelectionChange" max-height="500">
 				<template #empty>
 					<span>{{ !tableData.loading ? t('emptyData') : '' }}</span>
 				</template>

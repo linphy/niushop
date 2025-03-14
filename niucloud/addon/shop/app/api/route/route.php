@@ -67,6 +67,8 @@ Route::group('shop', function() {
 
     // 添加 商品评价
     Route::post('goods/evaluate', 'addon\shop\app\api\controller\goods\Evaluate@add');
+    // 获取商品搜索配置
+    Route::get('goods/config/search', 'addon\shop\app\api\controller\goods\Config@getSearchConfig');
 
     // 评价 （订单页）
     Route::get('order/evaluate/:id', 'addon\shop\app\api\controller\goods\Evaluate@getEvaluate');
@@ -112,6 +114,7 @@ Route::group('shop', function() {
 
     //获取用户当前积分数供组件调用
     Route::get('exchange/point', 'addon\shop\app\api\controller\exchange\Exchange@getPointInfo');
+
 
     /***************************************************** 新人专享 ****************************************************/
 

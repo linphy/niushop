@@ -223,7 +223,7 @@
                                 </el-input>
                             </el-form-item>
                             <el-form-item :label="t('skuNo')">
-                                <el-input v-model.trim="goodsEdit.formData.sku_no" clearable :placeholder="t('skuNoPlaceholder')" class="input-width" maxlength="50" @keyup="goodsEdit.filterSpecial($event)"  />
+                                <el-input v-model.trim="goodsEdit.formData.sku_no" clearable :placeholder="t('skuNoPlaceholder')" class="input-width" maxlength="50" @keyup="goodsEdit.filterSpecial($event)"  @blur="goodsEdit.goodsVerifyFn($event)" />
                             </el-form-item>
                         </template>
 
@@ -288,7 +288,7 @@
                                     <el-input v-model.trim="goodsEdit.batchOperation.market_price" clearable :placeholder="t('marketPrice')" class="set-input" maxlength="8" />
                                     <el-input v-model.trim="goodsEdit.batchOperation.cost_price" clearable :placeholder="t('costPrice')" class="set-input" maxlength="8" />
                                     <el-input v-if="!goodsEdit.isDisabledPrice()" v-model.trim="goodsEdit.batchOperation.stock" clearable :placeholder="t('stock')" class="set-input" maxlength="8" />
-                                    <el-input v-model.trim="goodsEdit.batchOperation.sku_no" clearable maxlength="50" :placeholder="t('skuNo')" class="set-input" />
+                                    <el-input v-model.trim="goodsEdit.batchOperation.sku_no" clearable maxlength="50" :placeholder="t('skuNo')" class="set-input" @blur="goodsEdit.goodsVerifyFn($event)" />
                                     <el-button type="primary" @click="goodsEdit.saveBatch">{{ t('confirm') }}</el-button>
                                 </div>
 
@@ -396,7 +396,7 @@
                                                                             </td>
                                                                             <td class="el-table__cell">
                                                                                 <div class="cell">
-                                                                                    <el-input v-model.trim="item.sku_no" clearable maxlength="50" />
+                                                                                    <el-input v-model.trim="item.sku_no" clearable maxlength="50" @blur="goodsEdit.goodsVerifyFn($event)"/>
                                                                                 </div>
                                                                             </td>
                                                                             <td class="el-table__cell">

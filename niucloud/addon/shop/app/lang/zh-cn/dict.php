@@ -102,7 +102,8 @@ return [
         'page_shop_point_index' => '积分商城',
 
         'shop_title' => '商城',
-        'shop_link' => '商城',
+        'shop_link' => '商城系统',
+        'shop_link_basic' => '商城链接',
         'shop_link_index' => '商城首页',
         'shop_link_goods_category' => '商品分类',
         'shop_link_goods_list' => '商品列表',
@@ -120,7 +121,12 @@ return [
         'shop_link_point_list' => '积分商品列表',
         'shop_link_point_order_list' => '积分兑换记录',
         'shop_link_discount_list' => '限时折扣列表',
-        'shop_link_newcomer_list' => '新人专享'
+        'shop_link_newcomer_list' => '新人专享',
+        'shop_link_goods_select' => '选择商品',
+        'shop_link_goods_category_select' => '商品分类',
+        'shop_link_coupon_select' => '优惠券',
+        'shop_link_point_exchange_select' => '积分商品',
+        'shop_link_goods_rank_select' => '商品榜单'
     ],
     'dict_diy_poster' => [
         'shop_goods_component_type_basic' => '商品组件',

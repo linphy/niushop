@@ -217,6 +217,9 @@ class VirtualGoodsService extends BaseAdminService
 
             $sku_data = [];
             if ($data[ 'spec_type' ] == 'single') {
+                 if(!empty( $data[ 'sku_no' ])){
+                    (new ConfigService())->verifySkuNo(['sku_no'=>$data['sku_no']]);
+                }
                 // 单规格
                 $sku_data = [
                     'sku_name' => '',
@@ -234,7 +237,10 @@ class VirtualGoodsService extends BaseAdminService
                 $goods_sku_model->save($sku_data);
 
             } elseif ($data[ 'spec_type' ] == 'multi') {
-
+                $sku_no = implode(',', array_column($data['goods_sku_data'] ?? [], 'sku_no'));
+                if(!empty($sku_no)) {
+                    (new ConfigService())->verifySkuNo(['sku_no' => $sku_no]);
+                }
                 // 多规格数据
                 $default_spec_count = 0;
                 foreach ($data[ 'goods_sku_data' ] as $k => $v) {
@@ -366,6 +372,10 @@ class VirtualGoodsService extends BaseAdminService
 
             $sku_data = [];
             if ($data[ 'spec_type' ] == 'single') {
+                if(!empty($data[ 'sku_no' ])) {
+                    $check = ['sku_no' => $data[ 'sku_no' ], 'goods_id' => $goods_id];
+                    (new ConfigService())->verifySkuNo($check);
+                }
                 // 单规格
                 $sku_data = [
                     'sku_name' => '',
@@ -406,7 +416,11 @@ class VirtualGoodsService extends BaseAdminService
                 }
 
             } elseif ($data[ 'spec_type' ] == 'multi') {
-
+                $sku_no = implode(',', array_column($data['goods_sku_data'] ?? [], 'sku_no'));
+                if(!empty($sku_no)) {
+                    $check = ['sku_no' => $sku_no, 'goods_id' => $goods_id];
+                    (new ConfigService())->verifySkuNo($check);
+                }
                 // 多规格数据
                 $first_sku_data = reset($data[ 'goods_sku_data' ]);
 

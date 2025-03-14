@@ -133,7 +133,7 @@ class LabelService extends BaseAdminService
     {
         // 检测商品标签分组是否被使用
         $goods_model = new Goods();
-        $count = $goods_model->where([[ 'goods_id', '>', 0 ]])->withSearch([ 'label_ids' ], [ 'label_ids' => $id ])->count();
+        $count = $goods_model->where([ [ 'goods_id', '>', 0 ], ])->withSearch([ 'label_ids' ], [ 'label_ids' => $id ])->count();
         if ($count) {
             throw new AdminException('该标签正在使用中，无法删除');
         }
@@ -150,7 +150,7 @@ class LabelService extends BaseAdminService
     public function modifySort($data)
     {
         return $this->model->where([
-            [ 'label_id', '=', $data[ 'label_id' ] ],
+            [ 'label_id', '=', $data[ 'label_id' ] ]
         ])->update([ 'sort' => $data[ 'sort' ] ]);
     }
 
@@ -162,8 +162,25 @@ class LabelService extends BaseAdminService
     public function modifyStatus($data)
     {
         return $this->model->where([
-            [ 'label_id', '=', $data[ 'label_id' ] ],
+            [ 'label_id', '=', $data[ 'label_id' ] ]
         ])->update([ 'status' => $data[ 'status' ] ]);
+    }
+
+    /**
+     * 复制商品标签
+     * @param int $id
+     * @return Label|\think\Model
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function copy(int $id)
+    {
+        $field = 'label_name, group_id, style_type, color_json, icon, memo, sort';
+        $label_info = $this->model->field($field)->where('label_id',$id)->find()->toArray();
+        $label_info['label_name'] =$label_info['label_name'].'_副本';
+        $label_info['status'] =0;
+        return $this->model->create($label_info);
     }
 
 }

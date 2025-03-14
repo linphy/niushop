@@ -113,6 +113,7 @@ return [
                             "unique" => false,
                             "autofill" => false,
                             "privacyProtection" => false,
+                            'cache' => true,
                             "default" => "",
                             "value" => ""
                         ],
@@ -141,6 +142,7 @@ return [
                             "unique" => true,
                             "autofill" => false,
                             "privacyProtection" => false,
+                            'cache' => true,
                             "default" => "",
                             "value" => ""
                         ],
@@ -189,6 +191,7 @@ return [
                             "unique" => false,
                             "autofill" => false,
                             "privacyProtection" => false,
+                            'cache' => true,
                             "default" => "",
                             "value" => ""
                         ],
@@ -331,6 +334,7 @@ return [
                             "unique" => false,
                             "autofill" => false,
                             "privacyProtection" => false,
+                            'cache' => true,
                             "default" => "",
                             "value" => ""
                         ],
@@ -361,6 +365,7 @@ return [
                             "unique" => false,
                             "autofill" => false,
                             "privacyProtection" => false,
+                            'cache' => false,
                             "default" => [
                                 "date" => "2025-01-15",
                                 "timestamp" => 1736913088.477

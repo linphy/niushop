@@ -143,4 +143,18 @@ class Label extends BaseAdminController
         return success('SUCCESS');
     }
 
+    /**
+     * 复制分类
+     * @param int $id
+     * @return \think\Response
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function copy(int $id)
+    {
+        (new LabelService())->copy($id);
+        return success('SUCCESS');
+    }
+
 }

@@ -10,7 +10,7 @@
       "categoryFullName":"组装分类名称",
       "categoryFullNamePlaceholder":"请输入组装分类名称",
       "isShow":"是否显示",
-      "sort":"排序号",
+      "sort":"排序",
       "sortPlaceholder":"请输入排序号",
       "addCategory":"添加商品分类",
       "updateCategory":"编辑商品分类",

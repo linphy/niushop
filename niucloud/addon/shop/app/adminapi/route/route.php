@@ -221,6 +221,9 @@ Route::group('shop', function() {
     //编辑商品标签
     Route::put('goods/label/:id', 'addon\shop\app\adminapi\controller\goods\Label@edit');
 
+    //复制商品标签
+    Route::post('goods/label/copy/:id', 'addon\shop\app\adminapi\controller\goods\Label@copy');
+
     //删除商品标签
     Route::delete('goods/label/:id', 'addon\shop\app\adminapi\controller\goods\Label@del');
 
@@ -536,6 +539,17 @@ Route::group('shop', function() {
 
     //商品评价 取消置顶
     Route::put('goods/evaluate/cancel_topping/:id', 'addon\shop\app\adminapi\controller\goods\Evaluate@cancelTopping');
+    //校验商品编码
+    Route::post('goods/verify/skuno', 'addon\shop\app\adminapi\controller\goods\Goods@verifySkuNo');
+
+   //商品搜索配置
+    Route::get('goods/config/search', 'addon\shop\app\adminapi\controller\goods\Config@getSearchConfig');
+    Route::post('goods/config/search', 'addon\shop\app\adminapi\controller\goods\Config@setSearchConfig');
+
+    //商品编码配置
+    Route::get('goods/config/unique', 'addon\shop\app\adminapi\controller\goods\Config@getUniqueConfig');
+    Route::post('goods/config/unique', 'addon\shop\app\adminapi\controller\goods\Config@setUniqueConfig');
+
 
     Route::get('stat/total', 'addon\shop\app\adminapi\controller\Stat@total');
     Route::get('stat/today', 'addon\shop\app\adminapi\controller\Stat@today');
@@ -594,6 +608,9 @@ Route::group('shop', function() {
     /************************************************** 积分商城 *****************************************************/
     //积分商城列表
     Route::get('active/exchange', 'addon\shop\app\adminapi\controller\marketing\Exchange@lists');
+
+    //积分商城分页列表（用于弹框选择）
+    Route::get('active/exchange/select', 'addon\shop\app\adminapi\controller\marketing\Exchange@select');
 
     //商品类型
     Route::get('active/exchange/type', 'addon\shop\app\adminapi\controller\marketing\Exchange@type');
