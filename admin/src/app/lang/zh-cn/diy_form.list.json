@@ -47,7 +47,7 @@
   "batchEmptySelectedFormsTips": "请选择要删除的表单",
   "batchFormsDeleteTips": "确定要删除选中的表单吗？",
   "promotion":"推广",
-  "submirSuccess":"提交成功页",
+  "submitSuccess":"提交成功页",
   "writeSet":"填写设置",
   "export":"导出",
   "detail":"详情",

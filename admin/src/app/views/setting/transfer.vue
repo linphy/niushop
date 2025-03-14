@@ -8,7 +8,7 @@
             </div>
 
             <div class="mt-[20px]">
-                <el-alert :description="t('transferTips')" type="warning" show-icon>
+                <el-alert type="warning" show-icon>
                     <template #title>
                         <span class="!text-[14px]">{{ t('operationTip') }}</span>
                     </template>

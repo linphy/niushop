@@ -27,11 +27,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, watch } from 'vue'
+import { ref, reactive } from 'vue'
 import { t } from '@/lang'
-import { getAreaListByPid } from '@/app/api/sys'
-import { addMemberAddress } from '@/app/api/member'
-import { filterNumber } from '@/utils/common'
 import type { FormInstance } from 'element-plus'
 import { FormRules } from 'element-plus'
 import { cloneDeep } from 'lodash-es'
@@ -39,7 +36,7 @@ import useDiyStore from '@/stores/modules/diy'
 const diyStore = useDiyStore()
 
 const dialogThemeVisible = ref(false)
-let confirmRepeat = false
+const confirmRepeat = ref(false)
 const emit = defineEmits(['confirm'])
 /**
 * 表单数据
@@ -99,8 +96,10 @@ const formRules = reactive<FormRules>({
 })
 
 const confirmFn = async (formEl: FormInstance | undefined) => {
-    if (confirmRepeat || !formEl) return
+    if (confirmRepeat.value || !formEl) return
     await formEl.validate(async (valid) => {
+        if (confirmRepeat.value) return
+        confirmRepeat.value = true
         if (valid) {
             emit('confirm', cloneDeep(formData));
             dialogThemeVisible.value = false;

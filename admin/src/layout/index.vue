@@ -4,8 +4,6 @@
 
 <script lang="ts" setup>
 import { ref, markRaw, defineAsyncComponent, provide } from 'vue'
-import { getAppType } from '@/utils/common'
-import useUserStore from '@/stores/modules/user'
 import Storage from '@/utils/storage'
 
 const sysLayout = import.meta.glob('./*/index.vue')

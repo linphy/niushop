@@ -60,7 +60,7 @@
                                     <img class="max-w-[50px] max-h-[50px]" v-if="row.headimg" :src="img(row.headimg)" alt="">
                                     <img class="max-w-[50px] max-h-[50px]" v-else src="@/app/assets/images/member_head.png" alt="">
                                 </div>
-                                <div class="flex flex flex-col">
+                                <div class="flex flex-col">
                                     <span>{{ row.nickname || '' }}</span>
                                 </div>
                             </div>

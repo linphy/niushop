@@ -138,7 +138,7 @@
 
                         <div class="edit-component-wrap">
 
-                            <component v-if="diyStore.currentComponent" :is="modules[diyStore.currentComponent]" :value="diyStore.value[diyStore.currentIndex]">
+                            <component v-if="diyStore.currentComponent" :is="modules[diyStore.currentComponent]" :key="diyStore.currentIndex" :value="diyStore.value[diyStore.currentIndex]">
                                 <template #style>
                                     <div class="edit-attr-item-wrap">
                                         <h3 class="mb-[10px]">{{ t('componentStyleTitle') }}</h3>

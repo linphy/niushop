@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-dialog v-model="showDialog" :title="t('submirSuccess')" width="850px" :close-on-press-escape="true" :destroy-on-close="true" :close-on-click-modal="false">
+        <el-dialog v-model="showDialog" :title="t('submitSuccess')" width="850px" :close-on-press-escape="true" :destroy-on-close="true" :close-on-click-modal="false">
 
             <div class="flex flex-1 mt-[24px] mx-[24px] mb-0">
                 <div class="preview-wrap">
@@ -119,7 +119,7 @@
                                             <el-icon>
                                                 <QuestionFilled color="#999999" />
                                             </el-icon>
-                                        </el-tooltip> 
+                                        </el-tooltip>
                                     </el-radio>
                                     <el-radio label="submission_time" class="!block">
                                         <span class="mr-[3px]">{{ t('submissionTime') }}</span>

@@ -1,8 +1,8 @@
 @font-face {
   font-family: "nc-iconfont"; /* Project id 4567203 */
-  src: url('//at.alicdn.com/t/c/font_4567203_1gdtkv2t1dd.woff2?t=1740126778258') format('woff2'),
-       url('//at.alicdn.com/t/c/font_4567203_1gdtkv2t1dd.woff?t=1740126778258') format('woff'),
-       url('//at.alicdn.com/t/c/font_4567203_1gdtkv2t1dd.ttf?t=1740126778258') format('truetype');
+  src: url('//at.alicdn.com/t/c/font_4567203_9qmfc2elgrt.woff2?t=1741345195504') format('woff2'),
+       url('//at.alicdn.com/t/c/font_4567203_9qmfc2elgrt.woff?t=1741345195504') format('woff'),
+       url('//at.alicdn.com/t/c/font_4567203_9qmfc2elgrt.ttf?t=1741345195504') format('truetype');
 }
 
 .nc-iconfont {
@@ -11,6 +11,14 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.nc-icon-qingliV6xx:before {
+  content: "\e865";
+}
+
+.nc-icon-liebiao-xiV6xx1:before {
+  content: "\e863";
 }
 
 .nc-icon-shequfenleiV6xx1:before {

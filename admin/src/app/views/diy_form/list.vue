@@ -63,7 +63,7 @@
                                 <template #dropdown>
                                     <el-dropdown-menu>
                                         <el-dropdown-item v-if="row.type=='DIY_FORM'">
-                                            <el-button type="primary" class="w-full" link @click="submitConfigEvent(row)">{{ t('submirSuccess') }}</el-button>
+                                            <el-button type="primary" class="w-full" link @click="submitConfigEvent(row)">{{ t('submitSuccess') }}</el-button>
                                         </el-dropdown-item>
                                         <el-dropdown-item>
                                             <el-button type="primary" class="w-full" link @click="writeConfigEvent(row)">{{ t('writeSet') }}</el-button>
