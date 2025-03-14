@@ -25,7 +25,6 @@
         "topthink/think-orm": "v3.0.14",
         "topthink/think-filesystem": "v2.0.2",
         "topthink/think-multi-app": "v1.0.16",
-
         "topthink/think-template": "v3.0.0",
         "topthink/think-view": "v2.0.0",
         "topthink/think-captcha": "v3.0.9",
@@ -46,7 +45,6 @@
         "ext-mbstring": "*",
         "php-di/php-di": "v7.0.1",
         "guzzlehttp/guzzle": "7.5",
-        "yansongda/pay": "v3.6.3",
         "symfony/psr-http-message-bridge": "v2.2.0",
         "fastknife/ajcaptcha": "v1.2.1",
         "kosinix/grafika": "dev-master",
@@ -59,7 +57,9 @@
         "workerman/redis-queue": "v1.2.0",
         "workerman/crontab": "v1.0.6",
         "hyperf/pimple": "~2.2.0",
-        "365taofang/huaweicloud-sdk-php-obs": "^3.23"
+        "365taofang/huaweicloud-sdk-php-obs": "^3.23",
+        "kkokk/poster": "^2.3",
+        "yansongda/pay": "^3.7"
     },
     "require-dev": {
         "symfony/var-dumper": "v6.0.19",
