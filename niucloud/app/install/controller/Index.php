@@ -10,6 +10,7 @@ use app\service\admin\install\InstallSystemService;
 use app\service\admin\sys\ConfigService;
 use app\service\core\addon\CoreAddonInstallService;
 use app\service\core\addon\CoreAddonService;
+use app\service\core\diy\CoreDiyService;
 use app\service\core\poster\CorePosterService;
 use app\service\core\schedule\CoreScheduleInstallService;
 use Exception;
@@ -349,7 +350,7 @@ class Index extends BaseInstall
 
             // 设置网站信息
             if (!empty($admin_name)) {
-                (new ConfigService())->setWebSite([
+                ( new ConfigService() )->setWebSite([
                     'site_name' => $admin_name,
                     'logo' => config('install.admin_logo'),
                     'keywords' => '',
@@ -407,7 +408,7 @@ class Index extends BaseInstall
             foreach ($files as $path) {
                 $data = ( new CoreAddonService() )->getAddonConfig($path);
                 if (isset($data[ 'key' ])) {
-                    if ($data['type'] == 'app') {
+                    if ($data[ 'type' ] == 'app') {
                         $install_service = ( new CoreAddonInstallService($data[ 'key' ]) );
                         $install_service->installCheck();
                         $install_service->install();
@@ -578,4 +579,17 @@ class Index extends BaseInstall
         Cache::set('install_data', $install_data);
     }
 
+    /**
+     * 安装成功后初始化数据
+     * @return void
+     */
+    public function installAfterData()
+    {
+
+        // 创建默认主题风格颜色
+        ( new CoreDiyService() )->initDefaultDiyTheme();
+
+        return success();
+
+    }
 }

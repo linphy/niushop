@@ -79,15 +79,16 @@ class MemberCashOutService extends BaseApiService
         ])->findOrEmpty();
 
         if($cash_out->isEmpty()) throw new ApiException('RECHARGE_LOG_NOT_EXIST');
-        if($cash_out['status'] != MemberCashOutDict::WAIT_AUDIT) throw new CommonException('CASHOUT_STATUS_NOT_IN_WAIT_AUDIT');
-        $cash_out->save(
-
-            [
-                'cancel_time' => time(),
-                'status' => MemberCashOutDict::CANCEL
-            ]
-        );
-        (new CoreMemberCashOutService())->giveback($cash_out);
+//        if($cash_out['status'] != MemberCashOutDict::WAIT_AUDIT) throw new CommonException('CASHOUT_STATUS_NOT_IN_WAIT_AUDIT');
+        (new CoreMemberCashOutService())->cancel($id);
+//        $cash_out->save(
+//
+//            [
+//                'cancel_time' => time(),
+//                'status' => MemberCashOutDict::CANCEL
+//            ]
+//        );
+//        (new CoreMemberCashOutService())->giveback($cash_out);
         return true;
     }
 
@@ -99,4 +100,14 @@ class MemberCashOutService extends BaseApiService
         return (new CoreMemberConfigService())->getCashOutConfig();
     }
 
+    /**
+     * 提现转账(主要用于微信商家转账)
+     * @param int $id
+     * @return void
+     */
+    public function transfer(int $id, array $data){
+        $data['channel'] = $this->channel;
+        $result = (new CoreMemberCashOutService())->transfer($id, $data);
+        return $result;
+    }
 }

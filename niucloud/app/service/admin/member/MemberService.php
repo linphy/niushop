@@ -43,9 +43,8 @@ class MemberService extends BaseAdminService
      */
     public function getPage(array $where = [])
     {
-
         $field = 'member_id, member_no, username, mobile, password, register_channel, register_type, nickname, headimg, member_level, member_label, wx_openid, weapp_openid, wx_unionid, ali_openid, douyin_openid, login_ip, login_type, login_channel, login_count, login_time, create_time, last_visit_time, last_consum_time, sex, status, birthday, point, point_get, balance, balance_get, growth, growth_get, is_member, member_time, is_del, province_id, city_id, district_id, address, location, delete_time, money, money_get, commission, commission_get, commission_cash_outing';
-        $search_model = $this->model->where([['member_id', '>', 0]])->withSearch(['keyword','register_type', 'create_time', 'is_del', 'member_label', 'register_channel','member_level'],$where)
+        $search_model = $this->model->withSearch(['keyword','register_type', 'create_time', 'is_del', 'member_label', 'register_channel','member_level'],$where)
             ->field($field)
             ->order('member_id desc')
             ->with('member_level_name_bind')
@@ -66,7 +65,7 @@ class MemberService extends BaseAdminService
     public function getList(array $where = [])
     {
         $field = 'member_id, nickname, headimg';
-        return  $this->model->where([['member_id', '>', 0]])->withSearch(['keyword'],$where)->field($field)->order('member_id desc')->limit($this->getPageParam()['limit'] ?? 0)->select()->toArray();
+        return  $this->model->withSearch(['keyword'],$where)->field($field)->order('member_id desc')->limit($this->getPageParam()['limit'] ?? 0)->select()->toArray();
     }
     /**
      * 会员详情
@@ -89,21 +88,21 @@ class MemberService extends BaseAdminService
 
         //检测手机是否重复
         if(!empty($data['mobile'])){
-            if(!$this->model->where([ ['mobile', '=', $data['mobile']]])->findOrEmpty()->isEmpty())
+            if(!$this->model->where([['mobile', '=', $data['mobile']]])->findOrEmpty()->isEmpty())
             throw new AdminException('MOBILE_IS_EXIST');
         }
         if($data['init_member_no'] != $data['member_no']){
-            if(!$this->model->where([ ['member_no', '=', $data['member_no']]])->findOrEmpty()->isEmpty())
+            if(!$this->model->where([['member_no', '=', $data['member_no']]])->findOrEmpty()->isEmpty())
                 throw new AdminException('MEMBER_NO_IS_EXIST');
         }else{
-            if(!$this->model->where([ ['member_no', '=', $data['member_no']]])->findOrEmpty()->isEmpty()){
+            if(!$this->model->where([['member_no', '=', $data['member_no']]])->findOrEmpty()->isEmpty()){
                 $data['member_no'] = $this->getMemberNo();
             }
         }
 
         $data['username'] = $data['mobile'];
         if(!empty($data['username'])){
-            if(!$this->model->where([ ['username', '=', $data['username']]])->findOrEmpty()->isEmpty())
+            if(!$this->model->where([['username', '=', $data['username']]])->findOrEmpty()->isEmpty())
                 throw new AdminException('MEMBER_IS_EXIST');
         }
 
@@ -114,7 +113,7 @@ class MemberService extends BaseAdminService
         $password_hash = create_password($data['password']);
         $data['password'] = $password_hash;
         $data['register_type'] = MemberRegisterTypeDict::MANUAL;
-        $data['register_channel'] = MemberRegisterChannelDict::MANUAL;//todo 公共化渠道
+        $data['register_channel'] = MemberRegisterChannelDict::MANUAL; // todo 公共化渠道
 
         $member = $this->model->create($data);
         $data['member_id'] = $member->member_id;
@@ -197,7 +196,7 @@ class MemberService extends BaseAdminService
      */
     public function getSum($field)
     {
-        return $this->model->where([['member_id', '>', 0] ])->sum($field);
+        return $this->model->where([ ['member_id', '>', 0] ])->sum($field);
     }
 
     /**

@@ -11,7 +11,6 @@
 
 namespace app\service\admin\diy;
 
-use app\dict\addon\AddonDict;
 use app\dict\diy\ComponentDict;
 use app\dict\diy\LinkDict;
 use app\dict\diy\PagesDict;
@@ -22,7 +21,6 @@ use app\model\diy\Diy;
 use app\model\diy\DiyTheme;
 use app\service\admin\sys\SystemService;
 use app\service\core\addon\CoreAddonService;
-use app\service\core\diy\CoreDiyService;
 use core\base\BaseAdminService;
 use core\exception\AdminException;
 use Exception;
@@ -30,6 +28,7 @@ use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
 use think\facade\Db;
+use think\facade\Log;
 
 /**
  * 自定义页面服务层
@@ -64,9 +63,8 @@ class DiyService extends BaseAdminService
      * @param array $where
      * @return array
      */
-    public function getPageByCarouselSearch(array $where = [])
+    public function getPageByCarouselSearch()
     {
-        $where[] = [ 'id', '>', 0 ];
         $field = 'id,title,page_title,name,template,type,mode,is_default,share,visit_count,create_time,update_time,value';
         $order = "update_time desc";
         $search_model = $this->model->whereOr([
@@ -722,36 +720,36 @@ class DiyService extends BaseAdminService
      */
     public function getDiyTheme()
     {
-        $addon_list = ( new Addon() )->where([['status', '=', AddonDict::ON]])->append(['status_name'])->column('title, icon, key, desc, status, type, support_app', 'key');
-        $theme_data = ( new DiyTheme() )->where([ ['type', '=', 'app'] ])->column('id,color_mark,color_name,diy_value,value,title,mode','addon');
-        $defaultColor = ( new CoreDiyService() )->getDefaultColor();
-        $app_theme['app'] = [
-            'id' => $theme_data['app']['id'] ?? '',
-            'icon' => '',
-            'addon_title' => '系统',
-            'mode' => 'diy',
-            'title' => $theme_data['app']['title'] ?? '系统主色调',
-            'color_mark' => $theme_data['app']['color_mark'] ?? $defaultColor['name'],
-            'color_name' => $theme_data['app']['color_name'] ?? $defaultColor['title'],
-            'value' => $theme_data['app']['value'] ?? $defaultColor['theme'],
-            'diy_value' => $theme_data['app']['diy_value'] ?? '',
-        ];
-        $data = [];
-        foreach ($addon_list as $value){
-            if ($value[ 'type' ] == 'app') {
-                $default_theme_data = array_values(array_filter(event('ThemeColor', [ 'key' => $value['key']])))[0] ?? [];
-                $data[$value['key']]['id'] = $theme_data[$value['key']]['id'] ?? '';
-                $data[$value['key']]['icon'] = $value['icon'] ?? '';
-                $data[$value['key']]['mode'] = $theme_data[$value['key']]['mode'] ?? 'diy';
-                $data[$value['key']]['addon_title'] = $value['title'] ?? '';
-                $data[$value['key']]['title'] = $theme_data[$value['key']]['title'] ?? $value['title'].'主色调';
-                $data[$value['key']]['color_mark'] = $theme_data[$value['key']]['color_mark'] ?? ($default_theme_data ? $default_theme_data[ 'name' ] : $defaultColor['name']);
-                $data[$value['key']]['color_name'] = $theme_data[$value['key']]['color_name'] ?? ($default_theme_data ? $default_theme_data[ 'title' ] : $defaultColor['title']);
-                $data[$value['key']]['value'] = $theme_data[$value['key']]['value'] ?? ($default_theme_data ? $default_theme_data[ 'theme' ] : $defaultColor['theme']);
-                $data[$value['key']]['diy_value'] = $theme_data[$value['key']]['diy_value'] ?? '';
+        $addon_list = ( new CoreAddonService() )->getInstallAddonList();
+        $apps = [];
+        foreach ($addon_list as $k => $v) {
+            if ($v[ 'type' ] == 'app') {
+                $apps[] = $v;
             }
         }
-        $data = array_merge($app_theme,$data);
+
+        $theme_data = ( new DiyTheme() )->where([ [ 'type', '=', 'app' ], [ 'is_selected', '=', 1 ] ])->column('id,title,theme', 'addon');
+        $system_theme = array_values(array_filter(event('ThemeColor', [ 'key' => 'app' ])))[ 0 ] ?? [];
+        $app_theme[ 'app' ] = [
+            'id' => $theme_data[ 'app' ][ 'id' ] ?? '',
+            'icon' => '',
+            'addon_title' => '系统',
+            'title' => $theme_data[ 'app' ][ 'title' ] ?? ( !empty($system_theme) ? $system_theme[ 'theme_color' ][ 0 ][ 'title' ] : '' ),
+            'theme' => $theme_data[ 'app' ][ 'theme' ] ?? ( !empty($system_theme) ? $system_theme[ 'theme_color' ][ 0 ][ 'theme' ] : '' )
+        ];
+        $data = [];
+        foreach ($apps as $value) {
+            $addon_theme = array_values(array_filter(event('ThemeColor', [ 'key' => $value[ 'key' ] ])))[ 0 ] ?? [];
+            $data[ $value[ 'key' ] ][ 'id' ] = $theme_data[ $value[ 'key' ] ][ 'id' ] ?? '';
+            $data[ $value[ 'key' ] ][ 'icon' ] = $value[ 'icon' ] ?? '';
+            $data[ $value[ 'key' ] ][ 'addon_title' ] = $value[ 'title' ] ?? '';
+            $data[ $value[ 'key' ] ][ 'title' ] = $theme_data[ $value[ 'key' ] ][ 'title' ] ?? ( !empty($addon_theme) ? $addon_theme[ 'theme_color' ][ 0 ][ 'title' ] : '' );
+            $data[ $value[ 'key' ] ][ 'theme' ] = $theme_data[ $value[ 'key' ] ][ 'theme' ] ?? ( !empty($addon_theme) ? $addon_theme[ 'theme_color' ][ 0 ][ 'theme' ] : '' );
+        }
+        if (count($apps) > 1) {// 应用数量大于1时，展示系统主题色设置，只有一个应用时，不展示系统主题色设置
+            $data = array_merge($app_theme, $data);
+        }
+
         return $data;
     }
 
@@ -762,20 +760,21 @@ class DiyService extends BaseAdminService
      */
     public function setDiyTheme($data)
     {
-        $diy_theme_model = new  (new DiyTheme());
-
-        $addon_data = (new addon())->where([['support_app', '=', $data['key']]])->select()->toArray();
+        $diy_theme_model = new DiyTheme();
+        $diy_theme_count = $diy_theme_model->where([ [ 'id', '=', $data[ 'id' ] ] ])->count();
+        if ($diy_theme_count == 0) throw new AdminException("DIY_THEME_COLOR_NOT_EXIST");
+        // 应用选择主题色（is_selected）发生变更时，主应用下的插件也同步发生变更
+        $addon_data = ( new addon() )->field('key')->where([ [ 'support_app', '=', $data[ 'addon' ] ] ])->select()->toArray();
         $addon_save_data = [];
-        if (!empty($addon_data)){
-            foreach ($addon_data as $value){
+        if (!empty($addon_data)) {
+            foreach ($addon_data as $value) {
                 $addon_save_data[] = [
                     'type' => 'addon',
-                    'addon' =>  $value['key'],
-                    'color_mark' => $data['color_mark'],
-                    'color_name' => $data['color_name'],
-                    'mode' => $data['mode'],
-                    'value' => $data['value'],
-                    'diy_value' => $data['diy_value'],
+                    'addon' => $value[ 'key' ],
+                    'title' => $data[ 'title' ],
+                    'theme' => $data[ 'theme' ],
+                    'new_theme' => $data[ 'new_theme' ],
+                    'is_selected' => 1,
                     'update_time' => time(),
                 ];
             }
@@ -783,24 +782,16 @@ class DiyService extends BaseAdminService
 
         try {
             Db::startTrans();
-            if(!empty($data['id'])){
-                $data['update_time'] = time();
-                unset($data['key']);
-                $diy_theme_model->where([['id', '=', $data['id']]])->update($data);
-                if (!empty($addon_save_data)){
-                    foreach ($addon_save_data as $value){
-                        $diy_theme_model->where([['addon', '=', $value['addon']]])->update($value);
+            if (!empty($data[ 'id' ])) {
+                $diy_theme_model->where([ [ 'addon', '=', $data[ 'addon' ] ], [ 'is_selected', '=', 1 ] ])->update([ 'is_selected' => 0 ]);
+                $data[ 'is_selected' ] = 1;
+                $data[ 'update_time' ] = time();
+                $diy_theme_model->where([ [ 'id', '=', $data[ 'id' ] ] ])->update($data);
+                if (!empty($addon_save_data)) {
+                    foreach ($addon_save_data as $value) {
+                        $diy_theme_model->where([ [ 'addon', '=', $value[ 'addon' ] ], [ 'is_selected', '=', 1 ] ])->update([ 'is_selected' => 0 ]);
+                        $diy_theme_model->where([ [ 'addon', '=', $value[ 'addon' ] ], [ 'title', '=', $data[ 'title' ] ] ])->update($value);
                     }
-                }
-            }else{
-                $data['type'] = 'app';
-                $data['addon'] = $data['key'];
-                $data['crete_time'] = time();
-                unset($data['id'],$data['key']);
-                array_unshift($addon_save_data, $data);
-                foreach ($addon_save_data as $value){
-                    unset($value['update_time']);
-                    $diy_theme_model->create($value);
                 }
             }
             Db::commit();
@@ -815,9 +806,181 @@ class DiyService extends BaseAdminService
      * 获取默认主题配色
      * @return array
      */
-    public function getDefaultThemeColor()
+    public function getDefaultThemeColor($data)
     {
-        return ( new CoreDiyService() )->getDefaultThemeColor();
+        $theme_list = ( new DiyTheme() )->field('id,title,addon,default_theme,theme,new_theme,theme_type')->where([ [ 'addon', '=', $data[ 'addon' ] ] ])->select()->toArray();
+        foreach ($theme_list as &$value) {
+            $addon_theme = array_values(array_filter(event('ThemeColor', [ 'key' => $value[ 'addon' ] ])))[ 0 ] ?? [];
+            if (!empty($addon_theme) && !empty($addon_theme[ 'theme_field' ])) {
+                $value[ 'theme_field' ] = $addon_theme[ 'theme_field' ];//返回各个应用的主题颜色字段
+            }
+        }
+        return $theme_list;
+    }
+
+    /**
+     * 添加自定义主题配色
+     * @param array $data
+     * @return bool
+     */
+    public function addDiyTheme($data)
+    {
+        // 主应用添加自定义主题色时，主应用下的插件也同步添加自定义主题色
+        $addon_data = ( new addon() )->field('key')->where([ [ 'support_app', '=', $data[ 'addon' ] ] ])->select()->toArray();
+        $addon_save_data = [];
+        if (!empty($addon_data)) {
+            foreach ($addon_data as $value) {
+                $addon_save_data[] = [
+                    'type' => 'addon',
+                    'addon' => $value[ 'key' ],
+                    'title' => $data[ 'title' ],
+                    'default_theme' => $data[ 'default_theme' ],
+                    'theme' => $data[ 'theme' ],
+                    'new_theme' => $data[ 'new_theme' ],
+                    'theme_type' => 'diy',
+                    'create_time' => time(),
+                ];
+            }
+        }
+
+        Db::startTrans();
+        try {
+            $data[ 'type' ] = 'app';
+            $data[ 'theme_type' ] = 'diy';
+            $data[ 'create_time' ] = time();
+            $diy_theme_model = new DiyTheme();
+            $diy_theme_model->create($data);
+            if (!empty($addon_save_data)) {
+                $diy_theme_model->insertAll($addon_save_data);
+            }
+            Db::commit();
+            return true;
+        } catch (Exception $e) {
+            Db::rollback();
+            throw new AdminException($e->getMessage());
+        }
+    }
+
+    /**
+     * 编辑自定义主题配色
+     * @param int $id
+     * @param array $data
+     * @return bool
+     */
+    public function editDiyTheme(int $id, array $data)
+    {
+        $diy_theme_model = new DiyTheme();
+        $diy_theme_info = $diy_theme_model->field('title')->where([ [ 'id', '=', $id ] ])->findOrEmpty()->toArray();
+        if (empty($diy_theme_info)) throw new AdminException("DIY_THEME_COLOR_NOT_EXIST");
+        // 主应用主题颜色发生改变时，主应用下的插件也同步更新主题颜色
+        $addon_data = $diy_theme_model->field('id')->where([ [ 'title', '=', $diy_theme_info[ 'title' ] ], [ 'type', '=', 'addon' ] ])->select()->toArray();
+        $addon_save_data = [];
+        if (!empty($addon_data)) {
+            foreach ($addon_data as $value) {
+                $addon_save_data[] = [
+                    'id' => $value[ 'id' ],
+                    'title' => $data[ 'title' ],
+                    'theme' => $data[ 'theme' ],
+                    'new_theme' => $data[ 'new_theme' ],
+                    'update_time' => time(),
+                ];
+            }
+        }
+
+        Db::startTrans();
+        try {
+            $data[ 'update_time' ] = time();
+            $diy_theme_model->where([ [ 'id', '=', $id ] ])->update($data);
+            if (!empty($addon_save_data)) {
+                $diy_theme_model->saveAll($addon_save_data);
+            }
+            Db::commit();
+            return true;
+        } catch (Exception $e) {
+            Db::rollback();
+            throw new AdminException($e->getMessage());
+        }
+    }
+
+    /**
+     * 删除自定义主题配色
+     * @param int $id
+     * @return bool
+     */
+    public function delDiyTheme(int $id)
+    {
+        $diy_theme_model = new DiyTheme();
+        $diy_theme_info = $diy_theme_model->field('title,theme_type,is_selected')->where([ [ 'id', '=', $id ] ])->findOrEmpty()->toArray();
+        if (empty($diy_theme_info)) throw new AdminException("DIY_THEME_COLOR_NOT_EXIST");
+        if ($diy_theme_info[ 'theme_type' ] == 'default') throw new AdminException("DIY_THEME_DEFAULT_COLOR_CAN_NOT_DELETE");
+        if ($diy_theme_info[ 'is_selected' ] == 1) throw new AdminException("DIY_THEME_SELECTED_CAN_NOT_DELETE");
+        $res = $diy_theme_model->where([ [ 'title', '=', $diy_theme_info[ 'title' ] ] ])->delete();
+        return $res;
+    }
+
+    /**
+     * 检测自定义主题配色名称唯一性
+     * @param array $data
+     * @return bool
+     */
+    public function checkDiyThemeTitleUnique($data)
+    {
+        $where = [
+            [ 'title', "=", $data[ 'title' ] ],
+            [ 'addon', "=", $data[ 'addon' ] ]
+        ];
+        if (!empty($data[ 'id' ])) {
+            $where[] = [ 'id', "<>", $data[ 'id' ] ];
+        }
+        $diy_theme_model = new DiyTheme();
+        return $diy_theme_model->where($where)->count() > 0;
+    }
+
+    /**
+     * 初始化插件的主题风格颜色数据
+     * @param $addon
+     * @param $addon_theme
+     * @param $type
+     * @return void
+     * @throws DbException
+     */
+    public function initAddonThemeColorData($addon, $addon_theme, $type = 'app')
+    {
+        $diy_theme_model = new DiyTheme();
+
+        // 删除原有主题风格颜色
+        $diy_theme_model->where([ [ 'addon', '=', $addon ] ])->delete();
+
+        // 创建默认主题风格颜色
+        if (!empty($addon_theme)) {
+            foreach ($addon_theme[ 'theme_color' ] as $k => $v) {
+                $data[] = [
+                    'type' => $type,
+                    'addon' => $addon,
+                    'title' => $v[ 'title' ],
+                    'theme' => $v[ 'theme' ],
+                    'default_theme' => $v[ 'theme' ],
+                    'theme_type' => 'default',
+                    'is_selected' => $k == 0 ? 1 : 0,
+                    'create_time' => time(),
+                ];
+            }
+        }
+        if (!empty($data)) {
+            $diy_theme_model = new DiyTheme();
+            foreach ($data as $k => &$v) {
+                $theme_count = $diy_theme_model->where([
+                    [ 'title', "=", $v[ 'title' ] ],
+                    [ 'addon', "=", $v[ 'addon' ] ]
+                ])->count();
+                // 如果已有该主题风格颜色则不再添加
+                if ($theme_count > 0) {
+                    unset($data[ $k ]);
+                }
+            }
+            $diy_theme_model->insertAll($data);
+        }
+
     }
 
 }

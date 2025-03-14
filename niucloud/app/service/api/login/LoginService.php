@@ -118,7 +118,8 @@ class LoginService extends BaseApiService
                 $data = array(
                     'mobile' => $params[ 'mobile' ],
                     'nickname' => $params[ 'nickname' ],
-                    'headimg' => $params[ 'headimg' ]
+                    'headimg' => $params[ 'headimg' ],
+                    'wx_openid' => $params[ 'openid' ]
                 );
                 return ( new RegisterService() )->register($params[ 'mobile' ], $data, MemberRegisterTypeDict::MOBILE, false);
             } else {
@@ -255,20 +256,21 @@ class LoginService extends BaseApiService
         if (!empty($open_id)) {
             Log::write('channel_1' . $this->channel);
             if (!empty($this->channel)) {
-                $openid_field = match($this->channel){
-                'wechat' => 'wx_openid',
+                $openid_field = match ( $this->channel ) {
+                    'wechat' => 'wx_openid',
                     'weapp' => 'weapp_openid',
                     default => ''
                 };
                 if (!empty($openid_field)) {
                     if (!$member->isEmpty()) {
                         if (empty($member->$openid_field)) {
-                            //todo  定义当前第三方授权方没有退出登录功能,故这儿不做openid是否存在账号验证
-//                        $member_service = new MemberService();
-//                        $open_member = $member_service->findMemberInfo([$openid_field => $open_id]);
-
-                            $member->$openid_field = $open_id;
-                            $member->save();
+                            $member_service = new MemberService();
+                            $open_member = $member_service->findMemberInfo([ $openid_field => $open_id ]);
+                            // 检测openid是否存在账号验证
+                            if (empty($open_member)) {
+                                $member->$openid_field = $open_id;
+                                $member->save();
+                            }
                         } else {
                             if ($member->$openid_field != $open_id) {
                                 throw new AuthException('MEMBER_IS_BIND_AUTH');

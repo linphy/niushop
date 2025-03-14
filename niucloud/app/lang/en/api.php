@@ -41,8 +41,6 @@ return [
     'LOGIN_STATE_ERROR' => 'login expire',
     'USER_LOCK' => 'account is not auth',
     'USER_ERROR' => 'account or password error',
-    'NO_SITE_PERMISSION' => 'you do not have auth',
-    'SITE_NOT_EXIST' => 'site is not exit',
     'LOGOUT' => 'logout',
     'OLD_PASSWORD_ERROR' => 'password error',
     'MOBILE_LOGIN_UNOPENED' => 'mobile login is not open',
@@ -59,8 +57,6 @@ return [
 
     //用户管理
     'USER_NOT_EXIST' => '用户不存在',
-    'NO_SITE_USER_ROLE' => '用户不存在关联权限',
-    'ADMIN_NOT_ALLOW_EDIT_ROLE' => '超级管理员不允许改动权限',
     'USERNAME_REPEAT' => '用户名重复',
 
 
@@ -120,7 +116,6 @@ return [
     //支付相关
     500000 => '你选择的支付方式未启用',
     //站点相关
-    'SITE_GROUP_IS_EXIST' => '站点分组已存在站点，请调整站点后重试',
     //小程序版本
     'APPLET_VERSION_NOT_EXISTS' => 'applet version not exists',
 ];

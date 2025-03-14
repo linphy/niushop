@@ -11,7 +11,6 @@
 
 namespace app\service\api\login;
 
-use app\dict\common\ChannelDict;
 use app\dict\member\MemberLoginTypeDict;
 use app\dict\member\MemberRegisterTypeDict;
 use app\job\member\SetMemberNoJob;
@@ -110,7 +109,7 @@ class RegisterService extends BaseApiService
      * @param $mobile
      * @return array
      */
-    public function account(string $username, string $password, $mobile)
+    public function account(string $username, string $password, $mobile, $wx_openid)
     {
         //todo  校验验证码  可以加try catch  后续
         ( new CaptchaService() )->check();
@@ -129,6 +128,14 @@ class RegisterService extends BaseApiService
             'username' => $username,
             'password' => $password_hash,
         );
+        if (!empty($wx_openid)) {
+            // 检测openid是否被使用
+            $member_service = new MemberService();
+            $member_info = $member_service->findMemberInfo([ 'wx_openid' => $wx_openid ]);
+            if (empty($member_info->toArray())) {
+                $data[ 'wx_openid' ] = $wx_openid;
+            }
+        }
         return $this->register($mobile, $data, MemberRegisterTypeDict::USERNAME);
     }
 
@@ -180,7 +187,7 @@ class RegisterService extends BaseApiService
         $config = ( new MemberConfigService() )->getLoginConfig();
         $is_bind_mobile = $config[ 'is_bind_mobile' ];
 
-        $with_field = match($type){
+        $with_field = match ( $type ) {
             MemberLoginTypeDict::USERNAME => 'username',
             MemberLoginTypeDict::MOBILE => 'mobile',
             MemberLoginTypeDict::WECHAT => 'wx_openid',

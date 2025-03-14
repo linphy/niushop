@@ -9,22 +9,28 @@
 // | Author: Niucloud Team
 // +----------------------------------------------------------------------
 
-namespace app\listener\system;
+namespace app\listener\transfer;
+
+use app\dict\pay\TransferDict;
 
 /**
- * 站点端布局
- * Class AppInit
- * @package app\listener\system
+ * 微信支付转账场景监听器
  */
-class SiteLayout
+class TransferCashOutListener
 {
-    public function handle()
+    public function handle($data = [])
     {
+        //账单记录添加
         return [
-            "name" => get_lang("dict_site_layout.default"),
-            "key" => "default",
-            "image" => "static/resource/images/system/layout-default.png",
-            "sort" => 0
+            'member_cash_out' => [
+                'name' => '佣金提现',
+                'scene' => TransferDict::YJBC,
+                'perception' => '劳务报酬',
+                'infos' => [
+                    '岗位类型' => '业务顾问',
+                    '报酬说明' => '佣金提现'
+                ]
+            ]
         ];
     }
 }

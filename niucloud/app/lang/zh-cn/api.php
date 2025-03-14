@@ -38,8 +38,6 @@ return [
     'ADDON_INSTALL_NOT_EXIST' => '未找到插件安装任务',
     'ADDON_INSTALL_EXECUTED' => '插件安装任务已执行',
     'INSTALL_CHECK_NOT_PASS' => '安装校验未通过',
-    'SITE_INDEX_VIEW_PATH_NOT_EXIST' => '当前首页路径不存在',
-    'ADMIN_INDEX_VIEW_PATH_NOT_EXIST' => '当前首页路径不存在',
     'ADDON_SQL_FAIL' => '插件sql执行失败',
     'ADDON_DIR_FAIL' => '插件文件操作失败',
     'LAYOUT_NOT_EXIST' => '该布局不存在',
@@ -57,6 +55,7 @@ return [
     'ADDON_IS_INSTALLED_NOT_ALLOW_DEL' => '已安装的插件不允许删除',
     'ADDON_ZIP_ERROR' => '插件压缩失败',
     'PHP_SCRIPT_RUNNING_OUT_OF_MEMORY' => 'PHP脚本运行内存不足, 具体操作方法<a style="text-decoration: underline;" href="https://www.kancloud.cn/niushop/niushop_v6/3248604" target="blank">点击查看相关手册</a>',
+    'BEFORE_UPGRADING_NEED_UPGRADE_FRAMEWORK' => '升级插件前需要先升级框架',
     //登录注册重置账号....
 
     'LOGIN_SUCCESS' => '登录成功',
@@ -65,14 +64,9 @@ return [
     'LOGIN_STATE_ERROR' => '登录状态有误,请重新登录',
     'USER_LOCK' => '账号被锁定',
     'USER_ERROR' => '账号或密码错误',
-    'USER_NOT_EXIST' => '账号不存在',
-    'NO_SITE_PERMISSION' => '您没有当前站点的访问权限',
-    'SITE_NOT_EXIST' => '站点不存在',
     'LOGOUT' => '登陆退出',
     'OLD_PASSWORD_ERROR' => '原始密码不正确',
     'MOBILE_LOGIN_UNOPENED' => '手机号登录注册未开启',
-    'SITE_USER_CAN_NOT_LOGIN_IN_ADMIN' => '站点用户无法在平台端进行登录',
-    'ADMIN_USER_CAN_NOT_LOGIN_IN_SITE' => '平台用户无法在站点端进行登录',
     'APP_TYPE_NOT_EXIST' => '无效的登录端口',
 
     //用户组权限
@@ -90,10 +84,7 @@ return [
 
     //用户管理
     'USER_NOT_EXIST' => '用户不存在',
-    'NO_SITE_USER_ROLE' => '用户不存在关联权限',
-    'ADMIN_NOT_ALLOW_EDIT_ROLE' => '超级管理员不允许改动权限',
     'USERNAME_REPEAT' => '账号重复',
-    'SITE_USER_EXIST' => '该用户已存在',
 
     //角色管理
     'USER_ROLE_NOT_EXIST' => '角色不存在',
@@ -176,14 +167,23 @@ return [
     'MEMBER_APPLY_CASHOUT' => '会员申请提现,扣除零钱',
     'CASHOUT_MONEY_TOO_LITTLE' => '会员提现金额不能小于最低提现金额',
     'CASHOUT_STATUS_NOT_IN_WAIT_TRANSFER' => '当前提现申请未处于待转账状态',
+    'CASHOUT_STATUS_NOT_IN_CANCEL' => '只有进行中的提现才可以取消',
     'CASHOUT_STATUS_NOT_IN_WAIT_AUDIT' => '当前提现申请未处于待审核状态',
     'MEMBER_CASHOUT_TRANSFER' => '会员提现转账',
     'CASH_OUT_ACCOUNT_NOT_EXIST' => '提现账户不存在',
+    'CASH_OUT_WECHAT_ACCOUNT_NOT_ALLOW_ADMIN' => '在转账到微信零钱的提现场景下,提现操作应该由用户在客户端发起',
 
     'CASH_OUT_ACCOUNT_NOT_FOUND_VALUE' => '转账到微信零钱缺少参数',
 
     //DIY
     'PAGE_NOT_EXIST' => '页面不存在',
+    'DIY_THEME_COLOR_NOT_EXIST' => '主题配色不存在',
+    'DIY_THEME_DEFAULT_COLOR_CAN_NOT_DELETE' => '系统默认配色不能删除',
+    'DIY_THEME_SELECTED_CAN_NOT_DELETE' => '主题配色已选中不能删除',
+
+    //海报
+    'POSTER_NOT_EXIST' => '海报不存在',
+    'POSTER_IN_USE_NOT_ALLOW_MODIFY' => '海报使用中禁止修改状态',
 
     //万能表单
     'DIY_FORM_NOT_EXIST' => '表单不存在',
@@ -207,14 +207,7 @@ return [
     'WECHAT_MINI_PROGRAM_CODE_GENERATION_FAILED' => '微信小程序码生成失败',
 
     //站点相关
-    'SITE_GROUP_IS_EXIST' => '当前套餐存在站点，请调整站点对应套餐后重试',
-    'SITE_EXPIRE' => '站点已过期',
-    'SITE_EXPIRE_NOT_ALLOW' => '站点已打烊，续费后可继续使用此项功能',
     'SITE_CLOSE_NOT_ALLOW' => '站点已停止',
-    'SITE_GROUP_APP_NOT_EXIST' => '存在无效的应用',
-    'NO_PERMISSION_TO_CREATE_SITE_GROUP' => '没有创建该站点套餐的权限',
-    'SITE_GROUP_CREATE_SITE_EXCEEDS_LIMIT' => '该套餐的创建数量已达上限',
-    'SITE_GROUP_NOT_EXIST' => '站点套餐不存在',
 
     //支付相关(todo  注意:7段不共享)
     'ALIPAY_TRANSACTION_NO_NOT_EXIST' => '无效的支付交易号',
@@ -228,6 +221,7 @@ return [
     'TREAT_PAYMENT_IS_OPEN' => '只有待支付时可以关闭',
     'TRANFER_STATUS_NOT_IN_WAIT_TANSFER' => '当前转账未处于待转账状态',
     'TRANSFER_ORDER_INVALID' => '无效的转账单据',
+    'TRANSFER_IS_FAILING' => '单据正在撤销中,请等待片刻或稍后再试',
     'TRANFER_CONFIG_ERROR' => '参数有误或未开通转账业务',
     'IS_PAY_REMOVE_NOT_RESETTING' => '已支付和已取消的单据不可以重置',
     'DOCUMENT_IS_PAY_REMOVE' => '当前单据已支付或已取消',
@@ -241,6 +235,8 @@ return [
     'ONLY_OFFLINEPAY_CAN_AUDIT' => '只有线下支付的单据才可以审核',
     'TRADE_NOT_EXIST' => '支付单据不存在',
     'PAY_NOT_FOUND_TRADE' => '找不到可支付的交易',
+
+    'MERCHANT_TRANSFER_SCENARIOS_THAT_DO_NOT_EXIST' => '不存在的商户转账场景',
     //退款相关
     'REFUND_NOT_EXIST' => '退款单据不存在',
     //订单相关  8***
@@ -263,6 +259,7 @@ return [
 
     // 缓存相关
     'CLEAR_MYSQL_CACHE_SUCCESS' => '数据表缓存清除成功',
+    'CACHE_CLEAR_SUCCESS' => '缓存清除成功',
 
     //任务队列相关
     'JOB_NOT_EXISTS' => '任务类不存在',
@@ -278,7 +275,6 @@ return [
     'AUTH_NOT_EXISTS' => '未获取到授权信息',
 
     /********************************************************* home端专用 **************************************/
-    'USER_ROLE_NOT_HAS_SITE' => '当前登录用户下没有此项站点',
 
     // 云服务
     'CLOUD_WEAPP_COMPILE_NOT_EXIST' => '未找到微信小程序编译包',
@@ -317,10 +313,6 @@ return [
     'WAS_NOT_CREATED' => '创建失败',
 
     /********************************************************* 微信开放平台 **************************************/
-    'WECHAT_OPLATFORM_NOT_EXIST' => '未配置微信开放平台',
-    'WEAPP_EXIST' => '该小程序已经授权给其他站点',
-    'WECHAT_EXIST' => '该公众号已经授权给其他站点',
-    'PLEASE_ADD_FIRST_SITE_GROUP' => '请先添加站点套餐',
 
     'PRINTER_NOT_EXIST' => '打印机不存在'
 ];

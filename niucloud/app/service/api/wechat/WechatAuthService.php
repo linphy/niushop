@@ -148,6 +148,8 @@ class WechatAuthService extends BaseApiService
                     return $this->register($openid, '', $nickname, $avatar, $unionid);
                 }
 
+            } else {
+                return [ 'openid' => $openid, 'unionid' => $unionid ]; // 将重要信息返回给前端保存
             }
         } else {
             // 可能会更新用户和粉丝表

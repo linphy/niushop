@@ -181,6 +181,7 @@ class TemplateDict
                                     "unique" => false,
                                     "autofill" => false,
                                     "privacyProtection" => false,
+                                    'cache' => true,
                                     "default" => "",
                                     "value" => ""
                                 ],
@@ -230,6 +231,7 @@ class TemplateDict
                                     "unique" => true,
                                     "autofill" => false,
                                     "privacyProtection" => true,
+                                    'cache' => true,
                                     "default" => "",
                                     "value" => ""
                                 ],
@@ -279,6 +281,7 @@ class TemplateDict
                                     "unique" => true,
                                     "autofill" => false,
                                     "privacyProtection" => false,
+                                    'cache' => true,
                                     "default" => "",
                                     "value" => ""
                                 ],
@@ -328,6 +331,7 @@ class TemplateDict
                                     "unique" => false,
                                     "autofill" => false,
                                     "privacyProtection" => false,
+                                    'cache' => true,
                                     "default" => "",
                                     "value" => ""
                                 ],
@@ -377,6 +381,7 @@ class TemplateDict
                                     "unique" => false,
                                     "autofill" => false,
                                     "privacyProtection" => false,
+                                    'cache' => false,
                                     "default" => [
                                         "date" => "",
                                         "timestamp" => 0
@@ -435,6 +440,7 @@ class TemplateDict
                                     "unique" => false,
                                     "autofill" => false,
                                     "privacyProtection" => false,
+                                    'cache' => true,
                                     "default" => [],
                                     "value" => []
                                 ],
@@ -518,6 +524,7 @@ class TemplateDict
                                     "unique" => false,
                                     "autofill" => false,
                                     "privacyProtection" => false,
+                                    'cache' => true,
                                     "default" => "",
                                     "value" => ""
                                 ],
@@ -569,6 +576,7 @@ class TemplateDict
                                     "unique" => false,
                                     "autofill" => false,
                                     "privacyProtection" => false,
+                                    'cache' => false,
                                     "default" => [
                                         "start" => [
                                             "date" => "",

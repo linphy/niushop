@@ -312,7 +312,9 @@
                         type: 'post',
                         success : function(data) {
                             if(data.code == 1){
-                                window.location.href = '{$root_url}/install.php/index/build';
+                                installAfterData(function(){
+                                    window.location.href = '{$root_url}/install.php/index/build';
+                                })
                             }
                         }
                     })
@@ -337,6 +339,21 @@
     function SetScroll(){
         var height=$(".install-log")[0].scrollHeight;
         $(".install-log").scrollTop(height);
+    }
+
+    // 安装成功后初始化数据
+    function installAfterData(callback){
+        $.ajax({
+            url: "{$root_url}/install.php/index/installAfterData",
+            dataType: 'json',
+            type: 'post',
+            success : function(data) {
+                if(data.code == 1){
+                    if(callback) callback()
+                }
+            }
+        })
+
     }
 </script>
 {/block}

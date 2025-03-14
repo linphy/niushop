@@ -318,6 +318,20 @@ return [
                 'is_show' => '0',
             ],
             [
+                'menu_name' => '保存',
+                'menu_key' => 'diy_form_update',
+                'menu_short_name' => '保存',
+                'menu_type' => '2',
+                'icon' => '',
+                'api_url' => 'diy_form',
+                'router_path' => '',
+                'view_path' => '',
+                'methods' => 'post',
+                'sort' => '0',
+                'status' => '1',
+                'is_show' => '0',
+            ],
+            [
                 'menu_name' => '电脑端',
                 'menu_key' => 'diy_web',
                 'menu_short_name' => '电脑端',
@@ -330,7 +344,7 @@ return [
                 'sort' => '92',
                 'status' => '1',
                 'is_show' => '1',
-                'children' =>[
+                'children' => [
                     [
                         'menu_name' => '首页导航',
                         'menu_key' => 'diy_web_nav',
@@ -2228,6 +2242,20 @@ return [
                             ],
                         ],
                     ],
+                    [
+                        'menu_name' => '转账场景',
+                        'menu_key' => 'transfer_scene_config',
+                        'menu_short_name' => '转账场景',
+                        'menu_type' => '1',
+                        'icon' => 'element Postcard',
+                        'api_url' => '',
+                        'router_path' => 'setting/transfer_scene',
+                        'view_path' => 'setting/transfer_scene',
+                        'methods' => 'get',
+                        'sort' => '59',
+                        'status' => '1',
+                        'is_show' => '1',
+                    ],
                 ],
             ],
 
@@ -3119,6 +3147,20 @@ return [
                         'is_show' => '1',
                     ],
                 ]
+            ],
+            [
+                'menu_name' => '更新缓存',
+                'menu_key' => 'update_cache',
+                'menu_short_name' => '更新缓存',
+                'menu_type' => '1',
+                'icon' => 'nc-iconfont nc-icon-qingliV6xx',
+                'api_url' => 'sys/schema/clear',
+                'router_path' => 'tools/update_cache',
+                'view_path' => 'tools/updatecache',
+                'methods' => 'post',
+                'sort' => '98',
+                'status' => '1',
+                'is_show' => '1',
             ],
             [
                 'menu_name' => '数据字典',

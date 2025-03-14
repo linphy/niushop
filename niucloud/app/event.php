@@ -47,10 +47,6 @@ $system_event = [
         ],
         //协议类型加载
         'AgreementType' => [],
-        // 站点端布局
-        'SiteLayout' => [
-            'app\listener\system\SiteLayout'
-        ],
         'BottomNavigation' => [
             'app\listener\system\BottomNavigationListener'
         ],
@@ -109,7 +105,13 @@ $system_event = [
 
         'ShowApp' => [
             'app\listener\system\ShowAppListener'
-        ]
+        ],
+        //获取微信转账场景配置
+        'GetWechatTransferTradeScene' => [
+            'app\listener\transfer\TransferCashOutListener'
+        ],
+        //主题色
+        'ThemeColor' => [ 'app\listener\diy\ThemeColorListener' ],
     ],
     'subscribe' => [
     ],

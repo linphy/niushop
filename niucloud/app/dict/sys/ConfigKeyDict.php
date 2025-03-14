@@ -30,7 +30,11 @@ class ConfigKeyDict
 
     public const H5 = 'h5';//h5
 
+    public const WXOPLATFORM = 'WXOPLATFORM'; // 微信开放平台
+
     public const WEAPP_AUTHORIZATION_INFO = 'weapp_authorization_info';
 
     public const WECHAT_AUTHORIZATION_INFO = 'wechat_authorization_info';
+
+    public const WECHAT_TRANSFER_SCENE_CONFIG = 'WECHAT_TRANSFER_SCENE_CONFIG';//微信转账场景配置
 }

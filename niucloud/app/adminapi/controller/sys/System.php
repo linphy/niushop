@@ -50,12 +50,19 @@ class System extends BaseAdminController
     }
 
     /**
-     * 清理缓存，更新菜单
+     * 清理表缓存
      */
     public function schemaCache()
     {
-
         return success((new SystemService())->schemaCache());
+    }
+
+    /**
+     * 清理缓存
+     */
+    public function clearCache()
+    {
+        return success((new SystemService())->clearCache());
     }
 
     /**
@@ -74,28 +81,6 @@ class System extends BaseAdminController
     public function checkSchedule()
     {
         return success(data: (new SystemService())->checkSchedule());
-    }
-
-    /**
-     * 获取布局
-     * @return Response
-     */
-    public function layout() {
-        $layouts = event('SiteLayout');
-        if (count($layouts) > 1) {
-            array_multisort(array_column($layouts, 'sort'), SORT_ASC, $layouts);
-        }
-        return success($layouts);
-    }
-
-    /**
-     *
-     * 设置布局
-     * @return Response
-     */
-    public function setLayout(){
-        $key = input('key', '');
-        return success(data: (new SystemService())->setLayout($key));
     }
 
     /**

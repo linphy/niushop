@@ -233,7 +233,7 @@ return [
         'page_diy' => '微页面',
         'component_type_basic' => '基础组件',
 
-        'system_title' => '系统',
+        'system_title' => '系统页面',
         'system_link' => '启动页',
         'system_link_index' => '首页',
 
@@ -252,7 +252,14 @@ return [
         'diy_page' => '自定义页面',
         'diy_link' => '自定义链接',
         'diy_jump_other_applet' => '小程序跳转',
-        'diy_make_phone_call' => '拨打电话'
+        'diy_make_phone_call' => '拨打电话',
+
+        'system_web_index' => '首页',
+        'auth_login' => '登录',
+        'auth_register' => '注册',
+        'auth_bind' => '手机号绑定',
+
+        'diy_form_select' => '万能表单'
     ],
     // 自定义海报
     'dict_diy_poster' => [
