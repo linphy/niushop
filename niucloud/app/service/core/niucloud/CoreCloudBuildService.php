@@ -306,6 +306,7 @@ class CoreCloudBuildService extends BaseCoreService
                 'authorize_code' => $this->auth_code,
                 'timestamp' => $this->build_task['timestamp']
             ];
+            if (isset($this->build_task['version'])) $query['version'] = $this->build_task['version'];
             $chunk_size = 1 * 1024 * 1024;
             $temp_dir = runtime_path() . 'backup' . DIRECTORY_SEPARATOR . 'cloud_build' . DIRECTORY_SEPARATOR . $this->build_task['task_key'] . DIRECTORY_SEPARATOR;
 
